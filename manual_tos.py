@@ -1,12 +1,22 @@
 import os
 import dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 def database_connection_url():
     dotenv.load_dotenv()
     return os.getenv("POSTGRES_URI")
 
 engine = create_engine(database_connection_url(), pool_pre_ping=True)
+
+# testing out the connection with a simple query
+try:
+    with engine.connect() as connection:
+        result = connection.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"))
+        print("Tables in the 'public' schema:")
+        for row in result:
+            print(row[0])
+except Exception as e:
+    print("Database connection failed:", e)
 
 websites = [
     "google.com",
@@ -105,30 +115,29 @@ websites = [
 
 websites_info = [
     {"url": "google.com", "site_name": "Google", "category": "Search Engine", "tos_url": "https://policies.google.com/terms?hl=en-US"},
-    {"url": "youtube.com", "site_name": "YouTube", "category": "Video Sharing", "tos_url": ""},
-    {"url": "reddit.com", "site_name": "Reddit", "category": "Social News", "tos_url": ""},
-    {"url": "amazon.com", "site_name": "Amazon", "category": "E-commerce", "tos_url": ""},
-    {"url": "facebook.com", "site_name": "Facebook", "category": "Social Networking", "tos_url": ""},
-    {"url": "duckduckgo.com", "site_name": "DuckDuckGo", "category": "Search Engine", "tos_url": ""},
-    {"url": "yahoo.com", "site_name": "Yahoo", "category": "Web Services", "tos_url": ""},
-    {"url": "wikipedia.org", "site_name": "Wikipedia", "category": "Online Encyclopedia", "tos_url": ""},
-    {"url": "twitter.com", "site_name": "Twitter", "category": "Social Networking", "tos_url": ""},
-    {"url": "instagram.com", "site_name": "Instagram", "category": "Social Networking", "tos_url": ""},
-    {"url": "bing.com", "site_name": "Bing", "category": "Search Engine", "tos_url": ""},
-    {"url": "fandom.com", "site_name": "Fandom", "category": "Fan Community", "tos_url": ""},
-    {"url": "weather.com", "site_name": "The Weather Channel", "category": "Weather", "tos_url": ""},
-    {"url": "cnn.com", "site_name": "CNN", "category": "News", "tos_url": ""},
-    {"url": "espn.com", "site_name": "ESPN", "category": "Sports", "tos_url": ""},
-    {"url": "tiktok.com", "site_name": "TikTok", "category": "Social Networking", "tos_url": ""},
-    {"url": "nytimes.com", "site_name": "The New York Times", "category": "News", "tos_url": ""},
-    {"url": "foxnews.com", "site_name": "Fox News", "category": "News", "tos_url": ""},
-    {"url": "ebay.com", "site_name": "eBay", "category": "E-commerce", "tos_url": ""},
-    {"url": "quora.com", "site_name": "Quora", "category": "Question and Answer", "tos_url": ""},
-    {"url": "microsoftonline.com", "site_name": "Microsoft Online Services", "category": "Web Services", "tos_url": ""},
-    {"url": "walmart.com", "site_name": "Walmart", "category": "E-commerce", "tos_url": ""},
-    {"url": "linkedin.com", "site_name": "LinkedIn", "category": "Professional Networking", "tos_url": ""},
-    {"url": "office.com", "site_name": "Office", "category": "Productivity Software", "tos_url": ""},
-    {"url": "imdb.com", "site_name": "IMDb", "category": "Movies and TV", "tos_url": ""},
+    {"url": "youtube.com", "site_name": "YouTube", "category": "Video Sharing", "tos_url": "https://www.youtube.com/static?template=terms"},
+    {"url": "reddit.com", "site_name": "Reddit", "category": "Social News", "tos_url": "https://www.redditinc.com/policies/user-agreement-september-25-2023"},
+    {"url": "amazon.com", "site_name": "Amazon", "category": "E-commerce", "tos_url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=202140280"},
+    {"url": "facebook.com", "site_name": "Facebook", "category": "Social Networking", "tos_url": "https://www.facebook.com/legal/terms"},
+    {"url": "duckduckgo.com", "site_name": "DuckDuckGo", "category": "Search Engine", "tos_url": "https://duckduckgo.com/terms"},
+    {"url": "yahoo.com", "site_name": "Yahoo", "category": "Web Services", "tos_url": "https://legal.yahoo.com/us/en/yahoo/terms/otos/index.html"},
+    {"url": "wikipedia.org", "site_name": "Wikipedia", "category": "Online Encyclopedia", "tos_url": "https://en.wikipedia.org/wiki/Terms_of_service"},
+    {"url": "twitter.com", "site_name": "Twitter", "category": "Social Networking", "tos_url": "https://twitter.com/en/tos"},
+    {"url": "instagram.com", "site_name": "Instagram", "category": "Social Networking", "tos_url": "https://help.instagram.com/581066165581870"},
+    {"url": "bing.com", "site_name": "Bing", "category": "Search Engine", "tos_url": "https://www.bing.com/new/termsofuse"},
+    {"url": "fandom.com", "site_name": "Fandom", "category": "Fan Community", "tos_url": "https://www.fandom.com/terms-of-use"},
+    {"url": "weather.com", "site_name": "Weather", "category": "Weather", "tos_url": "https://weather.com/legal#"},
+    {"url": "cnn.com", "site_name": "CNN", "category": "News", "tos_url": "https://www.cnn.com/2014/01/17/cnn-info/interactive-legal/index.html"},
+    {"url": "espn.com", "site_name": "ESPN", "category": "Sports", "tos_url": "https://www.espn.com/mobile/aware/terms.pdf"},
+    {"url": "tiktok.com", "site_name": "TikTok", "category": "Social Networking", "tos_url": "https://www.tiktok.com/legal/page/us/terms-of-service/en"},
+    {"url": "nytimes.com", "site_name": "The New York Times", "category": "News", "tos_url": "https://help.nytimes.com/hc/en-us/articles/115014893428-Terms-of-Service"},
+    {"url": "foxnews.com", "site_name": "Fox News", "category": "News", "tos_url": "https://www.foxnews.com/terms-of-use"},
+    {"url": "ebay.com", "site_name": "eBay", "category": "E-commerce", "tos_url": "https://www.ebay.com/help/policies/member-behaviour-policies/user-agreement?id=4259"},
+    {"url": "quora.com", "site_name": "Quora", "category": "Question and Answer", "tos_url": "https://www.quora.com/about/tos"},
+    {"url": "microsoftonline.com", "site_name": "Microsoft Online Services", "category": "Web Services", "tos_url": "https://www.quora.com/about/tos"},
+    {"url": "walmart.com", "site_name": "Walmart", "category": "E-commerce", "tos_url": "https://www.microsoft.com/en-us/servicesagreement"},
+    {"url": "linkedin.com", "site_name": "LinkedIn", "category": "Professional Networking", "tos_url": "https://www.linkedin.com/legal/user-agreement"},
+    {"url": "imdb.com", "site_name": "IMDb", "category": "Movies and TV", "tos_url": "https://www.imdb.com/conditions"},
     {"url": "openai.com", "site_name": "OpenAI", "category": "Artificial Intelligence", "tos_url": ""},
     {"url": "live.com", "site_name": "Outlook (Live)", "category": "Web Services", "tos_url": ""},
     {"url": "twitch.tv", "site_name": "Twitch", "category": "Live Streaming", "tos_url": ""},
