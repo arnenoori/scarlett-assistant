@@ -98,7 +98,9 @@ websites_info = [
 
 def database_connection_url():
     dotenv.load_dotenv()
-    return os.getenv("POSTGRES_URI")
+    uri = os.getenv("POSTGRES_URI")
+    print(uri)
+    return uri
 
 engine = create_engine(database_connection_url(), pool_pre_ping=True)
 
@@ -135,34 +137,54 @@ CREATE TABLE terms_of_service (
 '''
 
 # Insert data into the websites and terms_of_service tables
-try:
-    with engine.connect() as connection:
-        for website in websites_info:
-            try:
+for website in websites_info:
+    try:
+        with engine.connect() as connection:
+            with connection.begin(): 
                 insert_website = """
                 INSERT INTO websites (url, site_name, category) 
-                VALUES (:url, :site_name, :category) 
-                RETURNING website_id
+                VALUES (:url, :site_name, :category)
+                ON CONFLICT (url) DO UPDATE 
+                SET site_name = EXCLUDED.site_name,
+                    category = EXCLUDED.category
+                RETURNING website_id;
                 """
-                website_id_result = connection.execute(sqlalchemy.text(insert_website), **website)
+                website_id_result = connection.execute(text(insert_website), {"url": website["url"], "site_name": website["site_name"], "category": website["category"]})
                 website_id = website_id_result.fetchone()[0]
-                
+                print(f"Inserted website {website['site_name']} with ID {website_id} into websites table")
+
                 website_tos_text_file = f"./tos_docs/{website['site_name']}.txt"
                 if os.path.exists(website_tos_text_file):
                     with open(website_tos_text_file, "r") as file:
                         tos_content = file.read()
                     insert_tos = """
                     INSERT INTO terms_of_service (website_id, content, simplified_content, tos_url) 
-                    VALUES (:website_id, :content, :simplified_content, :tos_url)
+                    VALUES (:website_id, :content, :simplified_content, :tos_url);
                     """
-                    connection.execute(sqlalchemy.text(insert_tos), website_id=website_id, content=tos_content, simplified_content="Simplified content here", tos_url=website["tos_url"])
+                    connection.execute(text(insert_tos), {"website_id": website_id, "content": tos_content, "simplified_content": "", "tos_url": website["tos_url"]})
+                    print(f"Inserted terms of service for {website['site_name']} into terms_of_service table")
                 else:
                     print(f"File not found: {website_tos_text_file}")
-            except SQLAlchemyError as db_err:
-                print(f"Database error for {website['site_name']}: {db_err}")
-            except IOError as io_err:
-                print(f"File error for {website['site_name']}: {io_err}")
-            except Exception as e:
-                print(f"Error for {website['site_name']}: {e}")
+                
+    except SQLAlchemyError as e:
+        print(f"Database operation failed for {website['site_name']}: {e}")
+
+
+# Retrieve data from the websites and terms_of_service tables
+try:
+    with engine.connect() as connection:
+        select_websites = """
+        SELECT * FROM websites
+        """
+        websites = connection.execute(sqlalchemy.text(select_websites))
+        for website in websites:
+            print(website)
+        
+        select_tos = """
+        SELECT * FROM terms_of_service
+        """
+        tos = connection.execute(sqlalchemy.text(select_tos))
+        for tos in tos:
+            print(tos)
 except SQLAlchemyError as e:
     print("Database connection failed:", e)
