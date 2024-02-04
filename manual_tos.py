@@ -1,12 +1,22 @@
 import os
 import dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 def database_connection_url():
     dotenv.load_dotenv()
     return os.getenv("POSTGRES_URI")
 
 engine = create_engine(database_connection_url(), pool_pre_ping=True)
+
+# testing out the connection with a simple query
+try:
+    with engine.connect() as connection:
+        result = connection.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"))
+        print("Tables in the 'public' schema:")
+        for row in result:
+            print(row[0])
+except Exception as e:
+    print("Database connection failed:", e)
 
 websites = [
     "google.com",
