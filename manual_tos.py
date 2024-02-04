@@ -1,117 +1,8 @@
 import os
 import dotenv
 from sqlalchemy import create_engine, text
-
-def database_connection_url():
-    dotenv.load_dotenv()
-    return os.getenv("POSTGRES_URI")
-
-engine = create_engine(database_connection_url(), pool_pre_ping=True)
-
-# testing out the connection with a simple query
-try:
-    with engine.connect() as connection:
-        result = connection.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"))
-        print("Tables in the 'public' schema:")
-        for row in result:
-            print(row[0])
-except Exception as e:
-    print("Database connection failed:", e)
-
-websites = [
-    "google.com",
-    "youtube.com",
-    "reddit.com",
-    "amazon.com",
-    "facebook.com",
-    "duckduckgo.com",
-    "yahoo.com",
-    "wikipedia.org",
-    "twitter.com",
-    "instagram.com",
-    "bing.com",
-    "fandom.com",
-    "weather.com",
-    "cnn.com",
-    "espn.com",
-    "tiktok.com",
-    "nytimes.com",
-    "foxnews.com",
-    "ebay.com",
-    "quora.com",
-    "microsoftonline.com",
-    "walmart.com",
-    "linkedin.com",
-    "office.com",
-    "imdb.com",
-    "openai.com",
-    "live.com",
-    "twitch.tv",
-    "microsoft.com",
-    "usps.com",
-    "dailymail.co.uk",
-    "netflix.com",
-    "msn.com",
-    "etsy.com",
-    "instructure.com",
-    "paypal.com",
-    "bestbuy.com",
-    "zoom.us",
-    "nypost.com",
-    "accuweather.com",
-    "pinterest.com",
-    "indeed.com",
-    "zillow.com",
-    "apple.com",
-    "homedepot.com",
-    "discord.com",
-    "bbc.com",
-    "ign.com",
-    "ups.com",
-    "sharepoint.com",
-    "target.com",
-    "imgur.com",
-    "craigslist.org",
-    "spotify.com",
-    "fedex.com",
-    "amazonaws.com",
-    "gamespot.com",
-    "breitbart.com",
-    "patreon.com",
-    "washingtonpost.com",
-    "hulu.com",
-    "theguardian.com",
-    "costco.com",
-    "chase.com",
-    "steamcommunity.com",
-    "outlook.com",
-    "slickdeals.net",
-    "roblox.com",
-    "github.com",
-    "usatoday.com",
-    "samsung.com",
-    "character.ai",
-    "capitalone.com",
-    "temu.com",
-    "nextdoor.com",
-    "lowes.com",
-    "nih.gov",
-    "yelp.com",
-    "foxbusiness.com",
-    "npr.org",
-    "canva.com",
-    "xfinity.com",
-    "quizlet.com",
-    "steampowered.com",
-    "okta.com",
-    "nbcnews.com",
-    "cnbc.com",
-    "apnews.com",
-    "adobe.com",
-    "cvs.com",
-    "wordpress.com",
-    "whatsapp.com",
-]
+import sqlalchemy
+from sqlalchemy.exc import SQLAlchemyError
 
 websites_info = [
     {"url": "google.com", "site_name": "Google", "category": "Search Engine", "tos_url": "https://policies.google.com/terms?hl=en-US"},
@@ -130,11 +21,11 @@ websites_info = [
     {"url": "cnn.com", "site_name": "CNN", "category": "News", "tos_url": "https://www.cnn.com/2014/01/17/cnn-info/interactive-legal/index.html"},
     {"url": "espn.com", "site_name": "ESPN", "category": "Sports", "tos_url": "https://www.espn.com/mobile/aware/terms.pdf"},
     {"url": "tiktok.com", "site_name": "TikTok", "category": "Social Networking", "tos_url": "https://www.tiktok.com/legal/page/us/terms-of-service/en"},
-    {"url": "nytimes.com", "site_name": "The New York Times", "category": "News", "tos_url": "https://help.nytimes.com/hc/en-us/articles/115014893428-Terms-of-Service"},
-    {"url": "foxnews.com", "site_name": "Fox News", "category": "News", "tos_url": "https://www.foxnews.com/terms-of-use"},
+    {"url": "nytimes.com", "site_name": "NYT", "category": "News", "tos_url": "https://help.nytimes.com/hc/en-us/articles/115014893428-Terms-of-Service"},
+    {"url": "foxnews.com", "site_name": "FoxNews", "category": "News", "tos_url": "https://www.foxnews.com/terms-of-use"},
     {"url": "ebay.com", "site_name": "eBay", "category": "E-commerce", "tos_url": "https://www.ebay.com/help/policies/member-behaviour-policies/user-agreement?id=4259"},
     {"url": "quora.com", "site_name": "Quora", "category": "Question and Answer", "tos_url": "https://www.quora.com/about/tos"},
-    {"url": "microsoftonline.com", "site_name": "Microsoft Online Services", "category": "Web Services", "tos_url": "https://www.quora.com/about/tos"},
+    {"url": "microsoft.com", "site_name": "Microsoft", "category": "Web Services", "tos_url": "https://www.microsoft.com/en-us/servicesagreement"},
     {"url": "walmart.com", "site_name": "Walmart", "category": "E-commerce", "tos_url": "https://www.microsoft.com/en-us/servicesagreement"},
     {"url": "linkedin.com", "site_name": "LinkedIn", "category": "Professional Networking", "tos_url": "https://www.linkedin.com/legal/user-agreement"},
     {"url": "imdb.com", "site_name": "IMDb", "category": "Movies and TV", "tos_url": "https://www.imdb.com/conditions"},
@@ -151,15 +42,15 @@ websites_info = [
     {"url": "zoom.us", "site_name": "Zoom", "category": "Video Conferencing", "tos_url": "https://explore.zoom.us/en/terms/"},
     {"url": "nypost.com", "site_name": "New York Post", "category": "News", "tos_url": "https://nypost.com/terms/"},
     {"url": "accuweather.com", "site_name": "AccuWeather", "category": "Weather", "tos_url": "https://www.accuweather.com/en/legal#:~:text=Except%20as%20expressly%20provided%20herein,of%20AccuWeather%20or%20its%20Providers."},
-    {"url": "pinterest.com", "site_name": "Pinterest", "category": "Social Networking", "tos_url": ""},
-    {"url": "indeed.com", "site_name": "Indeed", "category": "Job Search", "tos_url": ""},
-    {"url": "zillow.com", "site_name": "Zillow", "category": "Real Estate", "tos_url": ""},
-    {"url": "apple.com", "site_name": "Apple", "category": "Technology", "tos_url": ""},
-    {"url": "homedepot.com", "site_name": "Home Depot", "category": "E-commerce", "tos_url": ""},
-    {"url": "discord.com", "site_name": "Discord", "category": "Social Networking", "tos_url": ""},
-    {"url": "bbc.com", "site_name": "BBC", "category": "News", "tos_url": ""},
-    {"url": "ign.com", "site_name": "IGN", "category": "Gaming News", "tos_url": ""},
-    {"url": "ups.com", "site_name": "UPS", "category": "Postal Service", "tos_url": ""},
+    {"url": "pinterest.com", "site_name": "Pinterest", "category": "Social Networking", "tos_url": "https://policy.pinterest.com/en/terms-of-service"},
+    {"url": "indeed.com", "site_name": "Indeed", "category": "Job Search", "tos_url": "https://www.indeed.com/legal"},
+    {"url": "zillow.com", "site_name": "Zillow", "category": "Real Estate", "tos_url": "https://www.zillowgroup.com/terms-of-use/"},
+    {"url": "apple.com", "site_name": "Apple", "category": "Technology", "tos_url": "https://www.apple.com/legal/internet-services/itunes/"},
+    {"url": "homedepot.com", "site_name": "Home Depot", "category": "E-commerce", "tos_url": "https://www.homedepot.com/c/Terms_of_Use"},
+    {"url": "discord.com", "site_name": "Discord", "category": "Social Networking", "tos_url": "https://discord.com/terms"},
+    {"url": "bbc.com", "site_name": "BBC", "category": "News", "tos_url": "https://www.bbc.co.uk/usingthebbc/terms-of-use/"},
+    {"url": "ign.com", "site_name": "IGN", "category": "Gaming News", "tos_url": "https://www.ign.com/wikis/ign-community-central/IGN-Share-Terms-and-conditions"},
+    {"url": "ups.com", "site_name": "UPS", "category": "Postal Service", "tos_url": "https://www.ups.com/us/en/support/shipping-support/legal-terms-conditions/website-terms-of-use.page#:~:text=You%20agree%20to%20use%20the,any%20laws%2C%20rulings%20or%20regulations"},
     {"url": "sharepoint.com", "site_name": "SharePoint", "category": "Document Management", "tos_url": ""},
     {"url": "target.com", "site_name": "Target", "category": "E-commerce", "tos_url": ""},
     {"url": "imgur.com", "site_name": "Imgur", "category": "Image Sharing", "tos_url": ""},
@@ -205,7 +96,73 @@ websites_info = [
     {"url": "whatsapp.com", "site_name": "WhatsApp", "category": "Messaging", "tos_url": ""}
 ]
 
-# Insert data into the websites table 
+def database_connection_url():
+    dotenv.load_dotenv()
+    return os.getenv("POSTGRES_URI")
 
+engine = create_engine(database_connection_url(), pool_pre_ping=True)
 
-# Insert data into the terms_of_service table
+# testing out the connection with a simple query
+try:
+    with engine.connect() as connection:
+        result = connection.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"))
+        print("Tables in the 'public' schema:")
+        for row in result:
+            print(row[0])
+except Exception as e:
+    print("Database connection failed:", e)
+
+'''
+-- Websites Table
+CREATE TABLE websites (
+    website_id SERIAL PRIMARY KEY,
+    url VARCHAR(255) UNIQUE NOT NULL,
+    site_name VARCHAR(255),
+    category VARCHAR(255), -- categorizing the website (e.g., e-commerce, social media)
+    last_crawled TIMESTAMP WITH TIME ZONE
+);
+
+-- Terms of Service Table
+CREATE TABLE terms_of_service (
+    tos_id SERIAL PRIMARY KEY,
+    website_id INT REFERENCES websites(website_id),
+    content TEXT NOT NULL,
+    simplified_content TEXT NOT NULL,
+    version_identifier VARCHAR(255), 
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    tos_url VARCHAR(255)
+);
+'''
+
+# Insert data into the websites and terms_of_service tables
+try:
+    with engine.connect() as connection:
+        for website in websites_info:
+            try:
+                insert_website = """
+                INSERT INTO websites (url, site_name, category) 
+                VALUES (:url, :site_name, :category) 
+                RETURNING website_id
+                """
+                website_id_result = connection.execute(sqlalchemy.text(insert_website), **website)
+                website_id = website_id_result.fetchone()[0]
+                
+                website_tos_text_file = f"./tos_docs/{website['site_name']}.txt"
+                if os.path.exists(website_tos_text_file):
+                    with open(website_tos_text_file, "r") as file:
+                        tos_content = file.read()
+                    insert_tos = """
+                    INSERT INTO terms_of_service (website_id, content, simplified_content, tos_url) 
+                    VALUES (:website_id, :content, :simplified_content, :tos_url)
+                    """
+                    connection.execute(sqlalchemy.text(insert_tos), website_id=website_id, content=tos_content, simplified_content="Simplified content here", tos_url=website["tos_url"])
+                else:
+                    print(f"File not found: {website_tos_text_file}")
+            except SQLAlchemyError as db_err:
+                print(f"Database error for {website['site_name']}: {db_err}")
+            except IOError as io_err:
+                print(f"File error for {website['site_name']}: {io_err}")
+            except Exception as e:
+                print(f"Error for {website['site_name']}: {e}")
+except SQLAlchemyError as e:
+    print("Database connection failed:", e)
