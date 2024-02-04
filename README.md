@@ -1,7 +1,7 @@
-# scarlett-assistant
-Scarlett is an AI personal assistant applications that is interfaced with via text message. Developed as a senior project at California Polytechnic State University, San Luis Obispo.
+# tos-chrome-extension
+[project_name] is a chrome extension that helps users understand and control their privacy on the internet. It tells users if a website's terms of service are good or bad and warns them about privacy risks. The extension also keeps track of what personal information users share with websites.
 
-Try it out! Send a text to ...
+To install, visit ... 
 
 ## Contributors:
 [Arne Noori](https://github.com/arnenoori) <br>
