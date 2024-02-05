@@ -56,43 +56,41 @@ websites_info = [
     {"url": "craigslist.org", "site_name": "Craigslist", "category": "Classifieds", "tos_url": "https://www.craigslist.org/about/terms.of.use/en"},
     {"url": "spotify.com", "site_name": "Spotify", "category": "Music Streaming", "tos_url": "https://www.spotify.com/us/legal/end-user-agreement/"},
     {"url": "fedex.com", "site_name": "FedEx", "category": "Postal Service", "tos_url": "https://www.fedex.com/en-us/terms-of-use.html"},
-    {"url": "amazonaws.com", "site_name": "Amazon Web Services", "category": "Cloud Computing", "tos_url": ""},
-    {"url": "gamespot.com", "site_name": "GameSpot", "category": "Gaming News", "tos_url": ""},
-    {"url": "breitbart.com", "site_name": "Breitbart", "category": "News", "tos_url": ""},
-    {"url": "patreon.com", "site_name": "Patreon", "category": "Crowdfunding", "tos_url": ""},
-    {"url": "washingtonpost.com", "site_name": "The Washington Post", "category": "News", "tos_url": ""},
-    {"url": "hulu.com", "site_name": "Hulu", "category": "Streaming Service", "tos_url": ""},
-    {"url": "theguardian.com", "site_name": "The Guardian", "category": "News", "tos_url": ""},
-    {"url": "costco.com", "site_name": "Costco", "category": "E-commerce", "tos_url": ""},
-    {"url": "chase.com", "site_name": "Chase", "category": "Banking", "tos_url": ""},
-    {"url": "steamcommunity.com", "site_name": "Steam Community", "category": "Gaming Community", "tos_url": ""},
-    {"url": "outlook.com", "site_name": "Outlook", "category": "Email Service", "tos_url": ""},
-    {"url": "slickdeals.net", "site_name": "Slickdeals", "category": "Coupons and Deals", "tos_url": ""},
-    {"url": "roblox.com", "site_name": "Roblox", "category": "Online Gaming Platform", "tos_url": ""},
-    {"url": "github.com", "site_name": "GitHub", "category": "Software Development", "tos_url": ""},
-    {"url": "usatoday.com", "site_name": "USA Today", "category": "News", "tos_url": ""},
-    {"url": "samsung.com", "site_name": "Samsung", "category": "Electronics", "tos_url": ""},
-    {"url": "character.ai", "site_name": "Character.AI", "category": "Artificial Intelligence", "tos_url": ""},
-    {"url": "capitalone.com", "site_name": "Capital One", "category": "Banking", "tos_url": ""},
-    {"url": "temu.com", "site_name": "Temu", "category": "E-commerce", "tos_url": ""},
-    {"url": "nextdoor.com", "site_name": "Nextdoor", "category": "Social Networking", "tos_url": ""},
-    {"url": "lowes.com", "site_name": "Lowe's", "category": "Home Improvement", "tos_url": ""},
-    {"url": "nih.gov", "site_name": "National Institutes of Health (NIH)", "category": "Health", "tos_url": ""},
-    {"url": "yelp.com", "site_name": "Yelp", "category": "Business Reviews", "tos_url": ""},
-    {"url": "foxbusiness.com", "site_name": "Fox Business", "category": "Business News", "tos_url": ""},
-    {"url": "npr.org", "site_name": "NPR", "category": "Public Radio", "tos_url": ""},
-    {"url": "canva.com", "site_name": "Canva", "category": "Graphic Design", "tos_url": ""},
-    {"url": "xfinity.com", "site_name": "Xfinity", "category": "Telecommunications", "tos_url": ""},
-    {"url": "quizlet.com", "site_name": "Quizlet", "category": "Education", "tos_url": ""},
-    {"url": "steampowered.com", "site_name": "Steam", "category": "Digital Distribution", "tos_url": ""},
-    {"url": "okta.com", "site_name": "Okta", "category": "Identity Management", "tos_url": ""},
-    {"url": "nbcnews.com", "site_name": "NBC News", "category": "News", "tos_url": ""},
-    {"url": "cnbc.com", "site_name": "CNBC", "category": "Business News", "tos_url": ""},
-    {"url": "apnews.com", "site_name": "Associated Press News", "category": "News Agency", "tos_url": ""},
-    {"url": "adobe.com", "site_name": "Adobe", "category": "Software", "tos_url": ""},
-    {"url": "cvs.com", "site_name": "CVS", "category": "Pharmacy", "tos_url": ""},
-    {"url": "wordpress.com", "site_name": "WordPress", "category": "Web Publishing", "tos_url": ""},
-    {"url": "whatsapp.com", "site_name": "WhatsApp", "category": "Messaging", "tos_url": ""}
+    {"url": "amazonaws.com", "site_name": "Amazon Web Services", "category": "Cloud Computing", "tos_url": "https://aws.amazon.com/service-terms/"},
+    {"url": "gamespot.com", "site_name": "GameSpot", "category": "Gaming News", "tos_url": "https://www.clubrytariy.com/terms-of-use/index.html"},
+    {"url": "breitbart.com", "site_name": "Breitbart", "category": "News", "tos_url": "https://www.breitbart.com/terms-of-use/"},
+    {"url": "patreon.com", "site_name": "Patreon", "category": "Crowdfunding", "tos_url": "https://www.patreon.com/policy/legal"},
+    {"url": "washingtonpost.com", "site_name": "The Washington Post", "category": "News", "tos_url": "https://www.washingtonpost.com/terms-of-service/"},
+    {"url": "hulu.com", "site_name": "Hulu", "category": "Streaming Service", "tos_url": "https://www.hulu.com/subscriber_agreement"},
+    {"url": "theguardian.com", "site_name": "The Guardian", "category": "News", "tos_url": "https://www.theguardian.com/help/terms-of-service"},
+    {"url": "costco.com", "site_name": "Costco", "category": "E-commerce", "tos_url": "https://www.costco.com/terms-and-conditions-of-use.html"},
+    {"url": "chase.com", "site_name": "Chase", "category": "Banking", "tos_url": "https://www.chase.com/digital/resources/terms-of-use"},
+    {"url": "steamcommunity.com", "site_name": "Steam Community", "category": "Gaming Community", "tos_url": "https://store.steampowered.com/eula/471710_eula_0"},
+    {"url": "slickdeals.net", "site_name": "Slickdeals", "category": "Coupons and Deals", "tos_url": "http://corp-site.slickdeals.net/content-list-slickdeals-terms-of-service/"},
+    {"url": "roblox.com", "site_name": "Roblox", "category": "Online Gaming Platform", "tos_url": "https://en.help.roblox.com/hc/en-us/articles/115004647846-Roblox-Terms-of-Use"},
+    {"url": "github.com", "site_name": "GitHub", "category": "Software Development", "tos_url": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service"},
+    {"url": "usatoday.com", "site_name": "USA Today", "category": "News", "tos_url": "https://cm.usatoday.com/terms/"},
+    {"url": "samsung.com", "site_name": "Samsung", "category": "Electronics", "tos_url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwiNrdP62pSEAxUnOUQIHUgJCq0QFnoECAYQAQ&url=https%3A%2F%2Fwww.samsung.com%2Fus%2Fapps%2Fsamsung-members%2Fterms-of-service%2F&usg=AOvVaw0jWRlY4BpLQHz4Yf0cbwSS&opi=89978449"},
+    {"url": "character.ai", "site_name": "Character.AI", "category": "Artificial Intelligence", "tos_url": "https://beta.character.ai/tos"},
+    {"url": "capitalone.com", "site_name": "Capital One", "category": "Banking", "tos_url": "https://www.capitalone.com/digital/terms-conditions/"},
+    {"url": "temu.com", "site_name": "Temu", "category": "E-commerce", "tos_url": "https://www.temu.com/terms-of-use.html"},
+    {"url": "nextdoor.com", "site_name": "Nextdoor", "category": "Social Networking", "tos_url": "https://help.nextdoor.com/s/article/Member-Agreement-2024?language=en_US"},
+    {"url": "lowes.com", "site_name": "Lowe's", "category": "Home Improvement", "tos_url": "https://www.lowes.com/l/about/terms-and-conditions-of-use"},
+    {"url": "nih.gov", "site_name": "National Institutes of Health (NIH)", "category": "Health", "tos_url": "https://www.nih.gov/web-policies-notices"},
+    {"url": "yelp.com", "site_name": "Yelp", "category": "Business Reviews", "tos_url": "https://terms.yelp.com/tos/en_us/20200101_en_us/"},
+    {"url": "foxbusiness.com", "site_name": "Fox Business", "category": "Business News", "tos_url": "https://www.foxbusiness.com/terms-of-use#"},
+    {"url": "npr.org", "site_name": "NPR", "category": "Public Radio", "tos_url": "https://www.npr.org/about-npr/179876898/terms-of-use"},
+    {"url": "canva.com", "site_name": "Canva", "category": "Graphic Design", "tos_url": "https://www.canva.com/policies/terms-of-use/"},
+    {"url": "xfinity.com", "site_name": "Xfinity", "category": "Telecommunications", "tos_url": "https://www.xfinity.com/terms/web"},
+    {"url": "quizlet.com", "site_name": "Quizlet", "category": "Education", "tos_url": "https://quizlet.com/tos"},
+    {"url": "okta.com", "site_name": "Okta", "category": "Identity Management", "tos_url": "https://www.okta.com/terms-of-service/"},
+    {"url": "nbcnews.com", "site_name": "NBC News", "category": "News", "tos_url": "https://www.nbcuniversal.com/terms#:~:text=NBCUniversal%20and%20you%20agree%20that,transactions%20or%20relationships%20related%20to"},
+    {"url": "cnbc.com", "site_name": "CNBC", "category": "Business News", "tos_url": "https://www.cnbc.com/nbcuniversal-terms-of-service/"},
+    {"url": "apnews.com", "site_name": "Associated Press News", "category": "News Agency", "tos_url": "https://apnews.com/termsofservice"},
+    {"url": "adobe.com", "site_name": "Adobe", "category": "Software", "tos_url": "https://www.adobe.com/legal/terms.html"},
+    {"url": "cvs.com", "site_name": "CVS", "category": "Pharmacy", "tos_url": "https://www.cvs.com/retail/help/terms_of_use"},
+    {"url": "wordpress.com", "site_name": "WordPress", "category": "Web Publishing", "tos_url": "https://wordpress.com/tos/"},
+    {"url": "whatsapp.com", "site_name": "WhatsApp", "category": "Messaging", "tos_url": "https://www.whatsapp.com/legal/terms-of-service"}
 ]
 
 def database_connection_url():
@@ -150,7 +148,7 @@ for website in websites_info:
                 """
                 website_id_result = connection.execute(text(insert_website), {"url": website["url"], "site_name": website["site_name"], "category": website["category"]})
                 website_id = website_id_result.fetchone()[0]
-                print(f"Inserted website {website['site_name']} with ID {website_id} into websites table")
+                # print(f"Inserted website {website['site_name']} with ID {website_id} into websites table")
 
                 website_tos_text_file = f"./tos_docs/{website['site_name']}.txt"
                 if os.path.exists(website_tos_text_file):
@@ -161,7 +159,7 @@ for website in websites_info:
                     VALUES (:website_id, :content, :simplified_content, :tos_url);
                     """
                     connection.execute(text(insert_tos), {"website_id": website_id, "content": tos_content, "simplified_content": "", "tos_url": website["tos_url"]})
-                    print(f"Inserted terms of service for {website['site_name']} into terms_of_service table")
+                    # print(f"Inserted terms of service for {website['site_name']} into terms_of_service table")
                 else:
                     print(f"File not found: {website_tos_text_file}")
                 
