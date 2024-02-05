@@ -26,27 +26,27 @@ websites_info = [
     {"url": "ebay.com", "site_name": "eBay", "category": "E-commerce", "tos_url": "https://www.ebay.com/help/policies/member-behaviour-policies/user-agreement?id=4259"},
     {"url": "quora.com", "site_name": "Quora", "category": "Question and Answer", "tos_url": "https://www.quora.com/about/tos"},
     {"url": "microsoft.com", "site_name": "Microsoft", "category": "Web Services", "tos_url": "https://www.microsoft.com/en-us/servicesagreement"},
-    {"url": "walmart.com", "site_name": "Walmart", "category": "E-commerce", "tos_url": "https://www.microsoft.com/en-us/servicesagreement"},
+    {"url": "walmart.com", "site_name": "Walmart", "category": "E-commerce", "tos_url": "https://www.walmart.com/help/article/walmart-com-terms-of-use/3b75080af40340d6bbd596f116fae5a0"},
     {"url": "linkedin.com", "site_name": "LinkedIn", "category": "Professional Networking", "tos_url": "https://www.linkedin.com/legal/user-agreement"},
     {"url": "imdb.com", "site_name": "IMDb", "category": "Movies and TV", "tos_url": "https://www.imdb.com/conditions"},
     {"url": "openai.com", "site_name": "OpenAI", "category": "Artificial Intelligence", "tos_url": "https://openai.com/policies/terms-of-use"},
     {"url": "twitch.tv", "site_name": "Twitch", "category": "Live Streaming", "tos_url": "https://www.twitch.tv/p/en/legal/terms-of-service/"},
-    {"url": "usps.com", "site_name": "United States Postal Service", "category": "Postal Service", "tos_url": "https://reg.usps.com/entreg/assets/html/informed-delivery.html"},
-    {"url": "dailymail.co.uk", "site_name": "Daily Mail", "category": "News", "tos_url": "https://www.dailymail.co.uk/home/article-173687/Terms-conditions-use.html"},
+    {"url": "usps.com", "site_name": "USPS", "category": "Postal Service", "tos_url": "https://reg.usps.com/entreg/assets/html/informed-delivery.html"},
+    {"url": "dailymail.co.uk", "site_name": "DailyMail", "category": "News", "tos_url": "https://www.dailymail.co.uk/home/article-173687/Terms-conditions-use.html"},
     {"url": "netflix.com", "site_name": "Netflix", "category": "Streaming Service", "tos_url": "https://help.netflix.com/legal/termsofuse"},
     {"url": "msn.com", "site_name": "MSN", "category": "News and Services", "tos_url": "https://answers.msn.com/tou.aspx"},
     {"url": "etsy.com", "site_name": "Etsy", "category": "E-commerce", "tos_url": "https://www.etsy.com/legal/terms-of-use"},
     {"url": "instructure.com", "site_name": "Instructure", "category": "Education Technology", "tos_url": "https://www.instructure.com/policies/master-terms-conditions"},
     {"url": "paypal.com", "site_name": "PayPal", "category": "Payment Service", "tos_url": "https://www.paypal.com/us/legalhub/useragreement-full"},
-    {"url": "bestbuy.com", "site_name": "Best Buy", "category": "E-commerce", "tos_url": "https://www.bestbuy.com/site/help-topics/terms-and-conditions/pcmcat204400050067.c?id=pcmcat204400050067"},
+    {"url": "bestbuy.com", "site_name": "BestBuy", "category": "E-commerce", "tos_url": "https://www.bestbuy.com/site/help-topics/terms-and-conditions/pcmcat204400050067.c?id=pcmcat204400050067"},
     {"url": "zoom.us", "site_name": "Zoom", "category": "Video Conferencing", "tos_url": "https://explore.zoom.us/en/terms/"},
-    {"url": "nypost.com", "site_name": "New York Post", "category": "News", "tos_url": "https://nypost.com/terms/"},
+    {"url": "nypost.com", "site_name": "NYPost", "category": "News", "tos_url": "https://nypost.com/terms/"},
     {"url": "accuweather.com", "site_name": "AccuWeather", "category": "Weather", "tos_url": "https://www.accuweather.com/en/legal#:~:text=Except%20as%20expressly%20provided%20herein,of%20AccuWeather%20or%20its%20Providers."},
     {"url": "pinterest.com", "site_name": "Pinterest", "category": "Social Networking", "tos_url": "https://policy.pinterest.com/en/terms-of-service"},
     {"url": "indeed.com", "site_name": "Indeed", "category": "Job Search", "tos_url": "https://www.indeed.com/legal"},
     {"url": "zillow.com", "site_name": "Zillow", "category": "Real Estate", "tos_url": "https://www.zillowgroup.com/terms-of-use/"},
     {"url": "apple.com", "site_name": "Apple", "category": "Technology", "tos_url": "https://www.apple.com/legal/internet-services/itunes/"},
-    {"url": "homedepot.com", "site_name": "Home Depot", "category": "E-commerce", "tos_url": "https://www.homedepot.com/c/Terms_of_Use"},
+    {"url": "homedepot.com", "site_name": "HomeDepot", "category": "E-commerce", "tos_url": "https://www.homedepot.com/c/Terms_of_Use"},
     {"url": "discord.com", "site_name": "Discord", "category": "Social Networking", "tos_url": "https://discord.com/terms"},
     {"url": "bbc.com", "site_name": "BBC", "category": "News", "tos_url": "https://www.bbc.co.uk/usingthebbc/terms-of-use/"},
     {"url": "ign.com", "site_name": "IGN", "category": "Gaming News", "tos_url": "https://www.ign.com/wikis/ign-community-central/IGN-Share-Terms-and-conditions"},
@@ -56,37 +56,37 @@ websites_info = [
     {"url": "craigslist.org", "site_name": "Craigslist", "category": "Classifieds", "tos_url": "https://www.craigslist.org/about/terms.of.use/en"},
     {"url": "spotify.com", "site_name": "Spotify", "category": "Music Streaming", "tos_url": "https://www.spotify.com/us/legal/end-user-agreement/"},
     {"url": "fedex.com", "site_name": "FedEx", "category": "Postal Service", "tos_url": "https://www.fedex.com/en-us/terms-of-use.html"},
-    {"url": "amazonaws.com", "site_name": "Amazon Web Services", "category": "Cloud Computing", "tos_url": "https://aws.amazon.com/service-terms/"},
+    {"url": "amazonaws.com", "site_name": "AWS", "category": "Cloud Computing", "tos_url": "https://aws.amazon.com/service-terms/"},
     {"url": "gamespot.com", "site_name": "GameSpot", "category": "Gaming News", "tos_url": "https://www.clubrytariy.com/terms-of-use/index.html"},
     {"url": "breitbart.com", "site_name": "Breitbart", "category": "News", "tos_url": "https://www.breitbart.com/terms-of-use/"},
     {"url": "patreon.com", "site_name": "Patreon", "category": "Crowdfunding", "tos_url": "https://www.patreon.com/policy/legal"},
-    {"url": "washingtonpost.com", "site_name": "The Washington Post", "category": "News", "tos_url": "https://www.washingtonpost.com/terms-of-service/"},
+    {"url": "washingtonpost.com", "site_name": "WashingtonPost", "category": "News", "tos_url": "https://www.washingtonpost.com/terms-of-service/"},
     {"url": "hulu.com", "site_name": "Hulu", "category": "Streaming Service", "tos_url": "https://www.hulu.com/subscriber_agreement"},
-    {"url": "theguardian.com", "site_name": "The Guardian", "category": "News", "tos_url": "https://www.theguardian.com/help/terms-of-service"},
+    {"url": "theguardian.com", "site_name": "TheGuardian", "category": "News", "tos_url": "https://www.theguardian.com/help/terms-of-service"},
     {"url": "costco.com", "site_name": "Costco", "category": "E-commerce", "tos_url": "https://www.costco.com/terms-and-conditions-of-use.html"},
     {"url": "chase.com", "site_name": "Chase", "category": "Banking", "tos_url": "https://www.chase.com/digital/resources/terms-of-use"},
-    {"url": "steamcommunity.com", "site_name": "Steam Community", "category": "Gaming Community", "tos_url": "https://store.steampowered.com/eula/471710_eula_0"},
+    {"url": "steamcommunity.com", "site_name": "Steam", "category": "Gaming Community", "tos_url": "https://store.steampowered.com/eula/471710_eula_0"},
     {"url": "slickdeals.net", "site_name": "Slickdeals", "category": "Coupons and Deals", "tos_url": "http://corp-site.slickdeals.net/content-list-slickdeals-terms-of-service/"},
     {"url": "roblox.com", "site_name": "Roblox", "category": "Online Gaming Platform", "tos_url": "https://en.help.roblox.com/hc/en-us/articles/115004647846-Roblox-Terms-of-Use"},
     {"url": "github.com", "site_name": "GitHub", "category": "Software Development", "tos_url": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service"},
-    {"url": "usatoday.com", "site_name": "USA Today", "category": "News", "tos_url": "https://cm.usatoday.com/terms/"},
+    {"url": "usatoday.com", "site_name": "USAToday", "category": "News", "tos_url": "https://cm.usatoday.com/terms/"},
     {"url": "samsung.com", "site_name": "Samsung", "category": "Electronics", "tos_url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwiNrdP62pSEAxUnOUQIHUgJCq0QFnoECAYQAQ&url=https%3A%2F%2Fwww.samsung.com%2Fus%2Fapps%2Fsamsung-members%2Fterms-of-service%2F&usg=AOvVaw0jWRlY4BpLQHz4Yf0cbwSS&opi=89978449"},
-    {"url": "character.ai", "site_name": "Character.AI", "category": "Artificial Intelligence", "tos_url": "https://beta.character.ai/tos"},
-    {"url": "capitalone.com", "site_name": "Capital One", "category": "Banking", "tos_url": "https://www.capitalone.com/digital/terms-conditions/"},
+    {"url": "character.ai", "site_name": "CharacterAI", "category": "Artificial Intelligence", "tos_url": "https://beta.character.ai/tos"},
+    {"url": "capitalone.com", "site_name": "CapitalOne", "category": "Banking", "tos_url": "https://www.capitalone.com/digital/terms-conditions/"},
     {"url": "temu.com", "site_name": "Temu", "category": "E-commerce", "tos_url": "https://www.temu.com/terms-of-use.html"},
     {"url": "nextdoor.com", "site_name": "Nextdoor", "category": "Social Networking", "tos_url": "https://help.nextdoor.com/s/article/Member-Agreement-2024?language=en_US"},
-    {"url": "lowes.com", "site_name": "Lowe's", "category": "Home Improvement", "tos_url": "https://www.lowes.com/l/about/terms-and-conditions-of-use"},
-    {"url": "nih.gov", "site_name": "National Institutes of Health (NIH)", "category": "Health", "tos_url": "https://www.nih.gov/web-policies-notices"},
+    {"url": "lowes.com", "site_name": "Lowes", "category": "Home Improvement", "tos_url": "https://www.lowes.com/l/about/terms-and-conditions-of-use"},
+    {"url": "nih.gov", "site_name": "NIH", "category": "Health", "tos_url": "https://www.nih.gov/web-policies-notices"},
     {"url": "yelp.com", "site_name": "Yelp", "category": "Business Reviews", "tos_url": "https://terms.yelp.com/tos/en_us/20200101_en_us/"},
-    {"url": "foxbusiness.com", "site_name": "Fox Business", "category": "Business News", "tos_url": "https://www.foxbusiness.com/terms-of-use#"},
+    {"url": "foxbusiness.com", "site_name": "FoxBusiness", "category": "Business News", "tos_url": "https://www.foxbusiness.com/terms-of-use#"},
     {"url": "npr.org", "site_name": "NPR", "category": "Public Radio", "tos_url": "https://www.npr.org/about-npr/179876898/terms-of-use"},
     {"url": "canva.com", "site_name": "Canva", "category": "Graphic Design", "tos_url": "https://www.canva.com/policies/terms-of-use/"},
     {"url": "xfinity.com", "site_name": "Xfinity", "category": "Telecommunications", "tos_url": "https://www.xfinity.com/terms/web"},
     {"url": "quizlet.com", "site_name": "Quizlet", "category": "Education", "tos_url": "https://quizlet.com/tos"},
     {"url": "okta.com", "site_name": "Okta", "category": "Identity Management", "tos_url": "https://www.okta.com/terms-of-service/"},
-    {"url": "nbcnews.com", "site_name": "NBC News", "category": "News", "tos_url": "https://www.nbcuniversal.com/terms#:~:text=NBCUniversal%20and%20you%20agree%20that,transactions%20or%20relationships%20related%20to"},
+    {"url": "nbcnews.com", "site_name": "NBC", "category": "News", "tos_url": "https://www.nbcuniversal.com/terms#:~:text=NBCUniversal%20and%20you%20agree%20that,transactions%20or%20relationships%20related%20to"},
     {"url": "cnbc.com", "site_name": "CNBC", "category": "Business News", "tos_url": "https://www.cnbc.com/nbcuniversal-terms-of-service/"},
-    {"url": "apnews.com", "site_name": "Associated Press News", "category": "News Agency", "tos_url": "https://apnews.com/termsofservice"},
+    {"url": "apnews.com", "site_name": "AssociatedPressNews", "category": "News Agency", "tos_url": "https://apnews.com/termsofservice"},
     {"url": "adobe.com", "site_name": "Adobe", "category": "Software", "tos_url": "https://www.adobe.com/legal/terms.html"},
     {"url": "cvs.com", "site_name": "CVS", "category": "Pharmacy", "tos_url": "https://www.cvs.com/retail/help/terms_of_use"},
     {"url": "wordpress.com", "site_name": "WordPress", "category": "Web Publishing", "tos_url": "https://wordpress.com/tos/"},
@@ -139,11 +139,12 @@ for website in websites_info:
         with engine.connect() as connection:
             with connection.begin(): 
                 insert_website = """
-                INSERT INTO websites (url, site_name, category) 
-                VALUES (:url, :site_name, :category)
+                INSERT INTO websites (url, site_name, category, last_crawled) 
+                VALUES (:url, :site_name, :category, NOW())
                 ON CONFLICT (url) DO UPDATE 
                 SET site_name = EXCLUDED.site_name,
-                    category = EXCLUDED.category
+                    category = EXCLUDED.category,
+                    last_crawled = NOW()
                 RETURNING website_id;
                 """
                 website_id_result = connection.execute(text(insert_website), {"url": website["url"], "site_name": website["site_name"], "category": website["category"]})
@@ -155,8 +156,8 @@ for website in websites_info:
                     with open(website_tos_text_file, "r") as file:
                         tos_content = file.read()
                     insert_tos = """
-                    INSERT INTO terms_of_service (website_id, content, simplified_content, tos_url) 
-                    VALUES (:website_id, :content, :simplified_content, :tos_url);
+                    INSERT INTO terms_of_service (website_id, content, simplified_content, tos_url, last_updated) 
+                    VALUES (:website_id, :content, :simplified_content, :tos_url, NOW());
                     """
                     connection.execute(text(insert_tos), {"website_id": website_id, "content": tos_content, "simplified_content": "", "tos_url": website["tos_url"]})
                     # print(f"Inserted terms of service for {website['site_name']} into terms_of_service table")
