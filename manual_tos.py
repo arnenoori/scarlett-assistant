@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, text
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 from supabase import create_client, Client
+import openai
 
 websites_info = [
     {"url": "google.com", "site_name": "Google", "category": "Search Engine", "tos_url": "https://policies.google.com/terms?hl=en-US"},
@@ -94,95 +95,69 @@ websites_info = [
     {"url": "whatsapp.com", "site_name": "WhatsApp", "category": "Messaging", "tos_url": "https://www.whatsapp.com/legal/terms-of-service"}
 ]
 
-def database_connection_url():
-    dotenv.load_dotenv()
-    uri = os.getenv("POSTGRES_URI")
-    print(uri)
-    return uri
 
-engine = create_engine(database_connection_url(), pool_pre_ping=True)
-
+# Update websites and terms_of_service tables
 '''
--- Websites Table
-CREATE TABLE websites (
-    website_id SERIAL PRIMARY KEY,
-    url VARCHAR(255) UNIQUE NOT NULL,
-    site_name VARCHAR(255),
-    category VARCHAR(255), -- categorizing the website (e.g., e-commerce, social media)
-    last_crawled TIMESTAMP WITH TIME ZONE
-);
+if __name__ == "__main__":
+    def database_connection_url():
+        dotenv.load_dotenv()
+        uri = os.getenv("POSTGRES_URI")
+        return uri
 
--- Terms of Service Table
-CREATE TABLE terms_of_service (
-    tos_id SERIAL PRIMARY KEY,
-    website_id INT REFERENCES websites(website_id),
-    content TEXT NOT NULL,
-    simplified_content TEXT NOT NULL,
-    version_identifier VARCHAR(255), 
-    last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    tos_url VARCHAR(255)
-);
-'''
+    engine = create_engine(database_connection_url(), pool_pre_ping=True)
 
 
-'''
-# Insert data into the websites and terms_of_service tables
-for website in websites_info:
+    for website in websites_info:
+        try:
+            with engine.connect() as connection:
+                with connection.begin(): 
+                    insert_website = """
+                    INSERT INTO websites (url, site_name, category, last_crawled) 
+                    VALUES (:url, :site_name, :category, NOW())
+                    ON CONFLICT (url) DO UPDATE 
+                    SET site_name = EXCLUDED.site_name,
+                        category = EXCLUDED.category,
+                        last_crawled = NOW()
+                    RETURNING website_id;
+                    """
+                    website_id_result = connection.execute(text(insert_website), {"url": website["url"], "site_name": website["site_name"].lower(), "category": website["category"]})
+                    website_id = website_id_result.fetchone()[0]
+
+                    insert_tos_table = """
+                    INSERT INTO terms_of_service (website_id, tos_bucket_path, computed_tos_bucket_path, tos_url, last_updated) 
+                    VALUES (:website_id, :tos_bucket_path, :computed_tos_bucket_path, :tos_url, NOW());  """
+
+                    tos_bucket_path = "./tos_docs/" + website["site_name"].lower() + ".txt"
+                    computed_bucket_path = "./tos_docs_simplified/" + website["site_name"].lower() + "_simplified.txt"
+                    connection.execute(text(insert_tos_table), {"website_id": website_id, "tos_bucket_path": tos_bucket_path, "computed_tos_bucket_path": computed_bucket_path, "tos_url": website["tos_url"]})
+                    
+        except SQLAlchemyError as e:
+            print(f"Database operation failed for {website['site_name']}: {e}")
+
+
+    # Retrieve data from the websites and terms_of_service tables
     try:
         with engine.connect() as connection:
-            with connection.begin(): 
-                insert_website = """
-                INSERT INTO websites (url, site_name, category, last_crawled) 
-                VALUES (:url, :site_name, :category, NOW())
-                ON CONFLICT (url) DO UPDATE 
-                SET site_name = EXCLUDED.site_name,
-                    category = EXCLUDED.category,
-                    last_crawled = NOW()
-                RETURNING website_id;
-                """
-                website_id_result = connection.execute(text(insert_website), {"url": website["url"], "site_name": website["site_name"], "category": website["category"]})
-                website_id = website_id_result.fetchone()[0]
-                # print(f"Inserted website {website['site_name']} with ID {website_id} into websites table")
-
-                website_tos_text_file = f"./tos_docs/{website['site_name']}.txt"
-                if os.path.exists(website_tos_text_file):
-                    with open(website_tos_text_file, "r") as file:
-                        tos_content = file.read()
-                    insert_tos = """
-                    INSERT INTO terms_of_service (website_id, content, simplified_content, tos_url, last_updated) 
-                    VALUES (:website_id, :content, :simplified_content, :tos_url, NOW());
-                    """
-                    connection.execute(text(insert_tos), {"website_id": website_id, "content": tos_content, "simplified_content": "", "tos_url": website["tos_url"]})
-                    # print(f"Inserted terms of service for {website['site_name']} into terms_of_service table")
-                else:
-                    print(f"File not found: {website_tos_text_file}")
-                
+            select_websites = """
+            SELECT * FROM websites
+            """
+            websites = connection.execute(sqlalchemy.text(select_websites))
+            for website in websites:
+                print(website)
+            
+            select_tos = """
+            SELECT * FROM terms_of_service
+            """
+            tos = connection.execute(sqlalchemy.text(select_tos))
+            for tos in tos:
+                print(tos)
     except SQLAlchemyError as e:
-        print(f"Database operation failed for {website['site_name']}: {e}")
-
-
-# Retrieve data from the websites and terms_of_service tables
-try:
-    with engine.connect() as connection:
-        select_websites = """
-        SELECT * FROM websites
-        """
-        websites = connection.execute(sqlalchemy.text(select_websites))
-        for website in websites:
-            print(website)
-        
-        select_tos = """
-        SELECT * FROM terms_of_service
-        """
-        tos = connection.execute(sqlalchemy.text(select_tos))
-        for tos in tos:
-            print(tos)
-except SQLAlchemyError as e:
-    print("Database connection failed:", e)
-
+        print("Database connection failed:", e)
 
 '''
 
+# Upload TOS document to Supabase Storage
+'''
 if __name__ == "__main__":
     url = os.getenv('SUPABASE_URL')
     key = os.getenv('SUPABASE_KEY')
@@ -241,5 +216,12 @@ if __name__ == "__main__":
             print(tos_contents[:100])
         else:
             print(f"Failed to upload {website['site_name']} document.")
+'''
 
-
+# Upload simplified TOS documen to Supabase Storage - TEST
+if __name__ == '__main__':
+    def gpt_api_key():
+        dotenv.load_dotenv()
+        return os.getenv("GPT_API_KEY")
+    
+    # Get the contents of a file from Supabase Storage - TEST for 
