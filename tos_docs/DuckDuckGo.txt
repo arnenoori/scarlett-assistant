@@ -1,0 +1,36 @@
+
+DuckDuckGo Terms of Service
+DuckDuckGo (officially, Duck Duck Go, Inc.) has been an independent company since its founding in 2008.
+We offer an all-in-one privacy product to help protect your everyday online activities. While we started as a search engine, our apps and extensions now offer protection well beyond search, including when browsing websites, reading email, and even using other apps.
+These Terms of Service describe the terms and conditions (“Terms”) that apply to all of the services DuckDuckGo offers, including but not limited to our search engine, apps, and browser extensions, as well as all of their associated features (“Services”). By using our Services, you agree to these Terms.
+If you have any questions, please see our Contact Us page.
+We don't track you.
+For details about our privacy practices, please read our Privacy Policy, which applies to your use of our Services.
+We expect you to use our Services as authorized, or we may otherwise suspend access.
+In order to have authorization to use our Services:
+You must comply with these Terms and any additional service-specific terms that are presented upon use of those features.
+You must comply with all applicable laws and regulations.
+You must not engage in conduct that is an abuse of our Services or causes harm or liability to DuckDuckGo, our suppliers and partners, or other individuals or entities, including those who use our Services (for example, by scraping content, phishing, or violating the privacy of others).
+We may suspend or terminate your access to our Services at any time if you violate these Terms.
+We listen to feedback and may use it to improve our Services.
+If you choose to provide us with feedback about our Services (for example, by completing a survey or sending us an email), you grant us a forever license to use your input to improve our Services without any payment or credit to you.
+We make use of open-source software in our Services.
+We retain all intellectual property rights in our Services, but we make the source code and data for many of our Services available under open-source licenses. To build our software, we incorporate and build upon third party software and services.
+We do not give you rights to our trademarks if you use our Services.
+We have trademarks in DUCKDUCKGO, Dax the Duck, and other logos and elements of our brands. By using our Services, you are not granted any right to use our trademarks. You can learn more about our brand guidelines on our Press page.
+We are not responsible for content that comes from or is created by third parties.
+Many of our Services give you access to content that belongs to other people or organizations, for example, search results listing restaurants near you. We have no control over the content on third-party websites, and we cannot guarantee that the content you access through our Services is accurate or complete or that the sites you visit are unharmful.
+Some of the content available through our Services comes in the form of Instant Answers, which you can read more about on our Sources page. We make no representations or warranties about the accuracy or completeness of the content in our Instant Answers, as it is also derived from third-party sources.
+If you believe any content violates your intellectual property rights or is otherwise unlawful, you should contact the website or service hosting the content to have it removed. To report content to DuckDuckGo, please see our Report Copyright or Trademark Infringement page.
+We do not provide a warranty for our Services.
+To comply with the law, this section has to be written in more legalese with specific phrases and capitalization. Sorry about that — we’re not trying to yell at you.
+OUR SERVICES ARE PROVIDED AS-IS, WITHOUT WARRANTY OF ANY KIND. TO THE EXTENT PERMITTED BY APPLICABLE LAW: DUCKDUCKGO DISCLAIMS ALL EXPRESS OR IMPLIED WARRANTIES IN CONNECTION WITH OUR SERVICES, INCLUDING MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+To the extent permitted under applicable law, we will not be liable for any indirect, economic, exemplary, special, punitive, incidental, or consequential losses or damages of any kind, including without limitation loss of profits, in connection with, or otherwise related to our Services, including without limitation: (a) your use of or inability to use our Services, or the availability or performance of our Services; (b) any errors or omissions in our Services’ technical operation or security; or (c) any damage to any user’s computer, hardware, software, modem, or other equipment or technology, including damage from any virus, bugs, tampering, fraud, error, omission, interruption, defect, delay in operation or transmission, computer line, or network failure or any other technical or other malfunction, including losses or damages in the form of lost profits, loss of goodwill, loss of data, work stoppage, accuracy of results, or equipment failure or malfunction.
+As permitted by applicable law, the above limitations of liability will apply even if any of the listed events or circumstances were foreseeable and even if we were advised of or should have known of the possibility of such losses or damages, regardless of whether you bring an action based in contract, negligence, strict liability, or tort. This includes losses or damages caused, in whole or in part, by negligence, acts of god, telecommunications failure, or destruction of our Services. We do not exclude or limit our liability to you where it would be unlawful to do so.
+We offer these Terms under New York law.
+Any claim associated with our Services or arising out of these Terms must be filed in the state or federal courts in New York, New York, USA, and New York law will govern, regardless of conflict of laws rules.
+We have written these Terms to be severable.
+If any of these Terms is found to be void or unenforceable, it will not affect the other Terms.
+We update these Terms from time to time.
+We may make changes to these Terms, and we will notify you of changes by posting an update message on the top of this page and indicating the date it was last modified below. By continuing to use our Services after any such change, you are consenting to them and agree they will govern your continued use of our Services.
+Posted on 05-11-23
