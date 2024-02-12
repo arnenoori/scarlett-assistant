@@ -3,6 +3,8 @@ import dotenv
 from sqlalchemy import create_engine, text
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
+from supabase import create_client, Client
+# from storage3 import create_client
 
 websites_info = [
     {"url": "google.com", "site_name": "Google", "category": "Search Engine", "tos_url": "https://policies.google.com/terms?hl=en-US"},
@@ -101,16 +103,6 @@ def database_connection_url():
 
 engine = create_engine(database_connection_url(), pool_pre_ping=True)
 
-# testing out the connection with a simple query
-try:
-    with engine.connect() as connection:
-        result = connection.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"))
-        print("Tables in the 'public' schema:")
-        for row in result:
-            print(row[0])
-except Exception as e:
-    print("Database connection failed:", e)
-
 '''
 -- Websites Table
 CREATE TABLE websites (
@@ -133,6 +125,8 @@ CREATE TABLE terms_of_service (
 );
 '''
 
+
+'''
 # Insert data into the websites and terms_of_service tables
 for website in websites_info:
     try:
@@ -186,3 +180,75 @@ try:
             print(tos)
 except SQLAlchemyError as e:
     print("Database connection failed:", e)
+
+
+'''
+
+if __name__ == "__main__":
+    url = os.getenv('SUPABASE_URL')
+    key = os.getenv('SUPABASE_KEY')
+    supabase: Client = create_client(url, key)
+
+    # test connection
+    res = supabase.storage.from_('tos-bucket').list()
+    print(res)
+
+    # Practice retrieving a file from the supabase storage. Print out contents
+    # try:
+    #     res = supabase.storage.from_('tos-bucket').download('tos_docs/AWS.txt')
+    #     print(res)
+    # except Exception as e:
+    #     print(f"Error: {e}")
+
+
+    # Upload TOS document to Supabase Storage
+    def upload_tos_to_supbase_bucket(file_path, bucket_name, client: Client) -> str:
+        storage_path = f"tos_docs/{file_path.split('/')[-1]}"
+        try:
+            with open(file_path, "rb") as f:
+                upload_response = client.storage.from_(bucket_name).upload(storage_path, f)
+
+        except Exception as e:
+            print(f"Exception during file upload: {e}")
+            
+        return "OK"
+
+    # Get the contents of a file from Supabase Storage
+    def get_file_contents(client: Client, bucket_name: str, bucket_file_path: str) -> str:
+        try:
+            return client.storage.from_(bucket_name).download(bucket_file_path).decode('utf-8')
+        except Exception as e:
+            print(f"Error: {e}")
+            return "Error"    
+
+    for website in websites_info:
+        # Upload to Supabase storage tos-bucket
+        file_path = f"./tos_docs/{website['site_name']}.txt"
+        upload_result = upload_tos_to_supbase_bucket(file_path, 'tos-bucket', supabase)
+
+        if upload_result:
+            # Insert the URL for the Supabase storage location in the terms_of_service table
+            try:
+                with engine.connect() as connection:
+                    with connection.begin():
+                        update_tos = """
+                        UPDATE terms_of_service 
+                        SET tos_url = :tos_url 
+                        WHERE website_id = (SELECT website_id FROM websites WHERE url = :url);
+                        """
+                        connection.execute(text(update_tos), {"tos_url": upload_result, "url": website["url"]})
+                        print(f"Updated TOS URL for {website['site_name']}")
+            except SQLAlchemyError as e:
+                print(f"Database operation failed for {website['site_name']}: {e}")
+
+            relative_path = 'tos_docs/' + website['site_name'] + '.txt'
+
+            print('\n\n')
+            print(relative_path)
+
+            tos_contents = get_file_contents(supabase, 'tos-bucket', relative_path)
+            print(tos_contents[:100])
+        else:
+            print(f"Failed to upload {website['site_name']} document.")
+
+
