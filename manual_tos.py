@@ -1,10 +1,11 @@
 import os
+from io import BytesIO
 import dotenv
 from sqlalchemy import create_engine, text
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 from supabase import create_client, Client
-import openai
+from openai import OpenAI
 
 websites_info = [
     {"url": "google.com", "site_name": "Google", "category": "Search Engine", "tos_url": "https://policies.google.com/terms?hl=en-US"},
@@ -218,10 +219,56 @@ if __name__ == "__main__":
             print(f"Failed to upload {website['site_name']} document.")
 '''
 
+'''
 # Upload simplified TOS documen to Supabase Storage - TEST
 if __name__ == '__main__':
-    def gpt_api_key():
-        dotenv.load_dotenv()
-        return os.getenv("GPT_API_KEY")
+    from io import StringIO
     
-    # Get the contents of a file from Supabase Storage - TEST for 
+    url = os.getenv('SUPABASE_URL')
+    key = os.getenv('SUPABASE_KEY')
+    supabase: Client = create_client(url, key)
+
+    # test connection
+    res = supabase.storage.from_('tos-bucket').list()
+    print(res)
+    
+    # Get the contents of a file from Supabase Storage - TEST for AWS
+    try:
+        AWS_path = 'tos_docs/AWS.txt'
+        AWS_contents = supabase.storage.from_('tos-bucket').download(AWS_path).decode('utf-8')
+    except Exception as e:
+        print(f"Error: {e}")
+        AWS_contents = "Error"
+
+    # Send the TOS document to OpenAI to get the simplified output
+    prompt: str = "Summarize this document below in a short 3-5 paragraph. Warns me of any potential dangers:\n\n" + AWS_contents
+
+    openai_client = OpenAI()
+
+    completion = openai_client.chat.completions.create(
+        model="gpt-4-0125-preview",
+        messages =[{"role": "user", "content": prompt}]
+    )
+
+    simplified_content = completion.choices[0].message.content
+    print(simplified_content)
+
+    # Upload simplified TOS document to Supabase Storage in the tos-contents bucket, in the ./tos_docs_simplified/ directory
+    storage_path = f"tos_docs_simplified/AWS_simplified.txt"
+
+    # Use StringIO as an in-memory text buffer
+    file_buffer = StringIO(simplified_content)
+
+    try:
+        # Convert StringIO buffer to bytes
+        file_bytes = file_buffer.getvalue().encode('utf-8')
+        
+        # Upload directly from memory
+        upload_response = supabase.storage.from_('tos-bucket').upload(storage_path, file_bytes)
+        print("Successfully uploaded", upload_response)
+    except Exception as e:
+        print(f"Exception during file upload: {e}")
+
+    file_buffer.close()
+
+'''
