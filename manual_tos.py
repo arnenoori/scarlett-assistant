@@ -4,7 +4,6 @@ from sqlalchemy import create_engine, text
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 from supabase import create_client, Client
-# from storage3 import create_client
 
 websites_info = [
     {"url": "google.com", "site_name": "Google", "category": "Search Engine", "tos_url": "https://policies.google.com/terms?hl=en-US"},
@@ -192,14 +191,6 @@ if __name__ == "__main__":
     # test connection
     res = supabase.storage.from_('tos-bucket').list()
     print(res)
-
-    # Practice retrieving a file from the supabase storage. Print out contents
-    # try:
-    #     res = supabase.storage.from_('tos-bucket').download('tos_docs/AWS.txt')
-    #     print(res)
-    # except Exception as e:
-    #     print(f"Error: {e}")
-
 
     # Upload TOS document to Supabase Storage
     def upload_tos_to_supbase_bucket(file_path, bucket_name, client: Client) -> str:
