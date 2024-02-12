@@ -16,7 +16,7 @@ router = APIRouter(
 
 @router.post("/get_tos")
 def get_tos(url: str):
-    # shorten url to include only website name. Example: Google
+    # shorten url to include only website name. Example: google
     url_name = url.split("//")[-1].split("/")[0].lower()
 
     supabase_url = os.getenv('SUPABASE_URL')
@@ -35,7 +35,7 @@ def get_tos(url: str):
                 if row:
                     # get contents of the file from tos-bucket
                     try:
-                        return supabase.storage.from_('tos-contents').download('./tos_docs_simplified'+url_name+'txt').decode('utf-8')
+                        return supabase.storage.from_('tos-contents').download('./tos_docs_simplified/'+url_name+'simplified.txt').decode('utf-8')
                     except Exception as e:
                         print(f"Error: {e}")
                         return "Error"
