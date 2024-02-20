@@ -1,27 +1,30 @@
 from fastapi import FastAPI, exceptions
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
-from src import audit, carts, catalog, bottler, barrels, admin
+from src import auth, crawler, server, tos
 import json
 import logging
 import sys
 from starlette.middleware.cors import CORSMiddleware
 
 description = """
-Project description
+[tos-chrome-extension] is a chrome extension that helps users understand and control their privacy on the internet. 
+It tells users if a website's terms of service are good or bad and warns them about privacy risks. 
+The extension also keeps track of what personal information users share with websites.
 """
 
 app = FastAPI(
-    title="title",
+    title="TOS Project",
     description=description,
     version="0.0.1",
     terms_of_service="http://example.com/terms/",
     contact={
-        "name": "Connor OBrien, Arne Noori",
-        "email": "",
+        "name": "Connor OBrien & Arne Noori",
+        "email": "agnoori@calpoly.edu",
     },
 )
 
+# This origins list determines who can access the API
 origins = [""]
 
 app.add_middleware(
@@ -32,7 +35,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-## app.include_router(audit.router)
+app.include_router(crawler.router)
+app.include_router(tos.router)
 
 
 @app.exception_handler(exceptions.RequestValidationError)
@@ -48,4 +52,4 @@ async def validation_exception_handler(request, exc):
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to project_name"}
+    return {"message": "Welcome to TOS Project"}
