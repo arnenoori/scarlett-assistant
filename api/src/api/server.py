@@ -1,7 +1,7 @@
 from fastapi import FastAPI, exceptions
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
-from src import auth, crawler, server, tos
+from src.api import auth, crawler, server, tos
 import json
 import logging
 import sys
