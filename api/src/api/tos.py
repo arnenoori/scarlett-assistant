@@ -7,6 +7,11 @@ from api.src import database as db
 import json
 import random
 from supabase import create_client, Client
+from sqlalchemy import create_engine, text
+import sqlalchemy
+from sqlalchemy.exc import SQLAlchemyError
+import dotenv
+
 
 router = APIRouter(
     prefix="/tos",
@@ -16,29 +21,40 @@ router = APIRouter(
 
 @router.post("/get_tos")
 def get_tos(url: str):
-    # shorten url to include only website name. Example: google
-    url_name = url.split("//")[-1].split("/")[0].lower()
+    def database_connection_url():
+        dotenv.load_dotenv()
+        uri = os.getenv("POSTGRES_URI")
+        return uri
+    engine = create_engine(database_connection_url(), pool_pre_ping=True)
 
-    supabase_url = os.getenv('SUPABASE_URL')
-    supabase_key = os.getenv('SUPABASE_KEY')
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_KEY")
     supabase: Client = create_client(supabase_url, supabase_key)
+    
+    # shorten url to include only website name. Example: google
+    site_name = url.split("//")[-1].split("/")[0].lower().split(".")[1]
+    print(site_name)
 
-    # query the database first to check if url is already cached, if so return the path to the file in tos-bucket from 'simplified-content' column in terms_of_service table
+    # query the database first to check if url is already cached
     try:
-        with db.engine.connect() as connection:
-            result = connection.execute(f"SELECT * FROM terms_of_service WHERE url = '{url}'")
+        with db.engine.connect() as con:
+            query = text("SELECT * FROM websites WHERE site_name = :site_name")
+            result = con.execute(query, {"site_name": site_name})
             row = result.fetchone()
             if row:
+                # get website_id 
                 website_id = row[0]
-                result = connection.execute(f"SELECT simplified FROM terms_of_service WHERE website_id = '{website_id}'")
+                print(website_id)
+                # Use website id to get file path to tos-contents bucket from terms_of_service table
+                query = text("SELECT computed_tos_bucket_path FROM terms_of_service WHERE website_id = :website_id")
+                result = con.execute(query, {"website_id": website_id})
                 row = result.fetchone()
                 if row:
-                    # get contents of the file from tos-bucket
-                    try:
-                        return supabase.storage.from_('tos-contents').download('./tos_docs_simplified/'+url_name+'simplified.txt').decode('utf-8')
-                    except Exception as e:
-                        print(f"Error: {e}")
-                        return "Error"
+                    file_path = row[0]
+                    print(file_path)
+                    # get contents of the file from tos-contents
+                    simplified_tos = supabase.storage.from_('tos-bucket').download(file_path).decode('utf-8')
+                    return {"simplified_tos": simplified_tos}
     except Exception as e:
         print(f"Error: {e}")
         return "Error"
@@ -51,7 +67,6 @@ def get_tos(url: str):
     # store path to bucket in database
     # return simplified output
     
-
     return {"message": "Unable to retrieve terms of service for this website at this time. Please try again later."}
 
 
