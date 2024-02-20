@@ -1,0 +1,1 @@
+{"version":3,"file":"style.js","sourceRoot":"","sources":["../../src/transfer/style.ts"],"names":[],"mappings":"AAAA,OAAO,+BAA+B,CAAA","sourcesContent":["import 'antd/lib/transfer/style/index'\n"]}

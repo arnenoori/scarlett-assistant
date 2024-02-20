@@ -1,0 +1,1 @@
+{"version":3,"file":"style.js","sourceRoot":"","sources":["../../src/form-tab/style.ts"],"names":[],"mappings":"AAAA,OAAO,2BAA2B,CAAA;AAClC,OAAO,4BAA4B,CAAA","sourcesContent":["import 'antd/lib/tabs/style/index'\nimport 'antd/lib/badge/style/index'\n"]}

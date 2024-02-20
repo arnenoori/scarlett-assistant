@@ -1,0 +1,1 @@
+{"version":3,"file":"style.js","sourceRoot":"","sources":["../../src/form-collapse/style.ts"],"names":[],"mappings":";;AAAA,yCAAsC;AACtC,sCAAmC","sourcesContent":["import 'antd/lib/collapse/style/index'\nimport 'antd/lib/badge/style/index'\n"]}
