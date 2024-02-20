@@ -1,0 +1,1 @@
+{"version":3,"file":"style.js","sourceRoot":"","sources":["../../src/preview-text/style.ts"],"names":[],"mappings":";;AAAA,oCAAiC;AACjC,wBAAqB","sourcesContent":["import 'antd/lib/tag/style/index'\nimport './style.less'\n"]}

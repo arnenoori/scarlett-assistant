@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../src/__builtins__/hooks/index.ts"],"names":[],"mappings":"AAAA,cAAc,gBAAgB,CAAA;AAC9B,cAAc,gBAAgB,CAAA","sourcesContent":["export * from './useClickAway'\nexport * from './usePrefixCls'\n"]}

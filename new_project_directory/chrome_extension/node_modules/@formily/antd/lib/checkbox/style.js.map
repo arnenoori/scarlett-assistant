@@ -1,0 +1,1 @@
+{"version":3,"file":"style.js","sourceRoot":"","sources":["../../src/checkbox/style.ts"],"names":[],"mappings":";;AAAA,yCAAsC","sourcesContent":["import 'antd/lib/checkbox/style/index'\n"]}
