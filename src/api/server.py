@@ -25,7 +25,7 @@ app = FastAPI(
 )
 
 # This origins list determines who can access the API
-origins = [""]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
