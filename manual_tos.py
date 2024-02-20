@@ -98,7 +98,6 @@ websites_info = [
 
 
 # Update websites and terms_of_service tables
-'''
 if __name__ == "__main__":
     def database_connection_url():
         dotenv.load_dotenv()
@@ -270,5 +269,3 @@ if __name__ == '__main__':
         print(f"Exception during file upload: {e}")
 
     file_buffer.close()
-
-'''
