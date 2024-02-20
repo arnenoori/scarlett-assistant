@@ -1,9 +1,9 @@
 import os
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from src.api import auth
+from api.src.api import auth
 import sqlalchemy
-from src import database as db
+from api.src import database as db
 import json
 import random
 from supabase import create_client, Client
