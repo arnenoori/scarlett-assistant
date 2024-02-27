@@ -39,3 +39,22 @@ System Prompt:
 use instruct package to validate the json 
 ask it to label the type of website it is (categorize it) and write a script to use gpt3.5 if the TOS is under a certain length
 otherwise its pretty expensive to do this
+
+categories:
+
+News: Sites for news and current events.
+SaaS: Software and technology services online.
+Entertainment: Video, music, and media streaming.
+Social Media: Community and networking platforms.
+Education & Learning: Learning resources and courses.
+E-Commerce & Marketplaces: Online shopping and sales.
+Gaming: Video games and gaming news.
+Health: Health advice and medical information.
+Real Estate: Property buying, selling, and renting.
+Sports: Sports news and event streaming.
+Job Search & Career: Job listings and career advice.
+Finance & Banking: Financial services and advice.
+Creative & Digital Content: Digital creation tools and content.
+Search Engines: Web searching and directories.
+Lifestyle & Hobbies: Personal interests and hobbies.
+AI: AI focused companies
