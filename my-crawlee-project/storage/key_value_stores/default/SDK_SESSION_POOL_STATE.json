@@ -1,0 +1,92 @@
+{
+  "usableSessionsCount": 2,
+  "retiredSessionsCount": 0,
+  "sessions": [
+    {
+      "id": "session_GD3b9mKN2w",
+      "cookieJar": {
+        "version": "tough-cookie@4.1.3",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2024-02-27T18:41:55.926Z",
+      "createdAt": "2024-02-27T17:51:55.926Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_CPR304mChs",
+      "cookieJar": {
+        "version": "tough-cookie@4.1.3",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": [
+          {
+            "key": "1P_JAR",
+            "value": "2024-02-27-17",
+            "expires": "2024-03-28T17:51:58.041Z",
+            "domain": "google.com",
+            "path": "/",
+            "secure": true,
+            "hostOnly": false,
+            "creation": "2024-02-27T17:51:58.100Z",
+            "lastAccessed": "2024-02-27T17:51:58.100Z"
+          },
+          {
+            "key": "AEC",
+            "value": "Ae3NU9PrQ7YcF9HNHq7LBdJRK7p8ygjIN0VRNZUQuarAmN6eF301eNOX8w",
+            "expires": "2024-08-25T17:51:58.010Z",
+            "domain": "google.com",
+            "path": "/",
+            "secure": true,
+            "httpOnly": true,
+            "hostOnly": false,
+            "creation": "2024-02-27T17:51:58.103Z",
+            "lastAccessed": "2024-02-27T17:51:58.103Z"
+          },
+          {
+            "key": "NID",
+            "value": "512=J6zxjFYuDK-eyYcBPpfd3U6LY1WLfuU_nkWVH8hlP85FTNfvADtiA3QrfgVdgqbLNI4LgzMJjMHstObcBpDCUQF_a9u4y7Pn4WRd0f3HT7_O7mjbJziiyPx_8PryAPQkeqgowPMLOIsfEuTf-kItIAIeMe-XL3pgHUU0t-YO9yxKjsIld5kVZ0kR",
+            "expires": "2024-08-28T17:51:56.421Z",
+            "domain": "google.com",
+            "path": "/",
+            "secure": true,
+            "httpOnly": true,
+            "hostOnly": false,
+            "creation": "2024-02-27T17:51:58.105Z",
+            "lastAccessed": "2024-02-27T17:51:58.105Z"
+          },
+          {
+            "key": "OGPC",
+            "value": "19037049-1:",
+            "expires": "2024-03-28T17:51:57.000Z",
+            "domain": "google.com",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2024-02-27T17:51:58.105Z",
+            "lastAccessed": "2024-02-27T17:51:58.105Z"
+          }
+        ]
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2024-02-27T18:41:55.928Z",
+      "createdAt": "2024-02-27T17:51:55.928Z",
+      "usageCount": 2,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    }
+  ]
+}
