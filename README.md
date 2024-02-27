@@ -3,6 +3,8 @@
 
 To install, visit ... 
 
+reference - https://github.com/webclipper/web-clipper
+
 ## Contributors:
 [Arne Noori](https://github.com/arnenoori) <br>
 [Connor OBrien](https://github.com/connorpobrien)
