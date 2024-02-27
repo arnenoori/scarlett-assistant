@@ -1,7 +1,38 @@
 const { PlaywrightCrawler, RequestQueue } = require('crawlee');
 const fs = require('fs');
 const path = require('path');
-const url = require('url');
+const https = require('https');
+const url = require('url'); // For URL manipulation
+
+// Normalize URL to its domain root
+function normalizeUrlToRoot(inputUrl) {
+    const urlObj = new URL(inputUrl);
+    return `${urlObj.protocol}//${urlObj.hostname}`;
+}
+
+// Download favicon
+function downloadFavicon(domain, callback) {
+    const faviconUrl = `${domain}/favicon.ico`;
+    const filename = path.join(__dirname, `${new URL(domain).hostname}_favicon.ico`);
+    
+    https.get(faviconUrl, (res) => {
+        if (res.statusCode === 200) {
+            const fileStream = fs.createWriteStream(filename);
+            res.pipe(fileStream);
+            fileStream.on('finish', () => {
+                fileStream.close();
+                console.log(`Downloaded favicon to ${filename}`);
+                if (callback) callback(filename);
+            });
+        } else {
+            console.log(`Failed to download favicon from ${faviconUrl}`);
+            if (callback) callback(null);
+        }
+    }).on('error', (err) => {
+        console.error(`Error downloading favicon from ${faviconUrl}: ${err.message}`);
+        if (callback) callback(null);
+    });
+}
 
 // Function to generate filename based on website name and document title
 function generateFilename(urlString, pageTitle) {
@@ -31,6 +62,10 @@ function saveToTextFile(filename, content) {
 // Main logic wrapped in an async function to use await
 async function main() {
     const requestQueue = await RequestQueue.open();
+
+    let initialUrl = 'https://www.example.com'; // Placeholder URL
+    initialUrl = normalizeUrlToRoot(initialUrl); // Normalize URL to domain root
+    downloadFavicon(initialUrl); // Download and save favicon
 
     const crawler = new PlaywrightCrawler({
         requestQueue,
@@ -63,7 +98,7 @@ async function main() {
         },
     });
 
-    await requestQueue.addRequest({ url: 'https://google.com', userData: { isTosPage: false } });
+    await requestQueue.addRequest({ url: initialUrl, userData: { isTosPage: false } });
     await crawler.run();
 }
 
