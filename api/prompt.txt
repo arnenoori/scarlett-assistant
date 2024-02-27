@@ -35,3 +35,7 @@ System Prompt:
   "Subscription and Payment Terms": {"Score": "", "Comments": ""},
   "Overall Score": ""
 }
+
+use instruct package to validate the json 
+ask it to label the type of website it is (categorize it) and write a script to use gpt3.5 if the TOS is under a certain length
+otherwise its pretty expensive to do this

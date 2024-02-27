@@ -1,5 +1,5 @@
 {
-  "name": "my-crawlee-project",
+  "name": "tos_crawler",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.7",
     "crawlee": "^3.8.1",
+    "dotenv": "^16.4.5",
     "playwright": "^1.41.2"
   }
 }
