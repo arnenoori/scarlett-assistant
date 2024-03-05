@@ -7,15 +7,14 @@ from sqlalchemy.exc import SQLAlchemyError
 from supabase import create_client, Client
 from openai import OpenAI
 
-def find_and_fetch_tos(url):
-    # 1. Crawl the website to find the ToS link (this step is highly variable and depends on the website structure).
-    tos_url = crawl_for_tos_link(url)  # You need to implement this function.
+# def find_and_fetch_tos(url):
+#     # 1. Crawl the website to find the ToS link (this step is highly variable and depends on the website structure).
+#     tos_url = crawl_for_tos_link(url)  # You need to implement this function.
 
-    # 2. Fetch the ToS text from the tos_url.
-    tos_text = fetch_tos_text(tos_url)  # Implement this function to fetch and parse the ToS page.
+#     # 2. Fetch the ToS text from the tos_url.
+#     tos_text = fetch_tos_text(tos_url)  # Implement this function to fetch and parse the ToS page.
 
-    return tos_text
-
+#     return tos_text
 
 
 websites_info = [
@@ -171,7 +170,7 @@ if __name__ == "__main__":
 '''
 
 # Upload TOS document to Supabase Storage
-'''
+
 
 if __name__ == "__main__":
     url = os.getenv("SUPABASE_URL")
@@ -239,12 +238,22 @@ if __name__ == "__main__":
             
 
 
-
 '''
+
 if __name__ == '__main__':
     from io import StringIO
 
-    # Assuming you have a way to loop over websites and their ids
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_KEY")
+    supabase: Client = create_client(url, key)
+
+    def database_connection_url():
+        dotenv.load_dotenv()
+        uri = os.getenv("POSTGRES_URI")
+        return uri
+
+    engine = create_engine(database_connection_url(), pool_pre_ping=True)
+
     for website in websites_info:
         try:
             with engine.connect() as connection:
@@ -264,7 +273,6 @@ if __name__ == '__main__':
                     print(f"Error downloading original TOS for {website['url']}: {e}")
                     continue  # Skip to the next website if there's an issue
 
-                # Process the TOS content with OpenAI (or any other logic you have)
                 prompt = f"Summarize this document in a short 3-5 paragraph. Warns me of any potential dangers:\n\n{tos_contents}"
                 simplified_content = "Your simplified content here"  # Result from processing
                 
@@ -280,8 +288,5 @@ if __name__ == '__main__':
                     file_buffer.close()
         except SQLAlchemyError as e:
             print(f"Database operation failed for {website['site_name']}: {e}")
-'''
 
-
-# Upload TOS document to Supabase Storage
 

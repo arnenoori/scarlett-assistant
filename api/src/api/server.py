@@ -8,13 +8,13 @@ import sys
 from starlette.middleware.cors import CORSMiddleware
 
 description = """
-[tos-chrome-extension] is a chrome extension that helps users understand and control their privacy on the internet. 
+tos-buddy is a chrome extension that helps users understand and control their privacy on the internet. 
 It tells users if a website's terms of service are good or bad and warns them about privacy risks. 
 The extension also keeps track of what personal information users share with websites.
 """
 
 app = FastAPI(
-    title="TOS Project",
+    title="TOS Buddy",
     description=description,
     version="0.0.1",
     terms_of_service="http://example.com/terms/",
@@ -38,7 +38,6 @@ app.add_middleware(
 app.include_router(crawler.router)
 app.include_router(tos.router)
 
-
 @app.exception_handler(exceptions.RequestValidationError)
 @app.exception_handler(ValidationError)
 async def validation_exception_handler(request, exc):
@@ -52,4 +51,4 @@ async def validation_exception_handler(request, exc):
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to TOS Project"}
+    return {"message": "Welcome to TOS Buddy"}
