@@ -54,7 +54,14 @@ def get_tos(url: str):
                     print(file_path)
                     # get contents of the file from tos-contents
                     simplified_tos = supabase.storage.from_('tos-bucket').download(file_path).decode('utf-8')
-                    return {"simplified_tos": simplified_tos}
+                    
+                    # get tos score from database
+                    # query = text("SELECT tos_score FROM websites WHERE site_name = :site_name")
+                    # result = con.execute(query, {"site_name": site_name})
+                    # row = result.fetchone()
+                    # tos_score = row[0]
+                    return {"simplified_tos": simplified_tos, "tos_score": 0}
+                
     except Exception as e:
         print(f"Error: {e}")
         return "Error"
