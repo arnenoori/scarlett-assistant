@@ -243,50 +243,85 @@ if __name__ == "__main__":
 if __name__ == '__main__':
     from io import StringIO
 
-    url = os.getenv("SUPABASE_URL")
-    key = os.getenv("SUPABASE_KEY")
+    url = ""
+    key = ""
     supabase: Client = create_client(url, key)
 
     def database_connection_url():
         dotenv.load_dotenv()
-        uri = os.getenv("POSTGRES_URI")
+        uri = ""
         return uri
 
     engine = create_engine(database_connection_url(), pool_pre_ping=True)
 
-    for website in websites_info:
-        try:
-            with engine.connect() as connection:
-                website_id_result = connection.execute(
-                    text("SELECT website_id FROM websites WHERE url = :url"),
-                    {"url": website["url"]}
-                )
-                website_id = website_id_result.fetchone()[0]
-                
-                original_path = f"tos_docs/{website_id}.txt"
-                simplified_path = f"tos_docs_simplified/{website_id}_simplified.txt"
+    try:
+        path = 'tos_docs/1843.txt'
+        contents = supabase.storage.from_('tos-bucket').download(path).decode('utf-8')
+    except Exception as e:
+        print(f"Error: {e}")
+        contents = "Error"
 
-                # Download original TOS content
-                try:
-                    tos_contents = supabase.storage.from_('tos-bucket').download(original_path).decode('utf-8')
-                except Exception as e:
-                    print(f"Error downloading original TOS for {website['url']}: {e}")
-                    continue  # Skip to the next website if there's an issue
+    prompt = f"""Analyze the document provided and generate a structured summary in JSON format with detailed subsections for easier access from a frontend application. The summary should include the following main sections with their respective subsections:
 
-                prompt = f"Summarize this document in a short 3-5 paragraph. Warns me of any potential dangers:\n\n{tos_contents}"
-                simplified_content = "Your simplified content here"  # Result from processing
-                
-                # Upload simplified content
-                file_buffer = StringIO(simplified_content)
-                file_bytes = file_buffer.getvalue().encode('utf-8')
-                try:
-                    upload_response = supabase.storage.from_('tos-bucket').upload(simplified_path, file_bytes)
-                    print(f"Successfully uploaded simplified TOS for {website_id}")
-                except Exception as e:
-                    print(f"Exception during file upload for {website_id}: {e}")
-                finally:
-                    file_buffer.close()
-        except SQLAlchemyError as e:
-            print(f"Database operation failed for {website['site_name']}: {e}")
+        {contents}
+
+        1. Introduction: Provide an overview of the document's purpose and scope.
+        2. Key Findings: Break down into subsections including:
+            - Service Provider: Specify the entity providing the service and its legal jurisdiction.
+            - Age Requirements: Mention any age restrictions and requirements for parental consent.
+            - User Relationship with Google: Describe the terms under which users are allowed to use the services.
+            - Content License: Outline how users' content is used by the service provider.
+            - Software Use: Detail the terms related to the use of software provided as part of the services.
+            - Disputes Resolution: Explain how disputes related to the terms or services are managed.
+        3. Risks: Identify potential risks for users, including:
+            - Suspension or Termination: Conditions under which services may be suspended or accounts terminated.
+            - Content Removal: Criteria for the removal of content by the service provider.
+            - Liability Limitations: Describe the limitations of liability as stated in the terms.
+        4. Recommendations: Provide advice for users based on the document's content, such as:
+            - Terms Compliance: Suggestions for ensuring compliance with the terms of service.
+            - Content Rights: Recommendations regarding the sharing and uploading of content.
+            - Security Measures: Tips for maintaining account security.
+            - Feedback and Communication: Encourage use of feedback mechanisms and staying informed about communications from the service provider.
+
+        Format the output as a JSON object with each of these sections and subsections clearly defined, similar to the following structure:
+        {{
+        "Introduction": "",
+        "Key Findings": {{
+            "Service Provider": "",
+            "Age Requirements": "",
+            "User Relationship with Google": "",
+            "Content License": "",
+            "Software Use": "",
+            "Disputes Resolution": ""
+        }},
+        "Risks": {{
+            "Suspension or Termination": "",
+            "Content Removal": "",
+            "Liability Limitations": ""
+        }},
+        "Recommendations": {{
+            "Terms Compliance": "",
+            "Content Rights": "",
+            "Security Measures": "",
+            "Feedback and Communication": ""
+        }}
+        }}
+        Ensure each section and subsection contains concise, informative content relevant to the document."""
+
+
+    openai_client = OpenAI(api_key="")
+
+    completion = openai_client.chat.completions.create(
+        model="gpt-4-0125-preview",
+        messages =[{"role": "user", "content": prompt}]
+    )
+
+    simplified_content = completion.choices[0].message.content
+    print(simplified_content)
+
+    # Upload to Supabase Storage
+
+
+
 
 
