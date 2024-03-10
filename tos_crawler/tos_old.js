@@ -4,11 +4,6 @@ const path = require('path');
 const https = require('https');
 const url = require('url'); // For URL manipulation
 
-require('dotenv').config();
-const { createClient } = require('@supabase/supabase-js');
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-
 // Normalize URL to its domain root
 function normalizeUrlToRoot(inputUrl) {
     const urlObj = new URL(inputUrl);
@@ -60,81 +55,16 @@ function generateFilename(urlString, pageTitle) {
 }
 
 // Function to save text content to a file
-function saveToTextFile(filename, content, websiteId, tosUrl) {
+function saveToTextFile(filename, content) {
     fs.writeFileSync(path.join(__dirname, filename), content, { encoding: 'utf8' });
-
-    // Insert into database
-    const insertData = async () => {
-        const { data, error } = await supabase
-            .from('terms_of_service')
-            .insert([
-                { 
-                    website_id: websiteId, 
-                    content: content, 
-                    simplified_content: '', // You'll need to generate this separately
-                    tos_url: tosUrl
-                }
-            ]);
-
-        if (error) {
-            console.error('Error inserting ToS data into Supabase:', error.message);
-        } else {
-            console.log('ToS data inserted into Supabase:', data);
-        }
-    };
-
-    insertData().catch(console.error);
 }
 
 // Main logic wrapped in an async function to use await
 async function main() {
     const requestQueue = await RequestQueue.open();
+
     let initialUrl = 'https://www.youtube.com'; // Placeholder URL
-    initialUrl = normalizeUrlToRoot(initialUrl);
-
-    // Extract and abbreviate site name
-    let siteName = new URL(initialUrl).hostname.replace(/^www\./, ''); // Remove 'www.' prefix
-    siteName = siteName.split('.')[0]; // Keep only the first part of the domain name
-
-    // Check if website is already in database
-    let { data: websiteData, error: websiteError } = await supabase
-        .from('websites')
-        .select('website_id')
-        .eq('url', initialUrl);
-
-    if (websiteError) {
-        console.error('Error querying website from Supabase:', websiteError.message);
-        return;
-    }
-
-    let websiteId;
-    if (websiteData.length === 0) {
-        // Insert the new website with abbreviated site_name and current timestamp for last_crawled
-        const { data: insertData, error: insertError } = await supabase
-            .from('websites')
-            .insert([{ url: initialUrl, site_name: siteName, last_crawled: new Date().toISOString() }])
-            .single();
-
-        if (insertError) {
-            console.error('Error inserting website into Supabase:', insertError.message);
-            return;
-        }
-
-        if (!insertData) {
-            console.error('Insert operation did not return expected data.');
-            return;
-        }
-
-        websiteId = insertData.website_id;
-    } else {
-        websiteId = websiteData[0].website_id;
-        // Update last_crawled timestamp for existing website
-        await supabase
-            .from('websites')
-            .update({ last_crawled: new Date().toISOString() })
-            .match({ website_id: websiteId });
-    }
-
+    initialUrl = normalizeUrlToRoot(initialUrl); // Normalize URL to domain root
     downloadFavicon(initialUrl); // Download and save favicon
 
     const crawler = new PlaywrightCrawler({
@@ -145,7 +75,7 @@ async function main() {
                 const pageTitle = await page.title();
                 const textContent = await page.evaluate(() => document.body.innerText);
                 const filename = generateFilename(request.url, pageTitle);
-                saveToTextFile(filename, textContent, websiteId, request.url);
+                saveToTextFile(filename, textContent);
                 console.log(`Saved ToS text content to ${filename}`);
             } else {
                 const pageTitle = await page.title();
