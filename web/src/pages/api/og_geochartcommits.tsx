@@ -72,7 +72,7 @@ export default async function handler(req: NextRequest) {
         >{`${org_name}/${repo_name}`}</p>
         <img width="894" height="384" src={converted_svg_string} />
         <p style={{ marginTop: "0", fontSize: "30", marginRight: "-40" }}>
-          <span style={{ color: "#e94f2e" }}>analyzemyrepo.com</span>
+          <span style={{ color: "#e94f2e" }}>tosbuddy.com</span>
         </p>
       </div>
     ),

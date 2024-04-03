@@ -21,10 +21,10 @@ const EXAMPLE_QUERIES = [
 ];
 
 const RepoCard = ({ repo }: { repo: EmbeddingSearchResult }) => {
-  const owner = repo.full_name.split("/")[0];
+  const owner = company.name.split("/")[0];
   const avatar = `https://github.com/${owner}.png`;
   return (
-    <Link href={`/analyze/${repo.full_name}`}>
+    <Link href={`/analyze/${company.name}`}>
       <div className="flex flex-col gap-2 items-center w-64 md:w-80 h-48 p-4 bg-white shadow-lg rounded-sm">
         <div className="flex flex-row gap-2 items-center">
           <Image
@@ -34,7 +34,7 @@ const RepoCard = ({ repo }: { repo: EmbeddingSearchResult }) => {
             width={40}
             height={40}
           />
-          <p className="text-xl text-ellipsis line-clamp-1">{repo.full_name}</p>
+          <p className="text-xl text-ellipsis line-clamp-1">{company.name}</p>
         </div>
         <p className="text-gray-500 text-ellipsis line-clamp-3 flex-1">
           {repo.description}
@@ -83,20 +83,20 @@ const SearchPage = () => {
   return (
     <>
       <Head>
-        <title>AI Search for GitHub repos | analyzemyrepo.com</title>
+        <title>AI Search for GitHub repos | tosbuddy.com</title>
         <meta name="description" content="Search GitHub repos using AI" />
         <meta name="og:url" content={`${host}/al-search`} />
         <meta name="og:type" content="website" />
         <meta
           name="og:title"
-          content={`AI Search for GitHub repos | analyzemyrepo.com`}
+          content={`AI Search for GitHub repos | tosbuddy.com`}
         />
         <meta name="og:description" content={`Search GitHub repos using AI`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@CrowdDotDev" />
         <meta
           name="twitter:title"
-          content={`Search GitHub repos using AI | analyzemyrepo.com`}
+          content={`Search GitHub repos using AI | tosbuddy.com`}
         />
         <meta
           name="twitter:description"
@@ -196,7 +196,7 @@ const SearchPage = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-4">
                   {search.data.map((repo) => (
-                    <div key={repo.full_name}>
+                    <div key={company.name}>
                       <RepoCard repo={repo} />
                     </div>
                   ))}

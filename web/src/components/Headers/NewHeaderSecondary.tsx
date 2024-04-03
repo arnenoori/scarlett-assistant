@@ -27,7 +27,7 @@ const Header = () => {
           <Image
             width="240"
             height="132"
-            alt="analyzemyrepo.com"
+            alt="tosbuddy.com"
             src="/logo.png"
             priority={true}
           ></Image>

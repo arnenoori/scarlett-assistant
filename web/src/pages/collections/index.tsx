@@ -50,7 +50,7 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>Collections of GitHub repos | analyzemyrepo.com</title>
+        <title>Collections of GitHub repos | tosbuddy.com</title>
         <meta name="description" content="Collections of GitHub repos" />
         <meta
           name="og:url"
@@ -59,7 +59,7 @@ const Home = () => {
         <meta name="og:type" content="website" />
         <meta
           name="og:title"
-          content={`Collections of GitHub repos | analyzemyrepo.com`}
+          content={`Collections of GitHub repos | tosbuddy.com`}
         />
         <meta name="og:description" content={`Collections of GitHub repos`} />
         <meta
@@ -72,7 +72,7 @@ const Home = () => {
         <meta name="twitter:site" content="@CrowdDotDev" />o
         <meta
           name="twitter:title"
-          content={`Collections of GitHub repos | analyzemyrepo.com`}
+          content={`Collections of GitHub repos | tosbuddy.com`}
         />
         <meta
           name="twitter:description"

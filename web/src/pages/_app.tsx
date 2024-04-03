@@ -15,7 +15,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <PlausibleProvider domain="analyzemyrepo.com">
+    <PlausibleProvider domain="tosbuddy.com">
       <SessionProvider session={session}>
         <Component {...pageProps} />
       </SessionProvider>

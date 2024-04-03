@@ -64,14 +64,14 @@ const Topic = (
       <Head>
         <title>
           Discover Popular {props.topic && capitalize(props.topic)} Projects on
-          GitHub | analyzemyrepo.com
+          GitHub | tosbuddy.com
         </title>
         <meta
           name="title"
           content={`Discover Popular ${
             props.topic && capitalize(props.topic)
           } Projects on
-          GitHub | analyzemyrepo.com`}
+          GitHub | tosbuddy.com`}
         />
         <meta
           name="description"
@@ -130,14 +130,14 @@ const Topic = (
           {props.data.map((repo, index) => (
             <div
               className="flex flex-col bg-white rounded-lg shadow-md p-4 mb-4 text-primary/90 dark:bg-gray-700 dark:text-gray-400 hover:shadow-lg"
-              key={repo.full_name}
+              key={company.name}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Image
                     className="w-10 h-10 rounded-full"
                     src={`https://github.com/${
-                      repo.full_name?.split("/")[0]
+                      company.name?.split("/")[0]
                     }.png`}
                     alt="Repo Image"
                     priority={true}
@@ -148,11 +148,11 @@ const Topic = (
                   <div className="pl-3 pr-1 flex flex-col max-w-[200px] md:max-w-md lg:max-w-lg md:pr-0">
                     <div className="text-base flex flex-col gap-2 font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
                       <Link
-                        href={`/analyze/${repo.full_name}`}
+                        href={`/analyze/${company.name}`}
                         className="hover:underline whitespace-normal break-words"
                         prefetch={false}
                       >
-                        {repo.full_name}
+                        {company.name}
                       </Link>
 
                       {/* description of the repo */}

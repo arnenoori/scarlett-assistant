@@ -122,7 +122,7 @@ export default async function handler(req: NextRequest) {
           }}
         >
           <p style={{ marginTop: "0", fontSize: "30", marginRight: "-40" }}>
-            <span style={{ color: "#e94f2e" }}>analyzemyrepo.com</span>
+            <span style={{ color: "#e94f2e" }}>tosbuddy.com</span>
           </p>
         </div>
       </div>

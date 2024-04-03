@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>analyzemyrepo.com | about</title>
+        <title>tosbuddy.com | about</title>
         <meta
           name="description"
           content="Community Insights for GitHub repo | about"
@@ -37,8 +37,8 @@ const Home: NextPage = () => {
               weekly for top repos and less frequently for the rest. Please note
               that the data may be incomplete. If you find any issues, email us
               at{" "}
-              <a href="mailto:igor@crowd.dev" className="decoration-primary">
-                igor@crowd.dev
+              <a href="mailto:arne@arne.ai" className="decoration-primary">
+                arne@arne.ai
               </a>
             </p>
             <p>
@@ -48,9 +48,9 @@ const Home: NextPage = () => {
               explore it yourself.
             </p>
             <p>
-              analyzemyrepo.com is brought to you by team at{" "}
-              <a href="https://crowd.dev" className="decoration-primary">
-                crowd.dev
+              tosbuddy.com is brought to you by team at{" "}
+              <a href="https://calpoly.edu" className="decoration-primary">
+                Cal Poly San Luis Obispo
               </a>
               .
             </p>
@@ -86,7 +86,7 @@ const Home: NextPage = () => {
               <em>All the best,</em>
             </p>
             <span className="block text-center text-3xl font-extrabold leading-8 tracking-tight text-primary sm:text-4xl">
-              analyzemyrepo.com
+              tosbuddy.com
             </span>
           </div>
         </div>

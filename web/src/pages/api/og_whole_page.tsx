@@ -46,7 +46,7 @@ export default async function handler(req: NextRequest) {
           <strong>{` ${org_name}/${repo_name}`}</strong>
         </p>
         <p>
-          <span style={{ color: "#e94f2e" }}>analyzemyrepo.com</span>
+          <span style={{ color: "#e94f2e" }}>tosbuddy.com</span>
         </p>
       </div>
     ),

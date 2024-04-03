@@ -22,7 +22,7 @@ const Header = () => {
           href="/"
           className="flex flex-1 items-center text-primary font-bold text-md md:text-xl"
         >
-          <span className="sr-only">Home</span>analyzemyrepo.com
+          <span className="sr-only">Home</span>tosbuddy.com
         </Link>
         <div className="flex flex-1 md:order-2 justify-end">
           <LoginButton />

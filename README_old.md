@@ -1,16 +1,3 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-<div align="center">
-<a href="https://www.producthunt.com/posts/analyze-my-repo?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-analyze&#0045;my&#0045;repo" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=374646&theme=light" alt="Analyze&#0032;My&#0032;Repo - Free&#0032;analysis&#0032;&#0038;&#0032;insights&#0032;for&#0032;any&#0032;GitHub&#0032;repository | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-</div>
-
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -18,12 +5,12 @@
     <img src="public/android-chrome-192x192.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">analyzemyrepo.com</h3>
+  <h3 align="center">tosbuddy.com</h3>
 
   <p align="center">
     Discover useful insights about your open-source repo
     <br />
-    <a href="https://analyzemyrepo.com/analyze/CrowdDotDev/crowd.dev">View Demo</a>
+    <a href="https://tosbuddy.com/analyze/CrowdDotDev/crowd.dev">View Demo</a>
     ·
     <a href="https://github.com/CrowdDotDev/analyzemyrepo/issues">Report Bug</a>
     ·
@@ -35,14 +22,14 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://analyzemyrepo.com)
+[![Product Name Screen Shot][product-screenshot]](https://tosbuddy.com)
 
-analyzemyrepo.com enables you to look over any Github repository and get comprehensive details about its performance, contributors, community governance, geographic diversity, and organizational diversity.
+tosbuddy.com enables you to look over any Github repository and get comprehensive details about its performance, contributors, community governance, geographic diversity, and organizational diversity.
 
 Its primary goal is to point out repository improvement opportunities and give contributors advice on how to resolve these problems. 
 
 
-Besides that, analyzemyrepo.com helps you to discover cool projects thanks to weekly updated ratings and collections.
+Besides that, tosbuddy.com helps you to discover cool projects thanks to weekly updated ratings and collections.
 
 
 ### Built With
@@ -55,9 +42,9 @@ The project is built with lots of cool tecnologies. All of them are open-source.
 
 <!-- GETTING STARTED -->
 ## Getting Started
-analyzemyrepo.com uses hybrid approach to get data from GitHub. Some of the data is fetched from GitHub in realtime, some of it is fetched from Postgres where data was uploaded ahead of time using Prefect.
+tosbuddy.com uses hybrid approach to get data from GitHub. Some of the data is fetched from GitHub in realtime, some of it is fetched from Postgres where data was uploaded ahead of time using Prefect.
 
-Still, it is possible to run analyzemyrepo.com locally and get insights about **any** repository. Though, not all sections will be avaliable.
+Still, it is possible to run tosbuddy.com locally and get insights about **any** repository. Though, not all sections will be avaliable.
 
 ### Prerequisites
 
@@ -66,9 +53,9 @@ You will need three main things to get started:
 - GitHub API key
 - Meilisearch instance with uploaded repositories names (optional)
 
-analyzemyrepo.com can also work without Meilisearch - one would need to submit repo's name fully and correctly.
+tosbuddy.com can also work without Meilisearch - one would need to submit repo's name fully and correctly.
 
-### Installation
+### Running Locally
 
 1. Get a GitHub API key
 2. Clone the repo
@@ -94,7 +81,7 @@ analyzemyrepo.com can also work without Meilisearch - one would need to submit r
 
 Any contributions are **greatly appreciated**.
 
-If you have a suggestion that would make analyzemyrepo.com better, please fork the repo and create a pull request. You can also simply open an issue with the tag "feature request".
+If you have a suggestion that would make tosbuddy.com better, please fork the repo and create a pull request. You can also simply open an issue with the tag "feature request".
 Don't forget to give the project a star!
 
 1. Fork the Project
@@ -107,12 +94,10 @@ Don't forget to give the project a star!
 <!-- LICENSE -->
 ## License
 
-Distributed under the Apache License 2.0. See `LICENSE.txt` for more information.
+Distributed under the MIT open License. See `LICENSE.txt` for more information.
 
 <!-- CONTACT -->
 ## Contact
-
-Igor Kotua - [@garrrikkotua](https://twitter.com/garrrikkotua) - igor@crowd.dev
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->

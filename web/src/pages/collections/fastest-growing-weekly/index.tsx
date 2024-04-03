@@ -88,7 +88,7 @@
 //     <>
 //       <Head>
 //         <title>
-//           The fastest growing repos on GitHub last week | analyzemyrepo.com
+//           The fastest growing repos on GitHub last week | tosbuddy.com
 //         </title>
 //         <meta
 //           name="description"
@@ -101,7 +101,7 @@
 //         <meta name="og:type" content="website" />
 //         <meta
 //           name="og:title"
-//           content={`The fastest growing repos on GitHub last week | analyzemyrepo.com`}
+//           content={`The fastest growing repos on GitHub last week | tosbuddy.com`}
 //         />
 //         <meta
 //           name="og:description"
@@ -117,7 +117,7 @@
 //         <meta name="twitter:site" content="@CrowdDotDev" />o
 //         <meta
 //           name="twitter:title"
-//           content={`The fastest growing repos on GitHub last week | analyzemyrepo.com`}
+//           content={`The fastest growing repos on GitHub last week | tosbuddy.com`}
 //         />
 //         <meta
 //           name="twitter:description"
@@ -185,7 +185,7 @@
 //           {props.data.map((repo, index) => (
 //             <tr
 //               className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-//               key={repo.full_name}
+//               key={company.name}
 //             >
 //               <td className="">
 //                 <div className="flex items-center py-3 px-1 md:px-6">
@@ -198,7 +198,7 @@
 //               >
 //                 <Image
 //                   className="w-10 h-10 rounded-full"
-//                   src={`https://github.com/${repo.full_name.split("/")[0]}.png`}
+//                   src={`https://github.com/${company.name.split("/")[0]}.png`}
 //                   alt="Repo Image"
 //                   priority={true}
 //                   loading="eager"
@@ -208,10 +208,10 @@
 //                 <div className="pl-3 pr-1 flex max-w-[110px] md:max-w-xs md:pr-0">
 //                   <div className="text-base font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
 //                     <Link
-//                       href={`/analyze/${repo.full_name}`}
+//                       href={`/analyze/${company.name}`}
 //                       className="hover:underline"
 //                     >
-//                       {repo.full_name}
+//                       {company.name}
 //                     </Link>
 //                   </div>
 //                 </div>

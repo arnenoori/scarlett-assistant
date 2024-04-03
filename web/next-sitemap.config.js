@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://analyzemyrepo.com",
+  siteUrl: "https://tosbuddy.com",
   changefreq: "weekly",
   priority: 0.7,
   sitemapSize: 7000,
@@ -19,7 +19,7 @@ module.exports = {
       },
     });
     return repos.map((repo) => ({
-      loc: `https://analyzemyrepo.com/analyze/${repo.full_name}`,
+      loc: `https://tosbuddy.com/analyze/${company.name}`,
       lastmod: new Date().toISOString(),
     }));
   },

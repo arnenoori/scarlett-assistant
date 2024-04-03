@@ -3,37 +3,6 @@ import { z } from "zod";
 
 const commitsRegExp = /&page=(\d+)>; rel="last"/;
 
-// get_github_repo, get_github_repo_contributors, get_contributions_count, get_community_health
-
-// const store_in_redis = async ({
-//   key,
-//   data,
-// }: {
-//   key: string;
-//   data: Record<string, any>;
-// }) => {
-//   const result = await fetch(
-//     "https://us1-united-grizzly-38526.upstash.io/set/foo/bar",
-//     {
-//       method: "POST",
-//       headers: {
-//         Authorization:
-//           "Bearer AZZ-ACQgNzY3OWVkMWItZTFjYS00NGYxLWI4YzYtZGQ2NDVlNWMzMzU0ZDMxNjI4MGVmYmMwNGM5OTk0N2QwMGU1YTY0MmM1OTc=",
-//       },
-//     }
-//   );
-// };
-
-// trying to get some data from redis
-// if not data for this key or this data is expired:
-//     fetch new data from Github API and my database
-//     update corresponding key in redis setting a expiration key
-// const data = fetch_from_redis("key to fetch for")
-// // if (data) {
-//   return data
-// }
-// return null; // indicating what we should fetch from other source
-
 const checkHeaders = (headers: Headers, default_value = 0): number => {
   const link = headers.get("Link") as string;
   if (link) {
@@ -171,46 +140,7 @@ export const githubRouter = createRouter()
         }
       );
 
-      // const response_gh_pages_commits = await fetch(
-      //   `https://api.github.com/repos/${input.owner}/${input.repo}/commits?sha=gh-pages&per_page=1`,
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       Accept: "application/vnd.github+json",
-      //       Authorization: "Bearer " + process.env.GITHUB_ACCESS_TOKEN_2,
-      //     },
-      //   }
-      // );
-
-      // const response_all_pulls = await fetch(
-      //   `https://api.github.com/repos/${input.owner}/${input.repo}/pulls?state=all&per_page=1`,
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       Accept: "application/vnd.github+json",
-      //       Authorization: "Bearer " + process.env.GITHUB_ACCESS_TOKEN_2,
-      //     },
-      //   }
-      // );
-
-      // const response_all_issues = await fetch(
-      //   `https://api.github.com/repos/${input.owner}/${input.repo}/issues?state=all&per_page=1`,
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       Accept: "application/vnd.github+json",
-      //       Authorization: "Bearer " + process.env.GITHUB_ACCESS_TOKEN_2,
-      //     },
-      //   }
-      // );
-
       const all_commits = checkHeaders(response_all_commits.headers, 1);
-      // const gh_pages_commits = checkHeaders(
-      //   response_gh_pages_commits.headers,
-      //   0
-      // );
-      // const all_pulls = checkHeaders(response_all_pulls.headers, 0);
-      // const all_issues = checkHeaders(response_all_issues.headers, 0);
 
       return {
         total_contributions: all_commits,
