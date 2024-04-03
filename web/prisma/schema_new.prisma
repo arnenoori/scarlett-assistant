@@ -1,0 +1,30 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Website {
+  websiteId      Int             @id @default(autoincrement())
+  url            String          @unique
+  siteName       String?
+  category       String?
+  lastCrawled    DateTime?
+  termsOfService TermsOfService[]
+}
+
+model TermsOfService {
+  tosId             Int      @id @default(autoincrement())
+  website           Website  @relation(fields: [websiteId], references: [websiteId])
+  websiteId         Int
+  content           String
+  simplifiedContent String
+  versionIdentifier String?
+  lastUpdated       DateTime @default(now())
+  tosUrl            String?
+
+  @@index([websiteId, lastUpdated])
+}

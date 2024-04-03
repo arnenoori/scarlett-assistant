@@ -1,17 +1,17 @@
-const { PlaywrightCrawler, RequestQueue } = require('crawlee');
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-const url = require('url'); // For URL manipulation
+import { PlaywrightCrawler, RequestQueue } from 'crawlee';
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+import { URL } from 'url';
 
 // Normalize URL to its domain root
-function normalizeUrlToRoot(inputUrl) {
+function normalizeUrlToRoot(inputUrl: string): string {
     const urlObj = new URL(inputUrl);
     return `${urlObj.protocol}//${urlObj.hostname}`;
 }
 
 // Download favicon
-function downloadFavicon(domain, callback) {
+function downloadFavicon(domain: string, callback?: (filename: string | null) => void): void {
     const faviconUrl = `${domain}/favicon.ico`;
     const filename = path.join(__dirname, `${new URL(domain).hostname}_favicon.ico`);
     
@@ -35,7 +35,7 @@ function downloadFavicon(domain, callback) {
 }
 
 // Function to generate filename based on website name and document title
-function generateFilename(urlString, pageTitle) {
+function generateFilename(urlString: string, pageTitle: string): string {
     const urlObj = new URL(urlString);
     // Extract the hostname and then take the root domain name without the TLD
     let domainParts = urlObj.hostname.replace('www.', '').split('.');
@@ -55,7 +55,7 @@ function generateFilename(urlString, pageTitle) {
 }
 
 // Function to save text content to a file
-function saveToTextFile(filename, content) {
+function saveToTextFile(filename: string, content: string): void {
     fs.writeFileSync(path.join(__dirname, filename), content, { encoding: 'utf8' });
 }
 
@@ -82,7 +82,7 @@ async function main() {
                 console.log(`Title of ${request.url}: ${pageTitle}`);
 
                 // Extract ToS links and enqueue them for processing
-                const tosLinks = await page.$$eval('a', (anchors) =>
+                const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
                     anchors.filter(a => /terms|tos|privacy/i.test(a.textContent) || /terms|tos|privacy/i.test(a.href))
                            .map(a => a.href)
                 );

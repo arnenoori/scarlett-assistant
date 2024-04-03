@@ -116,3 +116,10 @@ Distributed under the MIT open License. See `LICENSE.txt` for more information.
 [product-screenshot]: media/analyzemyrepo_crowd.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
+
+
+TODO list:
+
+ Rewrite endpoints and connect with a basic button
+	- [ ] take in URL crawl for the TOS
+	- [ ] send to claude haiku with optimized prompt and parse back json to give back a score, category, url, sitename 
