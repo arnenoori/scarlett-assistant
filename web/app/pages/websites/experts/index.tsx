@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import BecomeAwebsite from '~/components/BecomeAWebsite'
+import AddAWebsite from '~/components/AddAWebsite'
 import Layout from '~/components/Layout'
 import WebsiteLinkBox from '~/components/WebsiteLinkBox'
 import WebsiteTileGrid from '~/components/WebsiteTileGrid'
@@ -12,7 +12,7 @@ export async function getStaticProps() {
     .from<website>('websites')
     .select('*')
     .eq('approved', true)
-    .eq('type', 'expert')
+    .eq('type', 'popular')
     .order('category')
     .order('title')
 
@@ -28,19 +28,19 @@ interface Props {
   websites: website[]
 }
 
-function ExpertwebsitesPage(props: Props) {
+function popularwebsitesPage(props: Props) {
   const { websites } = props
-  const websitesByCategory: { [category: string]: website[] } = {}
+  const WebsitesByCategory: { [category: string]: website[] } = {}
   websites.map(
     (p) =>
-      (websitesByCategory[p.category] = [
-        ...(websitesByCategory[p.category] ?? []),
+      (WebsitesByCategory[p.category] = [
+        ...(WebsitesByCategory[p.category] ?? []),
         p,
       ])
   )
 
-  const meta_title = 'Find an expert'
-  const meta_description = `Find an expert to help build your next idea.`
+  const meta_title = 'Find an popular'
+  const meta_description = `Find an popular to help build your next idea.`
 
   return (
     <>
@@ -128,10 +128,10 @@ function ExpertwebsitesPage(props: Props) {
 
           {/* Become a website form */}
         </SectionContainer>
-        <BecomeAwebsite supabase={supabase} />
+        <AddAWebsite supabase={supabase} />
       </Layout>
     </>
   )
 }
 
-export default ExpertwebsitesPage
+export default popularwebsitesPage

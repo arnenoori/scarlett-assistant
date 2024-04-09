@@ -1,7 +1,7 @@
 {
-  "name": "website-gallery-example",
-  "version": "1.0.0",
-  "description": "Supabase's Open Source website Gallery Example",
+  "name": "tos-buddy",
+  "version": "0.1.0",
+  "description": "TOS Buddy is a chrome extension that helps users understand and control their privacy on the internet. It tells users if a website's terms of service are good or bad and warns them about privacy risks. The extension also keeps track of what personal information users share with websites.",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
@@ -10,12 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/supabase-community/website-gallery-example.git"
+    "url": "git+https://github.com/arnenoori/tos-buddy.git"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.20.2",
     "@supabase/supabase-js": "^1.33.3",
     "@supabase/ui": "^0.37.0-alpha.50",
+    "anthropic": "^0.0.0",
     "classnames": "^2.3.1",
+    "crawlee": "^3.8.2",
     "marked": "^4.0.12",
     "next": "^12.3.0",
     "react": "^17.0.2",

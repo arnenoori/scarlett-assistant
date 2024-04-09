@@ -1,7 +1,7 @@
 export interface website {
   id: number
   slug: string
-  type: 'technology' | 'expert'
+  type: 'technology' | 'popular'
   category: string
   developer: string
   title: string
@@ -14,8 +14,8 @@ export interface website {
   approved: boolean
 }
 
-export interface websiteContact {
-  type: 'technology' | 'expert'
+export interface WebsiteContact {
+  type: 'technology' | 'popular'
   company: string
   country: string
   details?: string

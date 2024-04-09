@@ -28,7 +28,7 @@ function website({ website }: { website: website }) {
             {/* Back button */}
             <Link
               href={`/websites/${
-                website.type === 'technology' ? 'integrations' : 'experts'
+                website.type === 'technology' ? 'integrations' : 'populars'
               }`}
             >
               <a className="flex cursor-pointer items-center text-scale-1200 transition-colors hover:text-scale-1000">
@@ -137,7 +137,7 @@ function website({ website }: { website: website }) {
                       href={`/websites/${
                         website.type === 'technology'
                           ? 'integrations'
-                          : 'experts'
+                          : 'populars'
                       }#${website.category.toLowerCase()}`}
                     >
                       <a className="text-brand-900 transition-colors hover:text-brand-800">

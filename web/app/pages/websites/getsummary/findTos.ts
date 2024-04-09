@@ -4,12 +4,12 @@ import path from 'path';
 import https from 'https';
 import { createClient } from '@supabase/supabase-js';
 import { config } from 'dotenv';
-import { Claude } from 'anthropic';
+import Anthropic from '@anthropic-ai/sdk';
 
 config();
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
-const claude = new Claude(process.env.ANTHROPIC_API_KEY!);
+const claude = new Anthropic(process.env.ANTHROPIC_API_KEY!);
 
 // Normalize URL to its domain root
 function normalizeUrlToRoot(inputUrl: string): string {

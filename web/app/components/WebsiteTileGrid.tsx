@@ -3,19 +3,19 @@ import Link from 'next/link'
 import { website } from '~/types/websites'
 
 export default function WebsiteTileGrid({
-  websitesByCategory,
+  WebsitesByCategory,
   hideCategories = false,
 }: {
-  websitesByCategory: { [category: string]: website[] }
+  WebsitesByCategory: { [category: string]: website[] }
   hideCategories?: boolean
 }) {
   return (
     <>
-      {Object.keys(websitesByCategory).map((category) => (
+      {Object.keys(WebsitesByCategory).map((category) => (
         <div key={category} id={category.toLowerCase()} className="space-y-8">
           {!hideCategories && <h2 className="h2">{category}</h2>}
           <div className="grid  gap-5 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 lg:max-w-none">
-            {websitesByCategory[category].map((p) => (
+            {WebsitesByCategory[category].map((p) => (
               <Link key={p.slug} href={`/websites/${p.slug}`}>
                 <a
                   className="

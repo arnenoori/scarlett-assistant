@@ -1,10 +1,10 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Button, Form, Input, Select } from '@supabase/ui'
 import { useState } from 'react'
-import { websiteContact } from '~/types/websites'
+import { WebsiteContact } from '~/types/websites'
 
 const INITIAL_VALUES = {
-  type: 'expert',
+  type: 'popular',
   company: '',
   website: '',
 }
@@ -21,11 +21,11 @@ const validate = (values: any) => {
   return errors
 }
 
-export default function BecomeAwebsite({ supabase }: { supabase: SupabaseClient }) {
+export default function AddAWebsite({ supabase }: { supabase: SupabaseClient }) {
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false)
 
   const handleFormSubmit = async (values: any) => {
-    const { error } = await supabase.from<websiteContact>('website_contacts').insert(
+    const { error } = await supabase.from<WebsiteContact>('website_contacts').insert(
       [
         {
           type: values.type,
@@ -56,8 +56,8 @@ export default function BecomeAwebsite({ supabase }: { supabase: SupabaseClient 
                 label="Category of website?"
                 layout="vertical"
               >
-                <Select.Option value="expert" selected={true}>
-                  Expert (Agency &amp; Consulting)
+                <Select.Option value="popular" selected={true}>
+                  popular (Agency &amp; Consulting)
                 </Select.Option>
                 <Select.Option value="technology">Technology</Select.Option>
               </Select>

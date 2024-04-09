@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
-import BecomeAwebsite from '~/components/BecomeAWebsite'
+import AddAWebsite from '~/components/AddAWebsite'
 import Layout from '~/components/Layout'
 import WebsiteLinkBox from '~/components/WebsiteLinkBox'
 import WebsiteTileGrid from '~/components/WebsiteTileGrid'
@@ -43,11 +43,11 @@ function IntegrationwebsitesPage(props: Props) {
     new Set(initialwebsites.map((p) => p.category))
   )
 
-  const websitesByCategory: { [category: string]: website[] } = {}
+  const WebsitesByCategory: { [category: string]: website[] } = {}
   websites.forEach(
     (p) =>
-      (websitesByCategory[p.category] = [
-        ...(websitesByCategory[p.category] ?? []),
+      (WebsitesByCategory[p.category] = [
+        ...(WebsitesByCategory[p.category] ?? []),
         p,
       ])
   )
@@ -161,7 +161,7 @@ function IntegrationwebsitesPage(props: Props) {
                       title="Most Popular"
                       color="blue"
                       description="View the most popular websites"
-                      href={`/websites/experts`}
+                      href={`/websites/populars`}
                       icon={
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -210,7 +210,7 @@ function IntegrationwebsitesPage(props: Props) {
               {/* website Tiles */}
               <div className="grid space-y-10">
                 {websites.length ? (
-                  <WebsiteTileGrid websitesByCategory={websitesByCategory} />
+                  <WebsiteTileGrid WebsitesByCategory={WebsitesByCategory} />
                 ) : (
                   <h2 className="h2">No Companies Found</h2>
                 )}
@@ -219,7 +219,7 @@ function IntegrationwebsitesPage(props: Props) {
           </div>
           {/* Add a website form */}
         </SectionContainer>
-        <BecomeAwebsite supabase={supabase} />
+        <AddAWebsite supabase={supabase} />
       </Layout>
     </>
   )
