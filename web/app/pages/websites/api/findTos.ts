@@ -3,13 +3,16 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import { createClient } from '@supabase/supabase-js';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { config } from 'dotenv';
 import Anthropic from '@anthropic-ai/sdk';
 
 config();
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
-const claude = new Anthropic(process.env.ANTHROPIC_API_KEY!);
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY!,
+});
 
 // Normalize URL to its domain root
 function normalizeUrlToRoot(inputUrl: string): string {
@@ -44,7 +47,7 @@ function downloadFavicon(domain: string, callback: (filename: string | null) => 
 // Function to generate filename based on website name and document title
 function generateFilename(urlString: string, pageTitle: string): string {
   const urlObj = new URL(urlString);
-  let domainParts = urlObj.hostname.replace('www.', '').split('.');
+  let domainParts = urlObj.hostname.replace(/^(www\.)?/, '').split('.');
   const siteName = domainParts.length > 2 ? domainParts[domainParts.length - 2] : domainParts[0];
 
   let label = pageTitle.split(' – ')[0].toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/(^_+|_+$)/g, '');
@@ -80,36 +83,45 @@ async function saveToTextFile(filename: string, content: string, processedConten
   }
 }
 
+// Synchronous message creation and handling
 async function processContent(content: string) {
-  const response = await claude.complete({
-    prompt: `
-      Analyze the following Terms of Service document and produce a JSON response that simplifies the key sections for a general audience. If certain key sections (such as "Data Collection", "User Rights", "Limitations of Liability", "Cancellation & Termination") exist, summarize them. Additionally, evaluate the document for any potential dangers or unfavorable terms to the user, such as excessive data collection, limited user rights, or other restrictive conditions. Highlight these in a separate section within the JSON. 
-
-      Input Document:
-      ${content}
-
-      Expected JSON Output Format:
+  const response = await anthropic.messages.create({
+    model: "claude-3-haiku-20240307",
+    max_tokens: 500,
+    messages: [
       {
-        "summary": {
-          "DataCollection": "Summarize this section in simplified terms.",
-          "UserRights": "Summarize this section in simplified terms.",
-          "LimitationsOfLiability": "Summarize this section in simplified terms.",
-          "CancellationAndTermination": "Summarize this section in simplified terms."
-        },
-        "potentialDangers": [
-          "Highlight any sections that may pose a risk to the user, such as excessive data collection or unfair user restrictions."
-        ],
-        "overallAssessment": "Indicate whether the terms of service are generally favorable or unfavorable to the user, based on the summaries and identified potential dangers."
+        role: "user",
+        content: `
+          Analyze the following Terms of Service document and produce a JSON response that simplifies the key sections for a general audience. If certain key sections (such as "Data Collection", "User Rights", "Limitations of Liability", "Cancellation & Termination") exist, summarize them. Additionally, evaluate the document for any potential dangers or unfavorable terms to the user, such as excessive data collection, limited user rights, or other restrictive conditions. Highlight these in a separate section within the JSON.
+          
+          Input Document:
+          ${content}
+          
+          Expected JSON Output Format:
+          {
+            "summary": {
+              "DataCollection": "Summarize this section in simplified terms.",
+              "UserRights": "Summarize this section in simplified terms.",
+              "LimitationsOfLiability": "Summarize this section in simplified terms.",
+              "CancellationAndTermination": "Summarize this section in simplified terms."
+            },
+            "potentialDangers": [
+              "Highlight any sections that may pose a risk to the user, such as excessive data collection or unfair user restrictions."
+            ],
+            "overallAssessment": "Indicate whether the terms of service are generally favorable or unfavorable to the user, based on the summaries and identified potential dangers."
+          }
+          Please ensure the response strictly follows this JSON structure.
+        `
       }
-      Please ensure the response strictly follows this JSON structure.`,
-    model: 'claude-v1',
-    max_tokens_to_sample: 500,
+    ],
   });
 
-  return response.completion;
+  // Accessing the text of the first content block in the response
+  const processedText = response.content?.[0]?.text || "Error: Unable to process content.";
+  return processedText;
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { url } = req.body;
     await crawlTos(url);
@@ -126,6 +138,7 @@ async function crawlTos(initialUrl: string) {
   let siteName = new URL(initialUrl).hostname.replace(/^www\./, '');
   siteName = siteName.split('.')[0];
 
+  // add a check for null or undefined before accessing length
   let { data: websiteData, error: websiteError } = await supabase
     .from('websites')
     .select('website_id')
@@ -137,7 +150,8 @@ async function crawlTos(initialUrl: string) {
   }
 
   let websiteId: number;
-  if (websiteData.length === 0) {
+  // check if websiteData is not null or undefined before checking its length
+  if (!websiteData || websiteData.length === 0) {
     const { data: insertData, error: insertError } = await supabase
       .from('websites')
       .insert([{ url: initialUrl, site_name: siteName, last_crawled: new Date().toISOString() }])
@@ -175,15 +189,43 @@ async function crawlTos(initialUrl: string) {
         const filename = generateFilename(request.url, pageTitle);
         await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
         console.log(`Saved ToS text content to ${filename}`);
+
+        // Update the website entry in Supabase with the processed data
+        const { data: websiteData, error: websiteError } = await supabase
+          .from('websites')
+          .select('*')
+          .eq('website_id', websiteId)
+          .single();
+
+        if (websiteError) {
+          console.error('Error fetching website data from Supabase:', websiteError.message);
+          return;
+        }
+
+        const parsedContent = JSON.parse(processedContent);
+
+        await supabase
+          .from('websites')
+          .update({
+            slug: websiteData.site_name.toLowerCase().replace(/\s+/g, '-'),
+            category: parsedContent.category,
+            website: initialUrl,
+            docs: request.url,
+            overview: parsedContent.summary,
+            logo: `${websiteData.site_name.toLowerCase()}_favicon.ico`,
+            approved: true,
+          })
+          .eq('website_id', websiteId);
       } else {
         const pageTitle = await page.title();
         console.log(`Title of ${request.url}: ${pageTitle}`);
 
-        const tosLinks = await page.$$eval('a', (anchors) =>
-          anchors.filter(a => /terms|tos|privacy/i.test(a.textContent) || /terms|tos|privacy/i.test(a.href))
-                 .map(a => a.href)
+        const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
+          anchors
+            .filter(a => /terms|tos|privacy/i.test(a.textContent || '') || /terms|tos|privacy/i.test(a.href || ''))
+            .map(a => a.href)
+            .filter((link): link is string => link !== null)
         );
-
         for (const link of tosLinks) {
           await requestQueue.addRequest({ url: link, userData: { isTosPage: true } });
         }

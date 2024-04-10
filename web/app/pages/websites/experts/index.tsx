@@ -90,7 +90,7 @@ function popularwebsitesPage(props: Props) {
                     title="Become a website"
                     color="brand"
                     description="Fill out a quick 30 second form to apply to become a website"
-                    href={`/websites/integrations#become-a-website`}
+                    href={`/websites/integrations#add-a-website`}
                     icon={
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
