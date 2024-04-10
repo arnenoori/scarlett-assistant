@@ -181,7 +181,7 @@ function IntegrationwebsitesPage(props: Props) {
                     />
 
                     <WebsiteLinkBox
-                      href={`/websites/integrations#become-a-website`}
+                      href={`/websites/integrations#add-a-website`}
                       title="Add a website"
                       color="brand"
                       description="Fill out a quick 30 second form to apply to add a website"
