@@ -9,13 +9,17 @@ import Anthropic from '@anthropic-ai/sdk';
 
 config();
 
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!);
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
 });
 
 // Normalize URL to its domain root
 function normalizeUrlToRoot(inputUrl: string): string {
+  // Check if the URL starts with http:// or https://, if not, prepend http://
+  if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('https://')) {
+    inputUrl = 'https://' + inputUrl;
+  }
   const urlObj = new URL(inputUrl);
   return `${urlObj.protocol}//${urlObj.hostname}`;
 }
@@ -124,6 +128,7 @@ async function processContent(content: string) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { url } = req.body;
+    console.log('Received POST request with URL:', url);
     await crawlTos(url);
     res.status(200).json({ message: 'ToS crawled successfully' });
   } else {
@@ -132,13 +137,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function crawlTos(initialUrl: string) {
+  console.log('Starting ToS crawling for URL:', initialUrl);
   const requestQueue = await RequestQueue.open();
   initialUrl = normalizeUrlToRoot(initialUrl);
 
   let siteName = new URL(initialUrl).hostname.replace(/^www\./, '');
   siteName = siteName.split('.')[0];
 
-  // add a check for null or undefined before accessing length
   let { data: websiteData, error: websiteError } = await supabase
     .from('websites')
     .select('website_id')
@@ -150,8 +155,8 @@ async function crawlTos(initialUrl: string) {
   }
 
   let websiteId: number;
-  // check if websiteData is not null or undefined before checking its length
   if (!websiteData || websiteData.length === 0) {
+    console.log('Website not found in database, inserting new entry');
     const { data: insertData, error: insertError } = await supabase
       .from('websites')
       .insert([{ url: initialUrl, site_name: siteName, last_crawled: new Date().toISOString() }])
@@ -169,6 +174,7 @@ async function crawlTos(initialUrl: string) {
 
     websiteId = insertData.website_id;
   } else {
+    console.log('Website found in database, updating last_crawled timestamp');
     websiteId = websiteData[0].website_id;
     await supabase
       .from('websites')
@@ -176,13 +182,15 @@ async function crawlTos(initialUrl: string) {
       .match({ website_id: websiteId });
   }
 
-  downloadFavicon(initialUrl, () => {}); // Download and save favicon
+  console.log('Downloading favicon');
+  downloadFavicon(initialUrl, () => {});
 
   const crawler = new PlaywrightCrawler({
     requestQueue,
 
     async requestHandler({ request, page, enqueueLinks }) {
       if (request.userData.isTosPage) {
+        console.log('Processing ToS page:', request.url);
         const pageTitle = await page.title();
         const textContent = await page.evaluate(() => document.body.innerText);
         const processedContent = await processContent(textContent);
