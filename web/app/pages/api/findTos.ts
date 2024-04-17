@@ -114,7 +114,7 @@ async function processContent(content: string) {
             ],
             "overallAssessment": "Indicate whether the terms of service are generally favorable or unfavorable to the user, based on the summaries and identified potential dangers."
           }
-          Please ensure the response strictly follows this JSON structure.
+          Please ensure the response strictly follows this JSON structure. Wrap the JSON response in triple backticks (\`\`\`) to ensure it is properly formatted.
         `
       }
     ],
@@ -122,7 +122,15 @@ async function processContent(content: string) {
 
   // Accessing the text of the first content block in the response
   const processedText = response.content?.[0]?.text || "Error: Unable to process content.";
-  return processedText;
+
+  // Extract the JSON from the response by finding the content between triple backticks
+  const jsonMatch = processedText.match(/```([\s\S]*)```/);
+  if (jsonMatch) {
+    return jsonMatch[1].trim();
+  } else {
+    console.error("Error: Unable to extract JSON from the processed content.");
+    return "{}";
+  }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

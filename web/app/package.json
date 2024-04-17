@@ -4,9 +4,9 @@
   "description": "TOS Buddy is a chrome extension that helps users understand and control their privacy on the internet. It tells users if a website's terms of service are good or bad and warns them about privacy risks. The extension also keeps track of what personal information users share with websites.",
   "license": "MIT",
   "scripts": {
-    "dev": "bun next dev",
-    "build": "bun next build",
-    "start": "bun next start"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "repository": {
     "type": "git",
@@ -18,9 +18,10 @@
     "@supabase/ui": "^0.37.0-alpha.50",
     "anthropic": "^0.0.0",
     "classnames": "^2.3.1",
-    "crawlee": "^3.8.2",
+    "crawlee": "^3.9.1",
     "marked": "^4.0.12",
     "next": "^12.3.0",
+    "playwright": "^1.43.1",
     "punycode": "^2.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
