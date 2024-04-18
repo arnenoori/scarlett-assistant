@@ -76,8 +76,7 @@ export default function AddAWebsite({ supabase }: { supabase: SupabaseClient }) 
       <div id="add-a-website" className="max-w-2xl mx-auto space-y-12 py-12 px-6">
         <h2 className="h2">Add a website</h2>
         <Form initialValues={INITIAL_VALUES} validate={validate} onSubmit={handleFormSubmit}>
-          {({ isSubmitting, resetForm, handleSubmit }) => (
-            // Remove the native <form> tag here
+          {({ isSubmitting, resetForm, handleSubmit }: { isSubmitting: boolean; resetForm: () => void; handleSubmit: () => void }) => (
             <div className="grid grid-cols-1 gap-y-4">
               <Input label="Website URL *" id="website" name="website" layout="vertical" placeholder="example.com" />
               <div className="flex flex-row-reverse w-full pt-4">
