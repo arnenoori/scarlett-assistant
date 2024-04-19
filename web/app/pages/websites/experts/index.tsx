@@ -5,16 +5,21 @@ import WebsiteLinkBox from '~/components/WebsiteLinkBox'
 import WebsiteTileGrid from '~/components/WebsiteTileGrid'
 import SectionContainer from '~/components/SectionContainer'
 import supabase from '~/lib/supabase'
-import { website } from '~/types/websites'
+import { website as WebsiteType } from '~/types/websites'
 
 export async function getStaticProps() {
-  const { data: websites } = await supabase
-    .from<website>('websites')
+  const { data: websites, error } = await supabase
+    .from<WebsiteType>('websites') // 'websites' is the table name as a string
     .select('*')
     .eq('approved', true)
     .eq('type', 'popular')
     .order('category')
     .order('title')
+
+  if (error) {
+    console.error('Error fetching websites:', error);
+    return { props: { websites: [] } }; // Handle the error by returning an empty array or appropriate error handling
+  }
 
   return {
     props: {
@@ -25,12 +30,12 @@ export async function getStaticProps() {
 }
 
 interface Props {
-  websites: website[]
+  websites: WebsiteType[]
 }
 
 function popularwebsitesPage(props: Props) {
   const { websites } = props
-  const WebsitesByCategory: { [category: string]: website[] } = {}
+  const WebsitesByCategory: { [category: string]: WebsiteType[] } = {}
   websites.map(
     (p) =>
       (WebsitesByCategory[p.category] = [

@@ -46,26 +46,3 @@ CREATE TABLE websites (
 );
 
 ALTER TABLE websites ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Enable public read access" ON websites FOR SELECT USING (true);
-
-CREATE TABLE "Website" (
-  "websiteId" SERIAL PRIMARY KEY,
-  "url" VARCHAR(255) UNIQUE NOT NULL,
-  "siteName" VARCHAR(255),
-  "category" VARCHAR(255),
-  "lastCrawled" TIMESTAMP
-);
-
-CREATE TABLE "TermsOfService" (
-  "tosId" SERIAL PRIMARY KEY,
-  "websiteId" INT NOT NULL,
-  "content" TEXT NOT NULL,
-  "simplifiedContent" TEXT NOT NULL,
-  "versionIdentifier" VARCHAR(255),
-  "lastUpdated" TIMESTAMP NOT NULL DEFAULT NOW(),
-  "tosUrl" VARCHAR(255),
-  FOREIGN KEY ("websiteId") REFERENCES "Website"("websiteId")
-);
-
-CREATE INDEX "TermsOfService_websiteId_lastUpdated_idx" ON "TermsOfService"("websiteId", "lastUpdated");

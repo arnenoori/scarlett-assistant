@@ -1,5 +1,3 @@
-const path = require('path');
-
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
@@ -28,26 +26,6 @@ module.exports = {
         source: '/websites',
         destination: '/websites/integrations',
       },
-    ];
+    ]
   },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.css$/,
-      use: [
-        {
-          loader: 'postcss-loader',
-          options: {
-            postcssOptions: {
-              plugins: [
-                'tailwindcss',
-                'autoprefixer',
-              ],
-            },
-          },
-        },
-      ],
-      include: path.resolve(__dirname, 'styles'),
-    });
-    return config;
-  },
-};
+}
