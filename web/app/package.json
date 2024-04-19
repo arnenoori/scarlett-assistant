@@ -23,16 +23,16 @@
     "crawlee": "next",
     "eslint-config-next": "latest",
     "framer-motion": "^11.1.5",
-    "marked": "^4.0.12",
+    "marked": "^12.0.1",
     "next": "latest",
     "next-themes": "^0.3.0",
     "playwright": "^1.43.1",
     "punycode": "^2.3.1",
     "react": "latest",
     "react-dom": "latest",
-    "swiper": "^8.0.7",
+    "swiper": "^11.1.1",
     "tailwind-merge": "^2.2.2",
-    "use-debounce": "^7.0.1"
+    "use-debounce": "^10.0.0"
   },
   "devDependencies": {
     "@mertasan/tailwindcss-variables": "^2.2.2",
@@ -43,12 +43,12 @@
     "@types/node": "^20.12.7",
     "@types/react": "latest",
     "autoprefixer": "^10.4.19",
-    "deepmerge": "^4.2.2",
+    "deepmerge": "^4.3.1",
     "mini-svg-data-uri": "^1.4.4",
-    "postcss": "^8.4.38",
+    "postcss": "latest",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.3",
-    "tailwindcss-radix": "^1.6.0"
+    "tailwindcss-radix": "^3.0.3"
   }
 }
