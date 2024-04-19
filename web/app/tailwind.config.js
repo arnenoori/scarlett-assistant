@@ -1,16 +1,15 @@
-const ui = require('./ui.config.js')
-const svgToDataUri = require('mini-svg-data-uri')
+const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette');
+const svgToDataUri = require('mini-svg-data-uri');
 
-module.exports = ui({
+module.exports = {
   content: [
     './components/**/*.tsx',
     './pages/**/*.tsx',
     './_blog/*.mdx',
-    // purge styles from supabase ui theme
+    './utils/**/*.ts',
     './node_modules/@supabase/ui/dist/config/default-theme.js',
   ],
-  darkMode: 'class', // 'media' or 'class'
-  // mode: 'jit',
+  darkMode: 'class',
   theme: {
     borderColor: (theme) => ({
       ...theme('colors'),
@@ -24,8 +23,6 @@ module.exports = ui({
     }),
     extend: {
       typography: ({ theme }) => ({
-        // Removal of backticks in code blocks for tailwind v3.0
-        // https://github.com/tailwindlabs/tailwindcss-typography/issues/135
         DEFAULT: {
           css: {
             'code::before': {
@@ -61,9 +58,6 @@ module.exports = ui({
             '--tw-prose-invert-quotes': theme('colors.scale[100]'),
             '--tw-prose-invert-quote-borders': theme('colors.scale[700]'),
             '--tw-prose-invert-captions': theme('colors.scale[400]'),
-            // the following are typography overrides
-            // examples can be seen here —> https://github.com/tailwindlabs/tailwindcss-typography/blob/master/src/styles.js
-            // reset all header font weights
             'h1, h2, h3, h4, h5': {
               fontWeight: '400',
             },
@@ -88,7 +82,6 @@ module.exports = ui({
             },
           },
         },
-
         toc: {
           css: {
             ul: {
@@ -109,7 +102,6 @@ module.exports = ui({
                 },
                 'font-weight': '400',
               },
-              // margin: 0,
               ul: {
                 'list-style-type': 'none',
                 li: {
@@ -159,5 +151,16 @@ module.exports = ui({
       },
     },
   },
-  plugins: [require('@tailwindcss/typography')],
-})
+  plugins: [require('@tailwindcss/typography'), addVariablesForColors],
+};
+
+function addVariablesForColors({ addBase, theme }) {
+  let allColors = flattenColorPalette(theme('colors'));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ':root': newVars,
+  });
+}
