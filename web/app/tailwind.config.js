@@ -8,6 +8,7 @@ module.exports = {
     './_blog/*.mdx',
     './utils/**/*.ts',
     './node_modules/@supabase/ui/dist/config/default-theme.js',
+    '../styles/globals.css',
   ],
   darkMode: 'class',
   theme: {

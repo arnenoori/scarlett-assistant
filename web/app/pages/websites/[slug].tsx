@@ -8,10 +8,10 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import Layout from '~/components/Layout'
 import SectionContainer from '~/components/SectionContainer'
 import supabase from '~/lib/supabase'
-import { website } from '~/types/websites'
+import { website as WebsiteType } from '~/types/websites'
 import Error404 from '../404'
 
-function website({ website }: { website: website }) {
+function website({ website }: { website: WebsiteType }) {
   if (!website) return <Error404 />
 
   return (
@@ -185,7 +185,7 @@ function website({ website }: { website: website }) {
 // This function gets called at build time
 export const getStaticPaths: GetStaticPaths = async () => {
   const { data: slugs } = await supabase
-    .from<website>('websites')
+    .from<WebsiteType>('websites')
     .select('slug')
 
   const paths: {
@@ -207,7 +207,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // This also gets called at build time
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   let { data: website } = await supabase
-    .from<website>('websites')
+    .from<WebsiteType>('websites')
     .select('*')
     .eq('slug', params!.slug as string)
     .single()

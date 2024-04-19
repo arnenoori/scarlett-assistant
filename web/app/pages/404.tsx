@@ -1,19 +1,19 @@
-import { Button } from '@supabase/ui'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import Layout from '~/components/Layout'
-import { useTheme } from '~/lib/theme'
+import { HoverBorderGradient } from '~/components/ui/hover-border-gradient';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import Layout from '~/components/Layout';
+import { useTheme } from '~/lib/theme';
 
 const Error404 = () => {
-  const [show404, setShow404] = useState<boolean>(false)
-  const { isDarkMode } = useTheme()
+  const [show404, setShow404] = useState<boolean>(false);
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     setTimeout(() => {
-      setShow404(true)
-    }, 500)
-  }, [])
+      setShow404(true);
+    }, 500);
+  }, []);
 
   return (
     <Layout hideHeader hideFooter>
@@ -61,15 +61,15 @@ const Error404 = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/">
-              <Button as="a" size="small" className="text-white">
+              <HoverBorderGradient as="a" className="text-white bg-black px-4 py-2 rounded-full">
                 Head back
-              </Button>
+              </HoverBorderGradient>
             </Link>
           </div>
         </div>
       </div>
     </Layout>
-  )
+  );
 }
 
-export default Error404
+export default Error404;
