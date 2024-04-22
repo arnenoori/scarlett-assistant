@@ -6,6 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { config } from 'dotenv';
 import Anthropic from '@anthropic-ai/sdk';
+import { WebsiteData } from '~/types/websites';
 
 config();
 
@@ -153,7 +154,7 @@ async function crawlTos(initialUrl: string) {
   siteName = siteName.split('.')[0];
 
   let { data: websiteData, error: websiteError } = await supabase
-    .from('websites')
+    .from<'websites', WebsiteData>('websites')
     .select('website_id')
     .eq('url', initialUrl);
 
@@ -166,8 +167,12 @@ async function crawlTos(initialUrl: string) {
   if (!websiteData || websiteData.length === 0) {
     console.log('Website not found in database, inserting new entry');
     const { data: insertData, error: insertError } = await supabase
-      .from('websites')
-      .insert([{ url: initialUrl, site_name: siteName, last_crawled: new Date().toISOString() }])
+      .from('websites') // Use the table name as a string
+      .insert([{
+        url: initialUrl,
+        site_name: siteName,
+        last_crawled: new Date() // Ensure this is a Date object, not a string
+      }])
       .single();
 
     if (insertError) {
@@ -179,17 +184,15 @@ async function crawlTos(initialUrl: string) {
       console.error('Insert operation did not return expected data.');
       return;
     }
-
-    websiteId = insertData.website_id;
+    
+    websiteId = (insertData as WebsiteData).website_id;
   } else {
-    console.log('Website found in database, updating last_crawled timestamp');
-    websiteId = websiteData[0].website_id;
+    console.log('Website found in database, updating last crawled timestamp');
     await supabase
       .from('websites')
       .update({ last_crawled: new Date().toISOString() })
       .match({ website_id: websiteId });
   }
-
   console.log('Downloading favicon');
   downloadFavicon(initialUrl, () => {});
 

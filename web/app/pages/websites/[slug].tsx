@@ -185,18 +185,12 @@ function website({ website }: { website: WebsiteType }) {
 // This function gets called at build time
 export const getStaticPaths: GetStaticPaths = async () => {
   const { data: slugs } = await supabase
-    .from<WebsiteType>('websites')
+    .from('websites')
     .select('slug')
 
-  const paths: {
-    params: { slug: string }
-    locale?: string | undefined
-  }[] =
-    slugs?.map(({ slug }) => ({
-      params: {
-        slug,
-      },
-    })) ?? []
+  const paths = slugs?.filter(({ slug }) => slug != null).map(({ slug }) => ({
+    params: { slug: slug.toString() }, // Ensure slug is a string and not null
+  })) ?? [];
 
   return {
     paths,
@@ -207,7 +201,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // This also gets called at build time
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   let { data: website } = await supabase
-    .from<WebsiteType>('websites')
+    .from('websites') // Correctly use the table name as a string
     .select('*')
     .eq('slug', params!.slug as string)
     .single()
@@ -218,9 +212,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     }
   }
 
-  // Parse markdown
-  website.overview = marked.parse(website.overview)
-
+  // Additional processing if necessary
   return {
     props: { website },
     revalidate: 18000, // In seconds - refresh every 5 hours

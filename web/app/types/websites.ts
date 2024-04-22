@@ -15,15 +15,24 @@ export interface website {
 }
 
 export interface WebsiteContact {
-  type: 'technology' | 'popular'
-  company: string
-  country: string
-  details?: string
-  email: string
-  first: string
-  last: string
-  phone?: string
-  size?: number
-  title?: string
-  website: string
+  id?: number;
+  type: 'technology' | 'popular';
+  company: string;
+  country: string;
+  details?: string;
+  email: string;
+  first: string;
+  last: string;
+  phone?: string;
+  size?: number;
+  title?: string;
+  website: string;
+  created_at?: string;
+}
+
+export interface WebsiteData {
+  website_id: number; // Ensure this property is correctly defined
+  url: string;
+  site_name: string;
+  last_crawled: Date;
 }

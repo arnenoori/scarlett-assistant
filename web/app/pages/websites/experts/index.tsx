@@ -9,7 +9,7 @@ import { website as WebsiteType } from '~/types/websites'
 
 export async function getStaticProps() {
   const { data: websites, error } = await supabase
-    .from<WebsiteType>('websites') // 'websites' is the table name as a string
+    .from('websites') // Use the table name as a string without generic type
     .select('*')
     .eq('approved', true)
     .eq('type', 'popular')

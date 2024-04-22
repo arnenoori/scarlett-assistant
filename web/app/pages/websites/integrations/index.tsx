@@ -14,19 +14,22 @@ import { website } from '~/types/websites'
 
 export async function getStaticProps() {
   const { data: websites, error } = await supabase
-    .from<website>('websites')
+    .from('websites') // Use the table name as a string without generic type
     .select('*')
     .eq('approved', true)
     .eq('type', 'technology')
     .order('category')
     .order('title')
-  if (error) console.log(websites, error)
+
+  if (error) {
+    console.error('Error fetching websites:', error);
+    return { props: { websites: [] } }; // Handle the error by returning an empty array or appropriate error handling
+  }
 
   return {
     props: {
       websites: websites ?? [],
     },
-    // TODO: consider using Next.js' On-demand Revalidation with Supabase function hooks instead
     revalidate: 18000, // In seconds - refresh every 5 hours
   }
 }
@@ -63,14 +66,14 @@ function IntegrationwebsitesPage(props: Props) {
   useEffect(() => {
     const searchwebsites = async () => {
       setIsSearching(true)
-
+  
       let query = supabase
-        .from<website>('websites')
+        .from('websites') // Use the table name as a string without generic type
         .select('*')
         .eq('approved', true)
         .order('category')
         .order('title')
-
+  
       if (search.trim()) {
         query = query
           // @ts-ignore
@@ -79,23 +82,23 @@ function IntegrationwebsitesPage(props: Props) {
             config: 'english',
           })
       }
-
+  
       const { data: websites } = await query
-
+  
       return websites
     }
-
+  
     if (search.trim() === '') {
       setIsSearching(false)
       setwebsites(initialwebsites)
       return
     }
-
+  
     searchwebsites().then((websites) => {
       if (websites) {
         setwebsites(websites)
       }
-
+  
       setIsSearching(false)
     })
   }, [debouncedSearchTerm, router])

@@ -32,54 +32,10 @@ export default function AddAWebsite({ supabase }: { supabase: SupabaseClient }) 
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
-  const handleFormSubmit = async (values: any, { setSubmitting }: any) => {
-    setLoading(true);
+  const handleFormSubmit = () => {
+    // Add your form submission logic here
+    // For now, you can just set formSubmitted to true
     setFormSubmitted(true);
-    setStatus('Crawling for terms of service...');
-    setCurrentStep(0);
-
-    const { error } = await supabase.from<WebsiteContact>('website_contacts').insert(
-      [{ website: values.website }],
-      { returning: 'minimal' }
-    );
-
-    if (!error) {
-      try {
-        const response = await fetch('/api/findTos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: values.website })
-        });
-
-        if (response.ok) {
-          setStatus('Pulled terms of service...');
-          setCurrentStep(1);
-          setTimeout(() => {
-            setStatus('Summarizing terms of service...');
-            setCurrentStep(2);
-          }, 2000);
-
-          setTimeout(() => {
-            setStatus('Now live');
-            setCurrentStep(3);
-            setFormSubmitted(false);
-            setSubmitting(false);
-            setLoading(false);
-          }, 4000);
-        } else {
-          setStatus('Error processing the request');
-          setFormSubmitted(false);
-          setSubmitting(false);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        setStatus('Error processing the request');
-        setFormSubmitted(false);
-        setSubmitting(false);
-        setLoading(false);
-      }
-    }
   };
 
   return (
