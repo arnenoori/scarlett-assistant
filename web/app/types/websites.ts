@@ -1,4 +1,4 @@
-export interface website {
+export interface Website {
   id: number;
   slug: string;
   type: 'technology' | 'popular';
@@ -31,8 +31,8 @@ export interface WebsiteContact {
 }
 
 export interface WebsiteData {
-  website_id: number;
+  id: number;
   url: string;
   site_name: string;
-  last_crawled: Date;
+  last_crawled: string;
 }

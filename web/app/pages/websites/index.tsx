@@ -10,7 +10,7 @@ import WebsiteLinkBox from '~/components/WebsiteLinkBox'
 import WebsiteTileGrid from '~/components/WebsiteTileGrid'
 import SectionContainer from '~/components/SectionContainer'
 import supabase from '~/lib/supabase'
-import { website } from '~/types/websites'
+import { Website } from '~/types/websites'
 
 export async function getStaticProps() {
   const { data: websites, error } = await supabase
@@ -35,7 +35,7 @@ export async function getStaticProps() {
 }
 
 interface Props {
-  websites: website[]
+  websites: Website[]
 }
 
 function IntegrationwebsitesPage(props: Props) {
@@ -46,7 +46,7 @@ function IntegrationwebsitesPage(props: Props) {
     new Set(initialwebsites.map((p) => p.category))
   )
 
-  const WebsitesByCategory: { [category: string]: website[] } = {}
+  const WebsitesByCategory: { [category: string]: Website[] } = {}
   websites.forEach(
     (p) =>
       (WebsitesByCategory[p.category] = [

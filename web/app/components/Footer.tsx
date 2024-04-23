@@ -32,7 +32,7 @@ function Footer() {
         </a>{' '}
         and{' '}
         <a href="https://www.linkedin.com/in/obrienconnorp/" target="_blank" rel="noopener noreferrer">
-          <Image src="/images/connor.jpeg" alt="Avatar of Connor" width={50} height={50} />
+          <Image src="/images/connor.png" alt="Avatar of Connor" width={50} height={50} />
         </a>
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>

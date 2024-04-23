@@ -1,12 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { website } from '~/types/websites'
+import { Website } from '~/types/websites'
 
 export default function WebsiteTileGrid({
   WebsitesByCategory,
   hideCategories = false,
 }: {
-  WebsitesByCategory: { [category: string]: website[] }
+  WebsitesByCategory: { [category: string]: Website[] }
   hideCategories?: boolean
 }) {
   return (
