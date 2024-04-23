@@ -5,7 +5,7 @@ import WebsiteLinkBox from '~/components/WebsiteLinkBox'
 import WebsiteTileGrid from '~/components/WebsiteTileGrid'
 import SectionContainer from '~/components/SectionContainer'
 import supabase from '~/lib/supabase'
-import { website as WebsiteType } from '~/types/websites'
+import { Website as WebsiteType } from '~/types/websites'
 
 export async function getStaticProps() {
   const { data: websites, error } = await supabase

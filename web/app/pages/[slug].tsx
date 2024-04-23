@@ -8,7 +8,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import Layout from '~/components/Layout'
 import SectionContainer from '~/components/SectionContainer'
 import supabase from '~/lib/supabase'
-import { website as WebsiteType } from '~/types/websites'
+import { Website as WebsiteType } from '~/types/websites'
 import Error404 from './404'
 
 function website({ website }: { website: WebsiteType }) {

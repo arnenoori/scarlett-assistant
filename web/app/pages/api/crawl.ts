@@ -14,36 +14,36 @@ config();
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
-export async function saveToTextFile(filename: string, content: string, processedContent: string, websiteId: number, tosUrl: string): Promise<void> {
-  const { data: uploadData, error: uploadError } = await supabase.storage
-    .from('terms_of_service')
-    .upload(filename, content);
-
-  if (uploadError) {
-    console.error('Error uploading ToS file to Supabase Storage:', uploadError.message);
-    return;
+async function saveToTextFile(filename: string, content: string, processedContent: string, websiteId: number, tosUrl: string): Promise<void> {
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('terms_of_service')
+      .upload(filename, content);
+  
+    if (uploadError) {
+      console.error('Error uploading ToS file to Supabase Storage:', uploadError.message);
+      return;
+    }
+  
+    console.log('ToS file uploaded to Supabase Storage:', uploadData);
+  
+    const { data, error } = await supabase
+      .from('terms_of_service')
+      .insert([
+        {
+          website_id: websiteId,
+          content: content,
+          simplified_content: processedContent,
+          tos_url: tosUrl,
+          file_path: uploadData.path
+        }
+      ]);
+  
+    if (error) {
+      console.error('Error inserting ToS data into Supabase:', error.message);
+    } else {
+      console.log('ToS data inserted into Supabase:', data);
+    }
   }
-
-  console.log('ToS file uploaded to Supabase Storage:', uploadData);
-
-  const { data, error } = await supabase
-    .from('terms_of_service')
-    .insert([
-      {
-        website_id: websiteId,
-        content: content,
-        simplified_content: processedContent,
-        tos_url: tosUrl,
-        file_path: uploadData.path
-      }
-    ]);
-
-  if (error) {
-    console.error('Error inserting ToS data into Supabase:', error.message);
-  } else {
-    console.log('ToS data inserted into Supabase:', data);
-  }
-}
 
 async function getWebsiteData(initialUrl: string): Promise<{ websiteId: number; siteName: string } | null> {
     const normalizedUrl = new URL(initialUrl).origin;
@@ -86,11 +86,11 @@ async function getWebsiteData(initialUrl: string): Promise<{ websiteId: number; 
     }
   }
 
-async function updateWebsiteData(websiteId: number, parsedContent: any, initialUrl: string, requestUrl: string, siteName: string) {
+  async function updateWebsiteData(websiteId: number, parsedContent: any, initialUrl: string, requestUrl: string, siteName: string, normalizedUrl: string, faviconUrl: string) {
     const { data: websiteData, error: websiteError } = await supabase
       .from('websites')
       .select('*')
-      .eq('website_id', websiteId)
+      .eq('id', websiteId)
       .single();
   
     if (websiteError) {
@@ -104,12 +104,14 @@ async function updateWebsiteData(websiteId: number, parsedContent: any, initialU
         slug: siteName.toLowerCase().replace(/\s+/g, '-'),
         category: parsedContent.category,
         website: initialUrl,
+        normalized_url: normalizedUrl,
+        tos_url: requestUrl,
+        favicon_url: faviconUrl,
+        simplified_overview: parsedContent.summary,
         docs: requestUrl,
-        overview: parsedContent.summary,
-        logo: `${siteName.toLowerCase()}_favicon.ico`,
-        approved: true,
+        logo: `${siteName.toLowerCase()}_favicon.png`,
       })
-      .eq('website_id', websiteId);
+      .eq('id', websiteId);
   }
 
 // Normalize URL to its domain root
@@ -140,57 +142,57 @@ function generateFilename(urlString: string, pageTitle: string): string {
 }
 
 export async function crawlTos(initialUrl: string) {
-  console.log('Starting ToS crawling for URL:', initialUrl);
-  const requestQueue = await RequestQueue.open();
-  initialUrl = normalizeUrlToRoot(initialUrl);
-
-  const websiteData = await getWebsiteData(initialUrl);
-  if (!websiteData) {
-    console.error('Unable to fetch or create website data.');
-    return;
-  }
-
-  const { websiteId, siteName } = websiteData;
-
-  console.log('Downloading favicon');
-  downloadFavicon(initialUrl, () => {});
-
-  const crawler = new PlaywrightCrawler({
-    requestQueue,
-
-    async requestHandler({ request, page, enqueueLinks }) {
-      if (request.userData.isTosPage) {
-        console.log('Processing ToS page:', request.url);
-        const pageTitle = await page.title();
-        const textContent = await page.evaluate(() => document.body.innerText);
-        const processedContent = await processContent(textContent);
-        const filename = generateFilename(request.url, pageTitle);
-        await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
-        console.log(`Saved ToS text content to ${filename}`);
-
-        const parsedContent = JSON.parse(processedContent);
-        await updateWebsiteData(websiteId, parsedContent, initialUrl, request.url, siteName);
-      } else {
-        const pageTitle = await page.title();
-        console.log(`Title of ${request.url}: ${pageTitle}`);
-
-        const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
-          anchors
-            .filter(a => /terms|tos|privacy/i.test(a.textContent || '') || /terms|tos|privacy/i.test(a.href || ''))
-            .map(a => a.href)
-            .filter((link): link is string => link !== null)
-        );
-        for (const link of tosLinks) {
-          await requestQueue.addRequest({ url: link, userData: { isTosPage: true } });
+    console.log('Starting ToS crawling for URL:', initialUrl);
+    const requestQueue = await RequestQueue.open();
+    const normalizedUrl = normalizeUrlToRoot(initialUrl);
+  
+    const websiteData = await getWebsiteData(normalizedUrl);
+    if (!websiteData) {
+      console.error('Unable to fetch or create website data.');
+      return;
+    }
+  
+    const { websiteId, siteName } = websiteData;
+  
+    console.log('Downloading favicon');
+    const faviconUrl = await downloadFavicon(initialUrl);
+  
+    const crawler = new PlaywrightCrawler({
+      requestQueue,
+  
+      async requestHandler({ request, page, enqueueLinks }) {
+        if (request.userData.isTosPage) {
+          console.log('Processing ToS page:', request.url);
+          const pageTitle = await page.title();
+          const textContent = await page.evaluate(() => document.body.innerText);
+          const processedContent = await processContent(textContent);
+          const filename = generateFilename(request.url, pageTitle);
+          await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
+          console.log(`Saved ToS text content to ${filename}`);
+  
+          const parsedContent = JSON.parse(processedContent);
+          await updateWebsiteData(websiteId, parsedContent, initialUrl, request.url, siteName, normalizedUrl, faviconUrl);
+        } else {
+          const pageTitle = await page.title();
+          console.log(`Title of ${request.url}: ${pageTitle}`);
+  
+          const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
+            anchors
+              .filter(a => /terms|tos|privacy/i.test(a.textContent || '') || /terms|tos|privacy/i.test(a.href || ''))
+              .map(a => a.href)
+              .filter((link): link is string => link !== null)
+          );
+          for (const link of tosLinks) {
+            await requestQueue.addRequest({ url: link, userData: { isTosPage: true } });
+          }
         }
-      }
-    },
-
-    async failedRequestHandler({ request }) {
-      console.error(`Request ${request.url} failed too many times.`);
-    },
-  });
-
-  await requestQueue.addRequest({ url: initialUrl, userData: { isTosPage: false } });
-  await crawler.run();
-}
+      },
+  
+      async failedRequestHandler({ request }) {
+        console.error(`Request ${request.url} failed too many times.`);
+      },
+    });
+  
+    await requestQueue.addRequest({ url: initialUrl, userData: { isTosPage: false } });
+    await crawler.run();
+  }

@@ -34,5 +34,9 @@ export interface WebsiteData {
   id: number;
   url: string;
   site_name: string;
+  normalized_url: string;
+  tos_url?: string;
+  favicon_url?: string;
+  simplified_overview?: any;
   last_crawled: string;
 }
