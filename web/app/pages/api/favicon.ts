@@ -4,9 +4,11 @@
 import fs from 'fs';
 import path from 'path';
 import https from 'https';
+import http from 'http';
 import { createClient } from '@supabase/supabase-js';
 import { config } from 'dotenv';
-import sharp from 'sharp';
+import imagemagick from 'imagemagick';
+import stream from 'stream';
 
 config();
 
@@ -14,61 +16,94 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 
 // Download favicon, convert to PNG, and store in Supabase Storage
 export async function downloadFavicon(domain: string): Promise<string | null> {
-  const faviconUrl = `${domain}/favicon.ico`;
-  const filename = `${new URL(domain).hostname}_favicon.png`; // Change the extension to .png
+    const hostname = new URL(domain).hostname;
+    const filename = `${hostname}_favicon.png`; // Change the extension to .png
+  
+    // Try different approaches to construct the faviconUrl
+    const faviconUrlAttempts = [
+      `${domain}/favicon.ico`, // Try the root path first
+      `https://${hostname}/favicon.ico`,
+      `https://www.${hostname}/favicon.ico`,
+      `${domain}/static/favicon.ico`,
+      `${domain}/assets/favicon.ico`,
+      `${domain}/images/favicon.ico`,
+    ];
 
-  return new Promise((resolve) => {
-    https.get(faviconUrl, async (res) => {
-      if (res.statusCode === 200) {
-        const tempFilePath = path.join(__dirname, `${new URL(domain).hostname}_favicon.ico`);
-        const fileStream = fs.createWriteStream(tempFilePath);
-        res.pipe(fileStream);
-
-        fileStream.on('finish', async () => {
-          fileStream.close();
-          console.log(`Downloaded favicon to ${tempFilePath}`);
-
-          // Convert ICO to PNG
+    for (const faviconUrl of faviconUrlAttempts) {
+        console.log(`Attempting to download favicon from ${faviconUrl}`);
+    
+        try {
+          const tempFilePath = path.join(__dirname, `${hostname}_favicon.ico`);
           const outputFilePath = path.join(__dirname, filename);
-          try {
-            await sharp(tempFilePath)
-              .png()
-              .toFile(outputFilePath);
-            console.log(`Converted favicon to PNG at ${outputFilePath}`);
-
-            // Upload the PNG favicon to Supabase Storage
-            const { data, error } = await supabase.storage
-              .from('favicons')
-              .upload(filename, fs.createReadStream(outputFilePath));
-
-            if (error) {
-              console.error('Error uploading favicon to Supabase Storage:', error.message);
-              resolve(null);
-            } else {
-              console.log('Favicon uploaded to Supabase Storage:', data);
-              const { data: publicUrlData } = supabase
-                .storage
-                .from('favicons')
-                .getPublicUrl(filename);
-
-              resolve(publicUrlData.publicUrl);
-            }
-          } catch (conversionError) {
-            console.error('Error converting favicon:', conversionError.message);
-            resolve(null);
-          } finally {
-            // Clean up both the original and converted files
-            fs.unlinkSync(tempFilePath);
-            fs.unlinkSync(outputFilePath);
+    
+          const response = await new Promise<http.IncomingMessage>((resolve, reject) => {
+            https.get(faviconUrl, (res) => {
+              resolve(res);
+            }).on('error', (err) => {
+              reject(err);
+            });
+          });
+    
+          if (response.statusCode === 200) {
+            const fileStream = fs.createWriteStream(tempFilePath);
+            response.pipe(fileStream);
+    
+            fileStream.on('finish', async () => {
+              fileStream.close();
+              console.log(`Downloaded favicon to ${tempFilePath}`);
+    
+              try {
+                const readStream = fs.createReadStream(tempFilePath);
+                const writeStream = fs.createWriteStream(outputFilePath);
+    
+                await new Promise((resolve, reject) => {
+                  stream.pipeline(
+                    readStream,
+                    imagemagick().convert(['-flatten', 'png:-']),
+                    writeStream,
+                    (err) => {
+                      if (err) {
+                        reject(err);
+                      } else {
+                        resolve(null);
+                      }
+                    }
+                  );
+                });
+    
+                console.log(`Converted favicon to PNG at ${outputFilePath}`);
+    
+                const { data, error } = await supabase.storage
+                  .from('favicons')
+                  .upload(filename, fs.createReadStream(outputFilePath));
+    
+                if (error) {
+                  console.error('Error uploading favicon to Supabase Storage:', error.message);
+                  return null;
+                } else {
+                  console.log('Favicon uploaded to Supabase Storage:', data);
+                  const { data: publicUrlData } = supabase
+                    .storage
+                    .from('favicons')
+                    .getPublicUrl(filename);
+                  return publicUrlData.publicUrl;
+                }
+              } catch (conversionError) {
+                console.error('Error converting favicon:', conversionError.message);
+                return null;
+              } finally {
+                fs.unlinkSync(tempFilePath);
+                fs.unlinkSync(outputFilePath);
+              }
+            });
+          } else {
+            console.log(`Failed to download favicon from ${faviconUrl}`);
           }
-        });
-      } else {
-        console.log(`Failed to download favicon from ${faviconUrl}`);
-        resolve(null);
+        } catch (error) {
+          console.error(`Error downloading favicon from ${faviconUrl}:`, error.message);
+        }
       }
-    }).on('error', (err) => {
-      console.error(`Error downloading favicon from ${faviconUrl}: ${err.message}`);
-      resolve(null);
-    });
-  });
-}
+    
+      console.error('Unable to download favicon after multiple attempts.');
+      return null;
+    }

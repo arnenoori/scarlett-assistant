@@ -25,6 +25,7 @@
     "dotenv": "^16.4.5",
     "eslint-config-next": "latest",
     "framer-motion": "^11.1.5",
+    "imagemagick": "^0.1.3",
     "marked": "^12.0.1",
     "next": "latest",
     "next-themes": "^0.3.0",
@@ -33,7 +34,6 @@
     "react": "latest",
     "react-dom": "latest",
     "sass": "^1.75.0",
-    "sharp": "^0.33.3",
     "swiper": "^11.1.1",
     "tailwind-merge": "^2.2.2",
     "use-debounce": "^10.0.0"

@@ -6,10 +6,7 @@ import path from 'path';
 import { downloadFavicon } from './favicon';
 import { processContent } from './summarization';
 import { createClient } from '@supabase/supabase-js';
-import { WebsiteData } from '~/types/websites';
 import { config } from 'dotenv';
-import { PostgrestSingleResponse } from '@supabase/supabase-js';
-import { Database } from "~/types/supabase";
 import { WebsiteRow, WebsiteInsertData } from '~/types/database';
 
 config();
@@ -82,7 +79,7 @@ async function saveToTextFile(filename: string, content: string, processedConten
       .single();
   
     if (insertError) {
-      console.error('Error inserting website into Supabase:', insertError.message);
+      console.error('Error inserting website into Supabase:', insertError.message, insertError);
       return null;
     }
   
@@ -90,8 +87,25 @@ async function saveToTextFile(filename: string, content: string, processedConten
       const insertedRow = insertedData as WebsiteRow;
       return { websiteId: insertedRow.id, siteName: insertedRow.site_name };
     } else {
-      console.error('Insert operation did not return expected data.');
-      return null;
+      // Check if the website was inserted successfully by querying the database
+      const { data: insertedWebsite, error: queryError } = await supabase
+        .from<'websites', 'public'>('websites')
+        .select('*')
+        .eq('normalized_url', normalizedUrl)
+        .single();
+  
+      if (queryError) {
+        console.error('Error querying inserted website:', queryError.message);
+        return null;
+      }
+  
+      if (insertedWebsite) {
+        const websiteData = insertedWebsite as { id: number; site_name: string }; // Type assertion
+        return { websiteId: websiteData.id, siteName: websiteData.site_name };
+      } else {
+        console.error('Insert operation did not return expected data. Inserted data:', insertData);
+        return null;
+      }
     }
   }
 
@@ -164,7 +178,7 @@ export async function crawlTos(initialUrl: string) {
     const { websiteId, siteName } = websiteData;
   
     console.log('Downloading favicon');
-    const faviconUrl = await downloadFavicon(initialUrl);
+    const faviconUrl = await downloadFavicon(normalizedUrl); // Pass normalizedUrl instead of initialUrl
   
     const crawler = new PlaywrightCrawler({
       requestQueue,
