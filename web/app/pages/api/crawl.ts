@@ -9,6 +9,8 @@ import { createClient } from '@supabase/supabase-js';
 import { WebsiteData } from '~/types/websites';
 import { config } from 'dotenv';
 import { PostgrestSingleResponse } from '@supabase/supabase-js';
+import { Database } from "~/types/supabase";
+import { WebsiteRow, WebsiteInsertData } from '~/types/database';
 
 config();
 
@@ -45,44 +47,51 @@ async function saveToTextFile(filename: string, content: string, processedConten
     }
   }
 
-async function getWebsiteData(initialUrl: string): Promise<{ websiteId: number; siteName: string } | null> {
+  async function getWebsiteData(initialUrl: string): Promise<{ websiteId: number; siteName: string } | null> {
     const normalizedUrl = new URL(initialUrl).origin;
-    let { data: websiteData, error: websiteError }: PostgrestSingleResponse<WebsiteData> = await supabase
-      .from('websites')
-      .select('id, site_name')
-      .eq('url', normalizedUrl)
-      .single();
   
-    if (websiteError) {
-      console.error('Error querying website from Supabase:', websiteError.message);
+    // Check if the normalized URL already exists in the database
+    const { data: existingData, error: existingError } = await supabase
+      .from<'websites', 'public'>('websites')
+      .select('*')
+      .eq('normalized_url', normalizedUrl);
+  
+    if (existingError) {
+      console.error('Error checking website existence in Supabase:', existingError.message);
       return null;
     }
   
-    if (websiteData) {
-      return { websiteId: websiteData.id, siteName: websiteData.site_name };
+    // If the normalized URL exists, return the first entry
+    if (existingData && existingData.length > 0) {
+      const firstEntry = existingData[0] as WebsiteRow;
+      return { websiteId: firstEntry.id, siteName: firstEntry.site_name };
+    }
+  
+    // Website doesn't exist, create a new entry
+    console.log('Website not found in database, inserting new entry');
+    const siteName = new URL(initialUrl).hostname.replace(/^www\./, '').split('.')[0];
+    const insertData = {
+      url: initialUrl,
+      site_name: siteName,
+      normalized_url: normalizedUrl,
+      last_crawled: new Date().toISOString(),
+    };
+    const { data: insertedData, error: insertError } = await supabase
+      .from('websites')
+      .insert(insertData)
+      .single();
+  
+    if (insertError) {
+      console.error('Error inserting website into Supabase:', insertError.message);
+      return null;
+    }
+  
+    if (insertedData) {
+      const insertedRow = insertedData as WebsiteRow;
+      return { websiteId: insertedRow.id, siteName: insertedRow.site_name };
     } else {
-      console.log('Website not found in database, inserting new entry');
-      const siteName = new URL(initialUrl).hostname.replace(/^www\./, '').split('.')[0];
-      const { data: insertData, error: insertError }: PostgrestSingleResponse<WebsiteData> = await supabase
-        .from('websites')
-        .insert({
-          url: normalizedUrl,
-          site_name: siteName,
-          last_crawled: new Date().toISOString()
-        })
-        .single();
-  
-      if (insertError) {
-        console.error('Error inserting website into Supabase:', insertError.message);
-        return null;
-      }
-  
-      if (insertData) {
-        return { websiteId: insertData.id, siteName: insertData.site_name };
-      } else {
-        console.error('Insert operation did not return expected data.');
-        return null;
-      }
+      console.error('Insert operation did not return expected data.');
+      return null;
     }
   }
 
