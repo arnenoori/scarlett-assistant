@@ -15,6 +15,8 @@ config();
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
 // Download favicon, convert to PNG, and store in Supabase Storage
+
+// // sharp, imagemagick, jump, ico-to-png not working need to use another package manager
 export async function downloadFavicon(domain: string): Promise<string | null> {
     const hostname = new URL(domain).hostname;
     const filename = `${hostname}_favicon.png`; // Change the extension to .png

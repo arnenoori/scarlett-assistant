@@ -5,7 +5,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     const { url } = req.body;
     console.log('Received POST request with URL:', url);
-
     try {
       await crawlTos(url);
       res.status(200).json({ message: 'ToS crawled successfully' });
