@@ -73,7 +73,7 @@ function popularwebsitesPage(props: Props) {
                     title="Integrations"
                     color="blue"
                     description="Extend and automate your workflow by using integrations for your favorite tools."
-                    href={`/websites/integrations`}
+                    href={`/websites`}
                     icon={
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -95,7 +95,7 @@ function popularwebsitesPage(props: Props) {
                     title="Become a website"
                     color="brand"
                     description="Fill out a quick 30 second form to apply to become a website"
-                    href={`/websites/integrations#add-a-website`}
+                    href={`/websites#add-a-website`}
                     icon={
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

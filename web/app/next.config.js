@@ -15,17 +15,13 @@ module.exports = {
   },
   async redirects() {
     return [
-      {
-        permanent: false,
-        source: '/',
-        destination: '/websites/integrations',
-      },
+      // This redirection has been removed to keep the homepage at '/'
+      // {
+      //   permanent: false,
+      //   source: '/',
+      //   destination: '/websites',
+      // },
       // Have integrations as the default websites page
-      {
-        permanent: false,
-        source: '/websites',
-        destination: '/websites/integrations',
-      },
     ]
   },
 }

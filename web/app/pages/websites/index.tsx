@@ -164,7 +164,7 @@ function IntegrationwebsitesPage(props: Props) {
                       title="Most Popular"
                       color="blue"
                       description="View the most popular websites"
-                      href={`/websites/populars`}
+                      href={`/popular`}
                       icon={
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -184,7 +184,7 @@ function IntegrationwebsitesPage(props: Props) {
                     />
 
                     <WebsiteLinkBox
-                      href={`/websites/integrations#add-a-website`}
+                      href={`/websites#add-a-website`}
                       title="Add a website"
                       color="brand"
                       description="Fill out a quick 30 second form to apply to add a website"

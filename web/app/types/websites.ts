@@ -31,7 +31,7 @@ export interface WebsiteContact {
 }
 
 export interface WebsiteData {
-  website_id: number; // Ensure this property is correctly defined
+  website_id: number;
   url: string;
   site_name: string;
   last_crawled: Date;

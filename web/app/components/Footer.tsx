@@ -2,7 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useInView } from 'framer-motion'
-import styles from 'styles/signature.module.scss' // Adjust the path to match your project structure
+import styles from 'styles/signature.module.scss'
 
 function Footer() {
   const ref = React.useRef<HTMLElement | null>(null)
