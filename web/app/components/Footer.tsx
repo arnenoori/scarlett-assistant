@@ -1,34 +1,46 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-import { useInView } from 'framer-motion'
-import styles from 'styles/signature.module.scss'
+import React, { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import Image from 'next/image';
+import styles from 'styles/signature.module.scss';
+import { useTheme } from '../lib/theme';
 
 function Footer() {
-  const ref = React.useRef<HTMLElement | null>(null)
+  const { isDarkMode } = useTheme();
+  const ref = useRef<HTMLElement | null>(null);
   const isInView = useInView(ref, {
     once: true,
     margin: '100px',
-  })
+  });
+
+  // Define styles based on the theme, with correct typing for CSS properties
+  const footerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: isDarkMode ? '#333' : '#fff',
+    color: isDarkMode ? '#fff' : '#000',
+  };
 
   return (
-    <footer ref={ref} className={styles.footer} data-animate={isInView}>
-      <div className={styles.footerText}>
+    <footer ref={ref} className={styles.footer} data-animate={isInView} style={footerStyle}>
+      <div className={styles.footerText} style={{ textAlign: 'center' }}>
         Crafted by{' '}
-        <a href="https://arne.me" target="_blank" rel="noopener noreferrer">
-          <Image src="/web/app/public/images/arne.png" alt="Avatar of Arne" width={50} height={50} />
-          Arne
+        <a href="https://arne.ai" target="_blank" rel="noopener noreferrer">
+          <Image src="/images/arne.png" alt="Avatar of Arne" width={50} height={50} />
         </a>{' '}
         and{' '}
-        <a href="https://connor.me" target="_blank" rel="noopener noreferrer">
-          <Image src="/web/app/public/images/connor.png" alt="Avatar of Connor" width={50} height={50} />
-          Connor
+        <a href="https://www.linkedin.com/in/obrienconnorp/" target="_blank" rel="noopener noreferrer">
+          <Image src="/images/connor.jpeg" alt="Avatar of Connor" width={50} height={50} />
         </a>
       </div>
-      <ConnorSignature />
-      <ArneSignature />
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <ConnorSignature />
+        <ArneSignature />
+      </div>
     </footer>
-  )
+  );
 }
 
 function ConnorSignature() {
@@ -43,6 +55,7 @@ function ConnorSignature() {
       height="118"
       viewBox="0 0 356 118"
       fill="none"
+      style={{ margin: 'auto' }} // Center the signature
     >
       <path
         d="M39.6522 10.8727C32.0622 19.9486 23.7402 27.7351 17.4485 37.93C14.1895 43.2106 10.8425 48.7619 8.15072 54.3365M2 4.56219C30.9703 4.28687 59.8154 4.46461 88.706 2M5.10832 31.8394C13.3342 30.3515 21.957 30.4518 30.2799 30.1261C32.4305 30.042 44.8189 31.0777 46.043 28.5427M35.5504 60.1056C40.7881 57.8276 45.1269 55.9145 45.2348 49.7269C45.2992 46.04 42.3852 43.6679 39.7347 41.6068C37.1441 39.5922 35.2035 40.7255 34.7931 43.7239C34.4752 46.0474 34.2899 48.3127 37.0257 48.7777C42.1989 49.6571 48.6039 49.4477 53.6739 48.0927C55.9963 47.472 58.0383 46.5469 59.7769 44.897C61.5598 43.2051 59.4798 48.3421 59.2622 48.8504C57.0455 54.0293 55.0028 57.9764 61.8826 60.0079C65.247 61.0013 68.6702 59.0371 71.8755 58.2384C74.4094 57.607 78.1527 57.4135 79.4538 54.7188C80.3093 52.9471 79.5946 45.3814 78.0185 44.19C77.8193 44.0395 70.1595 58.7844 70.5548 61.5199C71.083 65.1755 85.5921 60.8116 87.8354 59.9155C93.0005 57.8521 101.259 42.1787 98.0502 46.7216C96.0097 49.6102 94.8149 54.7237 94.0336 58.1224C93.9591 58.4465 92.9251 63.1692 94.3224 62.558C100.1 60.0307 107.906 58.9913 111.843 53.589C116.212 47.5929 116.624 39.2412 120.13 32.719C123.998 25.5256 110.938 47.1508 110.652 55.3129C110.53 58.8278 110.847 62.2658 113.478 64.8739C115.031 66.4132 118.704 68.7663 120.95 67.3511C122.633 66.2906 122.854 63.0236 123.332 61.285C123.533 60.558 124.804 54.7916 125.523 57.8018C127.423 65.7487 134.234 63.8099 139.205 59.3585C141.166 57.6021 143.163 55.3598 143.895 52.7674C144.073 52.137 144.083 50.0543 142.883 50.96C140.761 52.5616 132.552 63.5513 136.828 65.8799C140.973 68.1366 147.493 69.2386 151.211 66.0229C153.763 63.8167 155.807 60.4623 157.011 57.3295C157.374 56.3842 159.996 48.1819 158.697 47.5545C157.253 46.8572 157.109 52.813 157.414 53.5674C158.282 55.7108 161.296 55.7058 163.208 55.4606C164.958 55.2361 168.071 54.7284 169.248 53.2144C170.028 52.2114 170.241 55.5535 170.738 56.7227C172.225 60.2188 177.289 62.6928 181.044 61.096C183.988 59.8437 186.231 55.0676 189.15 54.6094C192.701 54.052 190.67 50.7455 188.287 49.8024C180.738 46.815 172.87 57.705 176.69 64.571C177.646 66.2894 181.226 63.8978 182.329 63.5067C188.555 61.2998 194.823 59.1513 199.465 54.2015C200.301 53.3106 200.377 52.9071 199.546 54.504C197.173 59.0586 195.315 63.8749 193.213 68.5549C190.335 74.9632 187.327 81.8528 182.771 87.2918C171.982 100.172 154.827 106.815 139.004 110.814C107.54 118.768 70.3986 118.508 39.9452 106.375C37.0775 105.233 32.6626 103.665 30.3512 101.309C28.0213 98.9348 36.0214 97.3532 39.3217 96.9357C56.758 94.7296 74.5289 94.2763 92.0549 93.4762C135.849 91.4768 179.752 90.2295 223.344 85.2523C252.079 81.9713 280.556 77.0898 308.262 68.6373C317.289 65.8833 330.847 60.7964 339.74 56.4402C358.309 47.3441 339.301 55.8458 353.656 47.521M100.748 33.252C100.877 36.5762 102.167 37.0453 102.123 33.916"
@@ -67,6 +80,7 @@ function ArneSignature() {
       whileInView={{ opacity: 0 }}
       transition={{ delay: 2.5 }}
       viewport={{ once: true }}
+      style={{ margin: 'auto' }} // Center the signature
     >
       <path
         d="M86.684 24.8853C84.684 64.5519 81.884 144.085 86.684 144.885M39.684 8.88526C68.3506 0.385261 131.984 -7.11474 157.184 30.8853C182.384 68.8853 96.3507 111.719 50.184 128.385C26.8506 138.885 -14.116 162.085 8.68398 170.885"

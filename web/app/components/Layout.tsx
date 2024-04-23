@@ -1,11 +1,11 @@
-import { PropsWithChildren, useEffect } from 'react'
-import Footer from './Footer'
-import Nav from './Nav'
+import { PropsWithChildren, useEffect } from 'react';
+import Footer from './Footer';
+import Nav from './Nav';
 
 type LayoutProps = {
-  hideHeader?: boolean
-  hideFooter?: boolean
-}
+  hideHeader?: boolean;
+  hideFooter?: boolean;
+};
 
 const Layout = ({
   hideHeader = false,
@@ -13,24 +13,27 @@ const Layout = ({
   children,
 }: PropsWithChildren<LayoutProps>) => {
   useEffect(() => {
-    const key = localStorage.getItem('supabaseDarkMode')
+    const key = localStorage.getItem('supabaseDarkMode');
     if (!key) {
-      // Default to dark mode if no preference config
-      document.documentElement.className = 'dark'
+      document.documentElement.className = 'dark';
     } else {
-      document.documentElement.className = key === 'true' ? 'dark' : ''
+      document.documentElement.className = key === 'true' ? 'dark' : '';
     }
-  }, [])
+  }, []);
 
   return (
     <>
       {!hideHeader && <Nav />}
-      <div className="min-h-screen">
-        <main>{children}</main>
+      <div className="flex flex-col min-h-screen">
+        <main className="flex-grow">{children}</main>
+        {!hideFooter && (
+          <div className="mt-auto">
+            <Footer />
+          </div>
+        )}
       </div>
-      {!hideFooter && <Footer />}
     </>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

@@ -106,7 +106,7 @@ function IntegrationwebsitesPage(props: Props) {
   return (
     <>
       <Head>
-        <title>{meta_title} | Supabase website Gallery Example</title>
+        <title>{meta_title} | TOS Buddy</title>
         <meta name="description" content={meta_description}></meta>
         <link rel="icon" href="/favicon.ico" />
       </Head>

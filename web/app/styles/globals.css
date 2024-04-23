@@ -161,3 +161,25 @@ body {
 .dashboard-tabs > div > div {
   justify-content: center;
 }
+
+html, body, #__next {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1 0 auto; /* Flex-grow, flex-shrink, flex-basis */
+}
+
+.footer {
+  flex-shrink: 0; /* Prevents the footer from growing */
+  text-align: center; /* Centers the text */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+}
