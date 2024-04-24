@@ -44,12 +44,12 @@ async function saveToTextFile(filename: string, content: string, processedConten
     }
   }
 
-  async function getWebsiteData(initialUrl: string): Promise<{ websiteId: number; siteName: string } | null> {
+  export async function getWebsiteData(initialUrl: string): Promise<{ websiteId: number; siteName: string; normalizedUrl: string } | null> {
     const normalizedUrl = new URL(initialUrl).origin;
   
     // Check if the normalized URL already exists in the database
     const { data: existingData, error: existingError } = await supabase
-      .from<'websites', 'public'>('websites')
+      .from('websites')
       .select('*')
       .eq('normalized_url', normalizedUrl);
   
@@ -61,7 +61,7 @@ async function saveToTextFile(filename: string, content: string, processedConten
     // If the normalized URL exists, return the first entry
     if (existingData && existingData.length > 0) {
       const firstEntry = existingData[0] as WebsiteRow;
-      return { websiteId: firstEntry.id, siteName: firstEntry.site_name };
+      return { websiteId: firstEntry.id, siteName: firstEntry.site_name, normalizedUrl: firstEntry.normalized_url };
     }
   
     // Website doesn't exist, create a new entry
@@ -85,11 +85,11 @@ async function saveToTextFile(filename: string, content: string, processedConten
   
     if (insertedData) {
       const insertedRow = insertedData as WebsiteRow;
-      return { websiteId: insertedRow.id, siteName: insertedRow.site_name };
+      return { websiteId: insertedRow.id, siteName: insertedRow.site_name, normalizedUrl: insertedRow.normalized_url };
     } else {
       // Check if the website was inserted successfully by querying the database
       const { data: insertedWebsite, error: queryError } = await supabase
-        .from<'websites', 'public'>('websites')
+        .from('websites')
         .select('*')
         .eq('normalized_url', normalizedUrl)
         .single();
@@ -100,8 +100,8 @@ async function saveToTextFile(filename: string, content: string, processedConten
       }
   
       if (insertedWebsite) {
-        const websiteData = insertedWebsite as { id: number; site_name: string }; // Type assertion
-        return { websiteId: websiteData.id, siteName: websiteData.site_name };
+        const websiteData = insertedWebsite as { id: number; site_name: string; normalized_url: string }; // Type assertion
+        return { websiteId: websiteData.id, siteName: websiteData.site_name, normalizedUrl: websiteData.normalized_url };
       } else {
         console.error('Insert operation did not return expected data. Inserted data:', insertData);
         return null;
@@ -164,58 +164,51 @@ function generateFilename(urlString: string, pageTitle: string): string {
   return `${siteName}_${label}.txt`;
 }
 
-export async function crawlTos(initialUrl: string) {
-    console.log('Starting ToS crawling for URL:', initialUrl);
-    const requestQueue = await RequestQueue.open();
-    const normalizedUrl = normalizeUrlToRoot(initialUrl);
-  
-    const websiteData = await getWebsiteData(normalizedUrl);
-    if (!websiteData) {
-      console.error('Unable to fetch or create website data.');
-      return;
-    }
-  
-    const { websiteId, siteName } = websiteData;
-  
-    console.log('Downloading favicon');
-    const faviconUrl = await downloadFavicon(normalizedUrl); // Pass normalizedUrl instead of initialUrl
-  
-    const crawler = new PlaywrightCrawler({
-      requestQueue,
-  
-      async requestHandler({ request, page, enqueueLinks }) {
-        if (request.userData.isTosPage) {
-          console.log('Processing ToS page:', request.url);
-          const pageTitle = await page.title();
-          const textContent = await page.evaluate(() => document.body.innerText);
-          const processedContent = await processContent(textContent);
-          const filename = generateFilename(request.url, pageTitle);
-          await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
-          console.log(`Saved ToS text content to ${filename}`);
-  
-          const parsedContent = JSON.parse(processedContent);
-          await updateWebsiteData(websiteId, parsedContent, initialUrl, request.url, siteName, normalizedUrl, faviconUrl);
-        } else {
-          const pageTitle = await page.title();
-          console.log(`Title of ${request.url}: ${pageTitle}`);
-  
-          const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
-            anchors
-              .filter(a => /terms|tos|privacy/i.test(a.textContent || '') || /terms|tos|privacy/i.test(a.href || ''))
-              .map(a => a.href)
-              .filter((link): link is string => link !== null)
-          );
-          for (const link of tosLinks) {
-            await requestQueue.addRequest({ url: link, userData: { isTosPage: true } });
-          }
+export async function crawlTos(websiteData: { websiteId: number; siteName: string; normalizedUrl: string }) {
+  const { websiteId, siteName, normalizedUrl } = websiteData;
+
+  console.log('Starting ToS crawling for URL:', normalizedUrl);
+  const requestQueue = await RequestQueue.open();
+
+  console.log('Downloading favicon');
+  const faviconUrl = await downloadFavicon(normalizedUrl);
+
+  const crawler = new PlaywrightCrawler({
+    requestQueue,
+
+    async requestHandler({ request, page, enqueueLinks }) {
+      if (request.userData.isTosPage) {
+        console.log('Processing ToS page:', request.url);
+        const pageTitle = await page.title();
+        const textContent = await page.evaluate(() => document.body.innerText);
+        const processedContent = await processContent(textContent);
+        const filename = generateFilename(request.url, pageTitle);
+        await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
+        console.log(`Saved ToS text content to ${filename}`);
+
+        const parsedContent = JSON.parse(processedContent);
+        await updateWebsiteData(websiteId, parsedContent, normalizedUrl, request.url, siteName, normalizedUrl, faviconUrl);
+      } else {
+        const pageTitle = await page.title();
+        console.log(`Title of ${request.url}: ${pageTitle}`);
+
+        const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
+          anchors
+            .filter(a => /terms|tos|privacy/i.test(a.textContent || '') || /terms|tos|privacy/i.test(a.href || ''))
+            .map(a => a.href)
+            .filter((link): link is string => link !== null)
+        );
+        for (const link of tosLinks) {
+          await requestQueue.addRequest({ url: link, userData: { isTosPage: true } });
         }
-      },
-  
-      async failedRequestHandler({ request }) {
-        console.error(`Request ${request.url} failed too many times.`);
-      },
-    });
-  
-    await requestQueue.addRequest({ url: initialUrl, userData: { isTosPage: false } });
-    await crawler.run();
-  }
+      }
+    },
+
+    async failedRequestHandler({ request }) {
+      console.error(`Request ${request.url} failed too many times.`);
+    },
+  });
+
+  await requestQueue.addRequest({ url: normalizedUrl, userData: { isTosPage: false } });
+  await crawler.run();
+}
