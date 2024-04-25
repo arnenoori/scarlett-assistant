@@ -1,7 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Form, Input } from '@supabase/ui';
 import { useState } from 'react';
-import { WebsiteContact } from '~/types/websites';
 import { HoverBorderGradient } from './ui/hover-border-gradient';
 import { MultiStepLoader } from './ui/multi-step-loader';
 import { BackgroundBeams } from './ui/background-beams';

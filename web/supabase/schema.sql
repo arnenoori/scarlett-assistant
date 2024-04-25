@@ -6,6 +6,7 @@ CREATE TABLE websites (
   tos_url TEXT,
   favicon_url TEXT,
   simplified_overview JSONB,
+  category TEXT,
   last_crawled TIMESTAMP,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()

@@ -7,7 +7,7 @@ import { downloadFavicon } from './favicon';
 import { processContent } from './summarization';
 import { createClient } from '@supabase/supabase-js';
 import { config } from 'dotenv';
-import { WebsiteRow, WebsiteInsertData } from '~/types/database';
+import { WebsiteRow } from '~/types/websites';
 
 config();
 

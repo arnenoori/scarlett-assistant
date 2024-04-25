@@ -1,29 +1,26 @@
-import { IconLoader, IconSearch, Input } from '@supabase/ui'
-import { error } from 'console'
-import Head from 'next/head'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { useDebounce } from 'use-debounce'
-import AddAWebsite from '~/components/AddAWebsite'
-import Layout from '~/components/Layout'
-import WebsiteLinkBox from '~/components/WebsiteLinkBox'
-import WebsiteTileGrid from '~/components/WebsiteTileGrid'
-import SectionContainer from '~/components/SectionContainer'
-import supabase from '~/lib/supabase'
-import { Website } from '~/types/websites'
+// websites/index.tsx
+import { IconLoader, IconSearch, Input } from '@supabase/ui';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useDebounce } from 'use-debounce';
+import AddAWebsite from '~/components/AddAWebsite';
+import Layout from '~/components/Layout';
+import WebsiteLinkBox from '~/components/WebsiteLinkBox';
+import WebsiteTileGrid from '~/components/WebsiteTileGrid';
+import SectionContainer from '~/components/SectionContainer';
+import supabase from '~/lib/supabase';
+import { WebsiteRow } from '~/types/websites';
 
 export async function getStaticProps() {
   const { data: websites, error } = await supabase
-    .from('websites') // Use the table name as a string without generic type
+    .from('websites')
     .select('*')
-    .eq('approved', true)
-    .eq('type', 'technology')
-    .order('category')
-    .order('title')
+    .order('site_name');
 
   if (error) {
     console.error('Error fetching websites:', error);
-    return { props: { websites: [] } }; // Handle the error by returning an empty array or appropriate error handling
+    return { props: { websites: [] } };
   }
 
   return {
@@ -31,77 +28,58 @@ export async function getStaticProps() {
       websites: websites ?? [],
     },
     revalidate: 18000, // In seconds - refresh every 5 hours
-  }
+  };
 }
 
 interface Props {
-  websites: Website[]
+  websites: WebsiteRow[];
 }
 
-function IntegrationwebsitesPage(props: Props) {
-  const { websites: initialwebsites } = props
-  const [websites, setwebsites] = useState(initialwebsites)
+function IntegrationWebsitesPage(props: Props) {
+  const { websites: initialWebsites } = props;
+  const [websites, setWebsites] = useState(initialWebsites);
 
-  const allCategories = Array.from(
-    new Set(initialwebsites.map((p) => p.category))
-  )
+  const router = useRouter();
 
-  const WebsitesByCategory: { [category: string]: Website[] } = {}
-  websites.forEach(
-    (p) =>
-      (WebsitesByCategory[p.category] = [
-        ...(WebsitesByCategory[p.category] ?? []),
-        p,
-      ])
-  )
-  const router = useRouter()
+  const meta_title = 'Find a simplified terms of service';
+  const meta_description = 'Terms of services simplified for our understanding';
 
-  const meta_title = 'Find a simplified terms of service'
-  const meta_description = `Terms of services for simplfied for our understanding`
-
-  const [search, setSearch] = useState('')
-  const [debouncedSearchTerm] = useDebounce(search, 300)
-  const [isSearching, setIsSearching] = useState(false)
+  const [search, setSearch] = useState('');
+  const [debouncedSearchTerm] = useDebounce(search, 300);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    const searchwebsites = async () => {
-      setIsSearching(true)
-  
+    const searchWebsites = async () => {
+      setIsSearching(true);
+
       let query = supabase
-        .from('websites') // Use the table name as a string without generic type
+        .from('websites')
         .select('*')
-        .eq('approved', true)
-        .order('category')
-        .order('title')
-  
+        .order('site_name');
+
       if (search.trim()) {
-        query = query
-          // @ts-ignore
-          .textSearch('tsv', `${search.trim()}`, {
-            type: 'websearch',
-            config: 'english',
-          })
+        query = query.ilike('site_name', `%${search.trim()}%`);
       }
-  
-      const { data: websites } = await query
-  
-      return websites
-    }
-  
+
+      const { data: websites } = await query;
+
+      return websites;
+    };
+
     if (search.trim() === '') {
-      setIsSearching(false)
-      setwebsites(initialwebsites)
-      return
+      setIsSearching(false);
+      setWebsites(initialWebsites);
+      return;
     }
-  
-    searchwebsites().then((websites) => {
+
+    searchWebsites().then((websites) => {
       if (websites) {
-        setwebsites(websites)
+        setWebsites(websites);
       }
-  
-      setIsSearching(false)
-    })
-  }, [debouncedSearchTerm, router])
+
+      setIsSearching(false);
+    });
+  }, [debouncedSearchTerm, router]);
 
   return (
     <>
@@ -122,13 +100,11 @@ function IntegrationwebsitesPage(props: Props) {
               {/* Horizontal link menu */}
               <div className="space-y-6">
                 {/* Search Bar */}
-
                 <Input
                   size="small"
                   icon={<IconSearch />}
                   placeholder="Search..."
                   type="text"
-                  // className="md:w-1/2"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   actions={
@@ -139,22 +115,6 @@ function IntegrationwebsitesPage(props: Props) {
                     )
                   }
                 />
-                <div className="hidden lg:block">
-                  <div className="mb-2 text-sm text-scale-900">Categories</div>
-                  <div className="space-y-1">
-                    {allCategories.map((category) => (
-                      <button
-                        key={category}
-                        onClick={() =>
-                          router.push(`#${category.toLowerCase()}`)
-                        }
-                        className="block text-base text-scale-1100"
-                      >
-                        {category}
-                      </button>
-                    ))}
-                  </div>
-                </div>
                 <div className="space-y-4">
                   <div className="mb-2 text-sm text-scale-900">
                     Explore more
@@ -210,10 +170,10 @@ function IntegrationwebsitesPage(props: Props) {
               </div>
             </div>
             <div className="lg:col-span-8 xl:col-span-9">
-              {/* website Tiles */}
+              {/* Website Tiles */}
               <div className="grid space-y-10">
                 {websites.length ? (
-                  <WebsiteTileGrid WebsitesByCategory={WebsitesByCategory} />
+                  <WebsiteTileGrid websites={websites} />
                 ) : (
                   <h2 className="h2">No Companies Found</h2>
                 )}
@@ -225,7 +185,7 @@ function IntegrationwebsitesPage(props: Props) {
         <AddAWebsite supabase={supabase} />
       </Layout>
     </>
-  )
+  );
 }
 
-export default IntegrationwebsitesPage
+export default IntegrationWebsitesPage;
