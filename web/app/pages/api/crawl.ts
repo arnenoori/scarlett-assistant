@@ -1,8 +1,6 @@
 // api/crawl.ts
 // Handles the main crawling functionality, orchestrating the different parts of the API.
 import { PlaywrightCrawler, RequestQueue } from 'crawlee';
-import fs from 'fs';
-import path from 'path';
 import { downloadFavicon } from './favicon';
 import { processContent } from './summarization';
 import { createClient } from '@supabase/supabase-js';
@@ -136,16 +134,6 @@ async function saveToTextFile(filename: string, content: string, processedConten
       })
       .eq('id', websiteId);
   }
-
-// Normalize URL to its domain root
-function normalizeUrlToRoot(inputUrl: string): string {
-  // Check if the URL starts with http:// or https://, if not, prepend http://
-  if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('https://')) {
-    inputUrl = 'https://' + inputUrl;
-  }
-  const urlObj = new URL(inputUrl);
-  return `${urlObj.protocol}//${urlObj.hostname}`;
-}
 
 // Function to generate filename based on website name and document title
 function generateFilename(urlString: string, pageTitle: string): string {
