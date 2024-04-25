@@ -1,6 +1,7 @@
 // api/crawl.ts
 // Handles the main crawling functionality, orchestrating the different parts of the API.
 import { PlaywrightCrawler, RequestQueue } from 'crawlee';
+import axios from 'axios';
 import { downloadFavicon } from './favicon';
 import { processContent } from './summarization';
 import { createClient } from '@supabase/supabase-js';
@@ -64,7 +65,31 @@ async function saveToTextFile(filename: string, content: string, processedConten
   
     // Website doesn't exist, create a new entry
     console.log('Website not found in database, inserting new entry');
-    const siteName = new URL(initialUrl).hostname.replace(/^www\./, '').split('.')[0];
+  
+    // Extract metadata from the website
+    let siteName = '';
+    try {
+      const response = await axios.get(initialUrl);
+      const html = response.data;
+      const titleMatch = html.match(/<title>(.*?)<\/title>/i);
+      if (titleMatch) {
+        const title = titleMatch[1].trim();
+        const pipeIndex = title.indexOf('|');
+        if (pipeIndex !== -1) {
+          siteName = title.slice(0, pipeIndex).trim();
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting metadata:', error.message);
+    }
+  
+    // Fallback to domain name approach
+    if (!siteName) {
+      const domainParts = new URL(initialUrl).hostname.replace(/^www\./, '').split('.');
+      const domainName = domainParts.length > 2 ? domainParts[domainParts.length - 2] : domainParts[0];
+      siteName = splitCamelCase(domainName);
+    }
+  
     const insertData = {
       url: initialUrl,
       site_name: siteName,
@@ -105,6 +130,10 @@ async function saveToTextFile(filename: string, content: string, processedConten
         return null;
       }
     }
+  }
+  
+  function splitCamelCase(str: string): string {
+    return str.split(/(?=[A-Z])/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
   async function updateWebsiteData(websiteId: number, parsedContent: any, initialUrl: string, requestUrl: string, siteName: string, normalizedUrl: string, faviconUrl: string) {
@@ -152,6 +181,32 @@ function generateFilename(urlString: string, pageTitle: string): string {
   return `${siteName}_${label}.txt`;
 }
 
+async function searchTosWithGoogle(website: string): Promise<string | null> {
+  const apiKey = process.env.GOOGLE_API_KEY;
+  const searchEngineId = process.env.GOOGLE_SEARCH_ENGINE_ID;
+  const query = `${website} terms of service`;
+
+  try {
+    const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
+      params: {
+        key: apiKey,
+        cx: searchEngineId,
+        q: query,
+        num: 1,
+      },
+    });
+
+    if (response.data.items && response.data.items.length > 0) {
+      return response.data.items[0].link;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error searching ToS with Google:', error.message);
+    return null;
+  }
+}
+
 export async function crawlTos(websiteData: { websiteId: number; siteName: string; normalizedUrl: string }) {
   const { websiteId, siteName, normalizedUrl } = websiteData;
 
@@ -169,13 +224,22 @@ export async function crawlTos(websiteData: { websiteId: number; siteName: strin
         console.log('Processing ToS page:', request.url);
         const pageTitle = await page.title();
         const textContent = await page.evaluate(() => document.body.innerText);
-        const processedContent = await processContent(textContent);
-        const filename = generateFilename(request.url, pageTitle);
-        await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
-        console.log(`Saved ToS text content to ${filename}`);
 
-        const parsedContent = JSON.parse(processedContent);
-        await updateWebsiteData(websiteId, parsedContent, normalizedUrl, request.url, siteName, normalizedUrl, faviconUrl);
+        // Check if the page content contains common ToS keywords
+        const tosKeywords = ['terms of service', 'terms and conditions', 'user agreement'];
+        const isTosPage = tosKeywords.some(keyword => textContent.toLowerCase().includes(keyword));
+
+        if (isTosPage) {
+          const processedContent = await processContent(textContent);
+          const filename = generateFilename(request.url, pageTitle);
+          await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
+          console.log(`Saved ToS text content to ${filename}`);
+
+          const parsedContent = JSON.parse(processedContent);
+          await updateWebsiteData(websiteId, parsedContent, normalizedUrl, request.url, siteName, normalizedUrl, faviconUrl);
+        } else {
+          console.log('Page does not contain ToS content, skipping:', request.url);
+        }
       } else {
         const pageTitle = await page.title();
         console.log(`Title of ${request.url}: ${pageTitle}`);
@@ -199,4 +263,26 @@ export async function crawlTos(websiteData: { websiteId: number; siteName: strin
 
   await requestQueue.addRequest({ url: normalizedUrl, userData: { isTosPage: false } });
   await crawler.run();
+
+  // Check if any ToS links were found during crawling
+  const tosRequest = await requestQueue.getRequest(normalizedUrl);
+  if (!tosRequest || !tosRequest.userData.isTosPage) {
+    console.log('No ToS links found through scraping, searching with Google');
+    const tosUrl = await searchTosWithGoogle(normalizedUrl);
+    if (tosUrl) {
+      console.log('Found ToS URL through Google search:', tosUrl);
+      await requestQueue.addRequest({ url: tosUrl, userData: { isTosPage: true } });
+      await crawler.run();
+
+      // Double-check if the ToS URL from Google search is actually a ToS page
+      const tosRequest = await requestQueue.getRequest(tosUrl);
+      if (tosRequest && tosRequest.userData.isTosPage) {
+        console.log('Confirmed ToS URL from Google search');
+      } else {
+        console.log('URL from Google search is not a valid ToS page');
+      }
+    } else {
+      console.log('No ToS URL found through Google search');
+    }
+  }
 }
