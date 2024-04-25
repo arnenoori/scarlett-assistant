@@ -1,24 +1,24 @@
-import { IconChevronLeft, IconExternalLink } from '@supabase/ui'
-import { marked } from 'marked'
-import { GetStaticPaths, GetStaticProps } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import Layout from '~/components/Layout'
-import SectionContainer from '~/components/SectionContainer'
-import supabase from '~/lib/supabase'
-import { Website as WebsiteType } from '~/types/websites'
-import Error404 from './404'
+import { IconChevronLeft, IconExternalLink } from '@supabase/ui';
+import { marked } from 'marked';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import Layout from '~/components/Layout';
+import SectionContainer from '~/components/SectionContainer';
+import supabase from '~/lib/supabase';
+import { WebsiteRow } from '~/types/websites';
+import Error404 from './404';
 
-function website({ website }: { website: WebsiteType }) {
-  if (!website) return <Error404 />
+function WebsitePage({ website }: { website: WebsiteRow }) {
+  if (!website) return <Error404 />;
 
   return (
     <>
       <Head>
-        <title>{website.title} | Supabase website Gallery Example</title>
-        <meta name="description" content={website.description}></meta>
+        <title>{website.site_name} | Supabase Website Gallery Example</title>
+        <meta name="description" content={website.simplified_overview?.summary}></meta>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -26,11 +26,7 @@ function website({ website }: { website: WebsiteType }) {
         <SectionContainer>
           <div className="col-span-12 mx-auto mb-2 max-w-5xl space-y-12 lg:col-span-2">
             {/* Back button */}
-            <Link
-              href={`/websites/${
-                website.type === 'technology' ? 'integrations' : 'populars'
-              }`}
-            >
+            <Link href="/websites">
               <a className="flex cursor-pointer items-center text-scale-1200 transition-colors hover:text-scale-1000">
                 <IconChevronLeft style={{ padding: 0 }} />
                 Back
@@ -43,63 +39,12 @@ function website({ website }: { website: WebsiteType }) {
                 width={56}
                 height={56}
                 className="flex-shrink-f0 h-14 w-14 rounded-full bg-scale-400"
-                src={website.logo}
-                alt={website.title}
+                src={website.favicon_url || '/path/to/default/image.png'}
+                alt={website.site_name}
               />
               <h1 className="h1" style={{ marginBottom: 0 }}>
-                {website.title}
+                {website.site_name}
               </h1>
-            </div>
-
-            <div
-              className="bg-scale-300 py-6"
-              style={{
-                marginLeft: 'calc(50% - 50vw)',
-                marginRight: 'calc(50% - 50vw)',
-              }}
-            >
-              <Swiper
-                initialSlide={0}
-                spaceBetween={0}
-                slidesPerView={4}
-                speed={300}
-                // slidesOffsetBefore={300}
-                centerInsufficientSlides={true}
-                breakpoints={{
-                  320: {
-                    slidesPerView: 1,
-                  },
-                  720: {
-                    slidesPerView: 2,
-                  },
-                  920: {
-                    slidesPerView: 3,
-                  },
-                  1024: {
-                    slidesPerView: 4,
-                  },
-                  1208: {
-                    slidesPerView: 5,
-                  },
-                }}
-              >
-                {website.images.map((image: any, i: number) => {
-                  return (
-                    <SwiperSlide key={i}>
-                      <div className="relative ml-3 mr-3 block cursor-move overflow-hidden rounded-md">
-                        <Image
-                          layout="responsive"
-                          objectFit="contain"
-                          width={1460}
-                          height={960}
-                          src={image}
-                          alt={website.title}
-                        />
-                      </div>
-                    </SwiperSlide>
-                  )
-                })}
-              </Swiper>
             </div>
 
             <div className="grid gap-3 space-y-16 lg:grid-cols-4 lg:space-y-0">
@@ -113,7 +58,7 @@ function website({ website }: { website: WebsiteType }) {
 
                 <div
                   className="prose"
-                  dangerouslySetInnerHTML={{ __html: website.overview }}
+                  dangerouslySetInnerHTML={{ __html: marked(website.simplified_overview?.summary || '') }}
                 />
               </div>
 
@@ -127,19 +72,8 @@ function website({ website }: { website: WebsiteType }) {
 
                 <div className="divide-y text-scale-1200">
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-scale-900">Developer</span>
-                    <span className="text-scale-1200">{website.developer}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between py-2">
                     <span className="text-scale-900">Category</span>
-                    <Link
-                      href={`/websites/${
-                        website.type === 'technology'
-                          ? 'integrations'
-                          : 'populars'
-                      }#${website.category.toLowerCase()}`}
-                    >
+                    <Link href={`/websites#${website.category?.toLowerCase()}`}>
                       <a className="text-brand-900 transition-colors hover:text-brand-800">
                         {website.category}
                       </a>
@@ -149,25 +83,25 @@ function website({ website }: { website: WebsiteType }) {
                   <div className="flex items-center justify-between py-2">
                     <span className="text-scale-900">Website</span>
                     <a
-                      href={website.website}
+                      href={website.url}
                       target="_blank"
                       rel="noreferrer"
                       className="text-brand-900 transition-colors hover:text-brand-800"
                     >
-                      {new URL(website.website).host}
+                      {new URL(website.url).host}
                     </a>
                   </div>
 
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-scale-900">Documentation</span>
+                    <span className="text-scale-900">Terms of Service</span>
                     <a
-                      href={website.docs}
+                      href={website.tos_url || ''}
                       target="_blank"
                       rel="noreferrer"
                       className="text-brand-900 transition-colors hover:text-brand-800"
                     >
                       <span className="flex items-center space-x-1">
-                        <span>Learn</span>
+                        <span>View</span>
                         <IconExternalLink size="small" />
                       </span>
                     </a>
@@ -179,44 +113,43 @@ function website({ website }: { website: WebsiteType }) {
         </SectionContainer>
       </Layout>
     </>
-  )
+  );
 }
 
 // This function gets called at build time
 export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: slugs } = await supabase
+  const { data: websites } = await supabase
     .from('websites')
-    .select('slug')
+    .select('site_name');
 
-  const paths = slugs?.filter(({ slug }) => slug != null).map(({ slug }) => ({
-    params: { slug: slug.toString() }, // Ensure slug is a string and not null
+  const paths = websites?.map((website) => ({
+    params: { slug: website.site_name },
   })) ?? [];
 
   return {
     paths,
     fallback: 'blocking',
-  }
-}
+  };
+};
 
 // This also gets called at build time
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   let { data: website } = await supabase
-    .from('websites') // Correctly use the table name as a string
+    .from('websites')
     .select('*')
-    .eq('slug', params!.slug as string)
-    .single()
+    .eq('site_name', params!.slug as string)
+    .single();
 
   if (!website) {
     return {
       notFound: true,
-    }
+    };
   }
 
-  // Additional processing if necessary
   return {
     props: { website },
     revalidate: 18000, // In seconds - refresh every 5 hours
-  }
-}
+  };
+};
 
-export default website
+export default WebsitePage;
