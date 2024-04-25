@@ -19,6 +19,7 @@
     "@supabase/ui": "^0.37.0-alpha.50",
     "@tabler/icons-react": "^3.2.0",
     "anthropic": "^0.0.0",
+    "axios": "^1.6.8",
     "classnames": "^2.3.1",
     "clsx": "^2.1.0",
     "crawlee": "next",
