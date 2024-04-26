@@ -1,0 +1,13 @@
+---
+import { Card, Typography } from '@shadcn/ui';
+
+// Retrieve the simplified terms of service summary from the backend API
+const tosData = await getTOSSummary();
+---
+
+<Card>
+  <Typography variant="h4">Terms of Service Summary</Typography>
+  <Typography variant="body" class="mt-2">
+    {tosData.summary}
+  </Typography>
+</Card>

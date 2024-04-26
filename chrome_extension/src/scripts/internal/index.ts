@@ -1,8 +1,8 @@
+// index.ts
 /* This file can be used to export functionality that can then be used in the
  * extension's content and background scripts.
  */
 
-// index.ts
 export async function getCurrentTab(): Promise<chrome.tabs.Tab> {
     return new Promise((resolve) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

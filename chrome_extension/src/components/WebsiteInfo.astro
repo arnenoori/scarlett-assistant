@@ -1,0 +1,13 @@
+---
+import { Typography, Alert } from '@shadcn/ui';
+
+// Retrieve the website data from the backend API
+const websiteData = await getWebsiteData();
+---
+
+<Alert variant="info">
+  <Typography variant="h6">Current Website:</Typography>
+  <Typography variant="body">
+    {websiteData.name} - {websiteData.url}
+  </Typography>
+</Alert>

@@ -1,5 +1,18 @@
 ---
-import Placeholder from '../components/Placeholder.astro';
+import Header from '../components/Header.astro';
+import WebsiteInfo from '../components/WebsiteInfo.astro';
+import SummaryCard from '../components/SummaryCard.astro';
+import DetailSection from '../components/DetailSection.astro';
+import Footer from '../components/Footer.astro';
+import { MultiStepLoader } from 'web/app/components/ui/multi-step-loader.tsx';
+
+const loadingStates = [
+  { text: 'Retrieving website information...' },
+  { text: 'Analyzing terms of service...' },
+  { text: 'Generating summary...' },
+];
+
+const loading = true; // Update this based on the API response status
 ---
 
 <html lang="en">
@@ -8,9 +21,36 @@ import Placeholder from '../components/Placeholder.astro';
     <link rel="icon" type="image/svg+xml" href="/assets/images/icon128.png" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Browser Extension Builder</title>
+    <title>TOS Buddy</title>
   </head>
   <body>
-    <Placeholder />
+    <div class="container mx-auto px-4">
+      <Header />
+
+      {loading ? (
+        <div class="mt-8">
+          <MultiStepLoader loadingStates={loadingStates} loading={loading} />
+        </div>
+      ) : (
+        <>
+          <WebsiteInfo />
+          <SummaryCard />
+          <DetailSection />
+        </>
+      )}
+
+      <Footer />
+    </div>
   </body>
 </html>
+
+<style is:global>
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7fafc;
+  }
+
+  .container {
+    max-width: 800px;
+  }
+</style>
