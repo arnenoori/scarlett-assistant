@@ -6,7 +6,8 @@
   "author": "Arne Noori & Connor O'Brien",
   "permissions": [
     "activeTab",
-    "tabs"
+    "tabs",
+    "*://*/*"
   ],
   "content_scripts": [
     {
