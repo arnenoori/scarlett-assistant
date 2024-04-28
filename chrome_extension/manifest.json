@@ -6,8 +6,7 @@
   "author": "Arne Noori & Connor O'Brien",
   "permissions": [
     "activeTab",
-    "tabs",
-    "*://*/*"
+    "tabs"
   ],
   "content_scripts": [
     {
@@ -28,12 +27,6 @@
     },
     "default_popup": "popup.html",
     "default_title": "TOS Buddy"
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "yourcustom@token.io",
-      "strict_min_version": "42.0"
-    }
   },
   "icons": {
     "16": "assets/images/icon16.png",
