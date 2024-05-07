@@ -1,0 +1,77 @@
+---
+import Header from '../components/Header.astro';
+import WebsiteInfo from '../components/WebsiteInfo.astro';
+import SummaryCard from '../components/SummaryCard.astro';
+import DetailSection from '../components/DetailSection.astro';
+import Footer from '../components/Footer.astro';
+import Loader from '../components/Loader.astro';
+
+let websiteData = null;
+let tosData = null;
+let loading = true;
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === 'websiteData') {
+    websiteData = message.data;
+    loading = false;
+  }
+});
+
+chrome.runtime.sendMessage({ type: 'getWebsiteData' });
+
+if (websiteData) {
+  chrome.runtime.sendMessage({ type: 'getTOSSummary', websiteId: websiteData.id }, (response) => {
+    tosData = response.data;
+  });
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/assets/images/icon128.png" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>TOS Buddy</title>
+  </head>
+  <body>
+    <div class="container mx-auto px-4">
+      <Header />
+
+      {loading ? (
+        <div class="mt-8">
+          <Loader />
+        </div>
+      ) : (
+        <>
+          {websiteData && (
+            <WebsiteInfo websiteData={websiteData} />
+          )}
+          {tosData ? (
+            <>
+              <SummaryCard tosData={tosData} />
+              <DetailSection tosData={tosData} />
+            </>
+          ) : (
+            <div class="mt-8">
+              <p>Failed to fetch TOS summary.</p>
+            </div>
+          )}
+        </>
+      )}
+
+      <Footer />
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7fafc;
+  }
+
+  .container {
+    max-width: 800px;
+  }
+</style>

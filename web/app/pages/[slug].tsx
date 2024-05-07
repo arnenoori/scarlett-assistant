@@ -4,7 +4,6 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import Layout from '~/components/Layout';
 import SectionContainer from '~/components/SectionContainer';
 import supabase from '~/lib/supabase';
@@ -17,7 +16,7 @@ function WebsitePage({ website }: { website: WebsiteRow }) {
   return (
     <>
       <Head>
-        <title>{website.site_name} | Supabase Website Gallery Example</title>
+        <title>{website.site_name} | TOS Buddy</title>
         <meta name="description" content={website.simplified_overview?.summary}></meta>
         <link rel="icon" href="/favicon.ico" />
       </Head>
