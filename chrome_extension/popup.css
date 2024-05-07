@@ -1,0 +1,59 @@
+/* Base styles */
+body, button {
+    font-family: 'Arial', sans-serif;
+}
+
+/* Popup styles */
+.popup-container {
+    text-align: center;
+    padding: 15px;
+    color: #333;
+    background-color: #eef2f7;
+}
+
+.popup-header {
+    margin-bottom: 20px;
+}
+
+.popup-header .logo {
+    width: 48px;
+    height: 48px;
+}
+
+.popup-header h1 {
+    font-size: 1.2em;
+    color: #005792;
+    margin: 0;
+}
+
+.popup-main {
+    margin-top: 10px;
+}
+
+.send-url-button {
+    background-color: #007cba;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1em;
+    outline: none;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.send-url-button:hover {
+    background-color: #005792;
+}
+
+.api-response {
+    display: none; /* Hidden by default, display it when there's content */
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: left;
+    min-height: 50px;
+    word-wrap: break-word;
+}
