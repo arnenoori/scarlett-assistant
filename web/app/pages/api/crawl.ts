@@ -136,7 +136,7 @@ async function saveToTextFile(filename: string, content: string, processedConten
     return str.split(/(?=[A-Z])/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
-  async function updateWebsiteData(websiteId: number, parsedContent: any, initialUrl: string, requestUrl: string, siteName: string, normalizedUrl: string, faviconUrl: string) {
+  async function updateWebsiteData(websiteId: number, parsedContent: any, initialUrl: string, requestUrl: string, siteName: string, normalizedUrl: string) {
     const { data: websiteData, error: websiteError } = await supabase
       .from('websites')
       .select('*')
@@ -156,7 +156,7 @@ async function saveToTextFile(filename: string, content: string, processedConten
         website: initialUrl,
         normalized_url: normalizedUrl,
         tos_url: requestUrl,
-        favicon_url: faviconUrl,
+        // favicon_url: faviconUrl,
         simplified_overview: parsedContent.summary,
         docs: requestUrl,
         logo: `${siteName.toLowerCase()}_favicon.png`,
@@ -214,7 +214,7 @@ export async function crawlTos(websiteData: { websiteId: number; siteName: strin
   const requestQueue = await RequestQueue.open();
 
   console.log('Downloading favicon');
-  const faviconUrl = await downloadFavicon(normalizedUrl);
+  // const faviconUrl = await downloadFavicon(normalizedUrl);
 
   const crawler = new PlaywrightCrawler({
     requestQueue,
@@ -236,7 +236,8 @@ export async function crawlTos(websiteData: { websiteId: number; siteName: strin
           console.log(`Saved ToS text content to ${filename}`);
 
           const parsedContent = JSON.parse(processedContent);
-          await updateWebsiteData(websiteId, parsedContent, normalizedUrl, request.url, siteName, normalizedUrl, faviconUrl);
+          // await updateWebsiteData(websiteId, parsedContent, normalizedUrl, request.url, siteName, normalizedUrl, faviconUrl);
+          await updateWebsiteData(websiteId, parsedContent, normalizedUrl, request.url, siteName, normalizedUrl);
         } else {
           console.log('Page does not contain ToS content, skipping:', request.url);
         }

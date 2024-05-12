@@ -4,8 +4,25 @@ import { crawlTos, getWebsiteData } from './crawl';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { url } = req.body;
-    console.log('Received POST request with URL:', url);
+    let { url } = req.body;
+
+    // Normalize the URL
+    try {
+      const parsedUrl = new URL(url);
+      url = `${parsedUrl.protocol}//${parsedUrl.hostname}`;
+    } catch (error) {
+      // If the URL is invalid, try prepending "https://" and parse again
+      try {
+        const parsedUrl = new URL(`https://${url}`);
+        url = `${parsedUrl.protocol}//${parsedUrl.hostname}`;
+      } catch (error) {
+        // If the URL is still invalid, return an error response
+        res.status(400).json({ message: 'Invalid URL provided' });
+        return;
+      }
+    }
+
+    console.log('Received POST request with normalized URL:', url);
 
     try {
       const websiteData = await getWebsiteData(url);
