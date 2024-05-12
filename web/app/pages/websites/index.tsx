@@ -86,7 +86,6 @@ function IntegrationWebsitesPage(props: Props) {
       <Head>
         <title>{meta_title} | TOS Buddy</title>
         <meta name="description" content={meta_description}></meta>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
         <SectionContainer className="space-y-16">
