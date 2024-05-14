@@ -8,6 +8,7 @@ import supabase from '~/lib/supabase';
 import { WebsiteRow } from '~/types/websites';
 import { TermsOfServiceRow } from '~/types/terms_of_service';
 import Error404 from './404';
+import ReactJson from 'react-json-view';
 
 interface Props {
   website: WebsiteRow;
@@ -37,6 +38,9 @@ function WebsitePage({ website, termsOfService }: Props) {
             </Link>
 
             <div className="flex items-center space-x-4">
+              {website.logo_svg && (
+                <img src={website.logo_svg} alt={`${website.site_name} logo`} className="h-10 w-10" />
+              )}
               <h1 className="h1" style={{ marginBottom: 0 }}>
                 {website.site_name}
               </h1>
@@ -52,7 +56,7 @@ function WebsitePage({ website, termsOfService }: Props) {
                 </h2>
 
                 <div className="prose">
-                  <pre>{JSON.stringify(termsOfService?.simplified_content, null, 2)}</pre>
+                  <ReactJson src={termsOfService?.simplified_content} />
                 </div>
               </div>
 
@@ -91,6 +95,20 @@ function WebsitePage({ website, termsOfService }: Props) {
                       </span>
                     </a>
                   </div>
+
+                  {website.category && (
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-scale-900">Category</span>
+                      <span>{website.category}</span>
+                    </div>
+                  )}
+
+                  {website.last_crawled && (
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-scale-900">Last Crawled</span>
+                      <span>{new Date(website.last_crawled).toLocaleDateString()}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -125,29 +143,29 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     .eq('site_name', params!.slug as string)
     .single();
 
-    if (websiteError || !website) {
-      return {
-        notFound: true,
-      };
-    }
-  
-    const { data: termsOfService, error: termsOfServiceError } = await supabase
-      .from('terms_of_service')
-      .select('*')
-      .eq('website_id', website.id)
-      .single();
-  
-    if (termsOfServiceError) {
-      console.error('Error fetching terms of service:', termsOfServiceError.message);
-    }
-  
+  if (websiteError || !website) {
     return {
-      props: {
-        website,
-        termsOfService: termsOfService || null,
-      },
-      revalidate: 18000, // In seconds - refresh every 5 hours
+      notFound: true,
     };
+  }
+
+  const { data: termsOfService, error: termsOfServiceError } = await supabase
+    .from('terms_of_service')
+    .select('*')
+    .eq('website_id', website.id)
+    .single();
+
+  if (termsOfServiceError) {
+    console.error('Error fetching terms of service:', termsOfServiceError.message);
+  }
+
+  return {
+    props: {
+      website,
+      termsOfService: termsOfService || null,
+    },
+    revalidate: 18000, // In seconds - refresh every 5 hours
   };
-  
-  export default WebsitePage;
+};
+
+export default WebsitePage;

@@ -36,6 +36,19 @@ def populate_database():
     for url in websites:
         parsed_url = urlparse(url)
         cleaned_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
+
+        # Check if the URL already exists in the database
+        existing_entry = supabase \
+            .from_('websites') \
+            .select('id') \
+            .eq('url', cleaned_url) \
+            .maybe_single() \
+            .execute()
+
+        if existing_entry and existing_entry.data:
+            print(f'{cleaned_url} already exists in the database. Skipping.')
+            continue
+
         site_name, description = get_website_metadata(url)
 
         insert_data = {
@@ -47,8 +60,8 @@ def populate_database():
         }
 
         response = supabase.table('websites').insert(insert_data).execute()
-        if response.error:
-            print(f'Error inserting {cleaned_url} into Supabase: {response.error.message}')
+        if response.data is None or response.status_code not in (200, 201):
+            print(f'Error inserting {cleaned_url} into Supabase: {response}')
         else:
             print(f'Inserted {cleaned_url} into Supabase')
 

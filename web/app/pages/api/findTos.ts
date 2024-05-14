@@ -28,8 +28,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const websiteData = await getWebsiteData(url);
       if (websiteData) {
         await crawlTos({ ...websiteData, url });
+        console.log('Successfully crawled ToS for URL:', url);
         res.status(200).json({ message: 'ToS crawled successfully' });
       } else {
+        console.error('Failed to fetch or create website data for URL:', url);
         res.status(500).json({ message: 'Failed to fetch or create website data' });
       }
     } catch (error) {

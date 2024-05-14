@@ -23,6 +23,8 @@ export async function getStaticProps() {
     return { props: { websites: [] } };
   }
 
+  console.log('Fetched websites:', websites); // Add this line
+
   return {
     props: {
       websites: websites ?? [],
@@ -38,6 +40,8 @@ interface Props {
 function IntegrationWebsitesPage(props: Props) {
   const { websites: initialWebsites } = props;
   const [websites, setWebsites] = useState(initialWebsites);
+  const [categories, setCategories] = useState<{ [key: string]: number }>({});
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -61,12 +65,16 @@ function IntegrationWebsitesPage(props: Props) {
         query = query.ilike('site_name', `%${search.trim()}%`);
       }
 
+      if (selectedCategory) {
+        query = query.eq('category', selectedCategory);
+      }
+
       const { data: websites } = await query;
 
       return websites;
     };
 
-    if (search.trim() === '') {
+    if (search.trim() === '' && !selectedCategory) {
       setIsSearching(false);
       setWebsites(initialWebsites);
       return;
@@ -79,7 +87,17 @@ function IntegrationWebsitesPage(props: Props) {
 
       setIsSearching(false);
     });
-  }, [debouncedSearchTerm, router]);
+  }, [debouncedSearchTerm, selectedCategory, router]);
+
+  useEffect(() => {
+    const categoryCount: { [key: string]: number } = {};
+    initialWebsites.forEach((website) => {
+      if (website.category) {
+        categoryCount[website.category] = (categoryCount[website.category] || 0) + 1;
+      }
+    });
+    setCategories(categoryCount);
+  }, [initialWebsites]);
 
   return (
     <>
@@ -107,11 +125,7 @@ function IntegrationWebsitesPage(props: Props) {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   actions={
-                    isSearching && (
-                      <span className="mr-1 animate-spin text-white">
-                        <IconLoader />
-                      </span>
-                    )
+                    isSearching && <IconLoader className="animate-spin" />
                   }
                 />
                 <div className="space-y-4">
@@ -141,42 +155,29 @@ function IntegrationWebsitesPage(props: Props) {
                         </svg>
                       }
                     />
-
-                    <WebsiteLinkBox
-                      href={`/websites#add-a-website`}
-                      title="Add a website"
-                      color="brand"
-                      description="Fill out a quick 30 second form to apply to add a website"
-                      icon={
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="1"
+                  </div>
+                  <div className="mt-4">
+                    {Object.keys(categories).map((category) => (
+                      <div key={category}>
+                        <a
+                          href="#"
+                          onClick={() => setSelectedCategory(category)}
+                          className="text-blue-500 hover:underline"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                          />
-                        </svg>
-                      }
-                    />
+                          {category} ({categories[category]})
+                        </a>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
             <div className="lg:col-span-8 xl:col-span-9">
-              {/* Website Tiles */}
-              <div className="grid space-y-10">
-                {websites.length ? (
-                  <WebsiteTileGrid websites={websites} />
-                ) : (
-                  <h2 className="h2">No Companies Found</h2>
-                )}
-              </div>
+              {websites.length === 0 ? (
+                <h2 className="h2">No Websites Found</h2>
+              ) : (
+                <WebsiteTileGrid websites={websites} />
+              )}
             </div>
           </div>
           {/* Add a website form */}

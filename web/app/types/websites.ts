@@ -11,4 +11,6 @@ export interface WebsiteRow {
   view_counter: number;
   website_description?: string | null;
   terms_of_service?: TermsOfServiceRow | null;
+  category?: string | null;
+  logo_svg?: string | null;
 }
