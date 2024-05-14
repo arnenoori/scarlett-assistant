@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const websiteData = await getWebsiteData(url);
       if (websiteData) {
-        await crawlTos(websiteData);
+        await crawlTos({ ...websiteData, url });
         res.status(200).json({ message: 'ToS crawled successfully' });
       } else {
         res.status(500).json({ message: 'Failed to fetch or create website data' });

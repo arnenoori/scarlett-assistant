@@ -19,7 +19,7 @@ export default function WebsiteTileGrid({
                   <h3 className="transition-colors text-xl text-scale-1100 group-hover:text-scale-1200 mb-2">
                     {website.site_name}
                   </h3>
-                  <p className="text-sm text-scale-900">{website.simplified_overview?.summary || 'No description available'}</p>
+                  <p className="text-sm text-scale-900">{website.website_description || 'No description available'}</p>
                 </div>
               </div>
             </a>

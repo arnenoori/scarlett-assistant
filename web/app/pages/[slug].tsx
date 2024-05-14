@@ -6,17 +6,23 @@ import Layout from '~/components/Layout';
 import SectionContainer from '~/components/SectionContainer';
 import supabase from '~/lib/supabase';
 import { WebsiteRow } from '~/types/websites';
+import { TermsOfServiceRow } from '~/types/terms_of_service';
 import Error404 from './404';
 
-function WebsitePage({ website }: { website: WebsiteRow }) {
+interface Props {
+  website: WebsiteRow;
+  termsOfService: TermsOfServiceRow | null;
+}
+
+function WebsitePage({ website, termsOfService }: Props) {
   if (!website) return <Error404 />;
 
   return (
     <>
       <Head>
         <title>{website.site_name} | TOS Buddy</title>
-        <meta name="description" content={website.simplified_overview?.summary}></meta>
-        // <link rel="icon" href="/favicon.ico" />
+        <meta name="description" content={website.website_description}></meta>
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Layout>
@@ -46,7 +52,7 @@ function WebsitePage({ website }: { website: WebsiteRow }) {
                 </h2>
 
                 <div className="prose">
-                  <pre>{JSON.stringify(website.simplified_overview?.summary, null, 2)}</pre>
+                  <pre>{JSON.stringify(termsOfService?.simplified_content, null, 2)}</pre>
                 </div>
               </div>
 
@@ -74,7 +80,7 @@ function WebsitePage({ website }: { website: WebsiteRow }) {
                   <div className="flex items-center justify-between py-2">
                     <span className="text-scale-900">Terms of Service</span>
                     <a
-                      href={website.tos_url || ''}
+                      href={termsOfService?.tos_url || ''}
                       target="_blank"
                       rel="noreferrer"
                       className="text-brand-900 transition-colors hover:text-brand-800"
@@ -113,29 +119,35 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 // This also gets called at build time
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  let { data: website } = await supabase
+  const { data: website, error: websiteError } = await supabase
     .from('websites')
-    .select(`
-      site_name,
-      url,
-      terms_of_service (
-        tos_url,
-        simplified_content
-      )
-    `)
+    .select('*')
     .eq('site_name', params!.slug as string)
     .single();
 
-  if (!website) {
+    if (websiteError || !website) {
+      return {
+        notFound: true,
+      };
+    }
+  
+    const { data: termsOfService, error: termsOfServiceError } = await supabase
+      .from('terms_of_service')
+      .select('*')
+      .eq('website_id', website.id)
+      .single();
+  
+    if (termsOfServiceError) {
+      console.error('Error fetching terms of service:', termsOfServiceError.message);
+    }
+  
     return {
-      notFound: true,
+      props: {
+        website,
+        termsOfService: termsOfService || null,
+      },
+      revalidate: 18000, // In seconds - refresh every 5 hours
     };
-  }
-
-  return {
-    props: { website },
-    revalidate: 18000, // In seconds - refresh every 5 hours
   };
-};
-
-export default WebsitePage;
+  
+  export default WebsitePage;

@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
     }
 
     try {
-        const response = await fetch('http://www.tosbuddy.com/findTos', {
+        const response = await fetch('http://www.tosbuddy.com/api/summaryTos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
