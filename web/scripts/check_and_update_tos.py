@@ -14,20 +14,11 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def get_outdated_tos():
     three_months_ago = datetime.now() - timedelta(days=90)
-    response = supabase \
-        .from('terms_of_service') \
-        .select('*') \
-        .lt('updated_at', three_months_ago.isoformat()) \
-        .execute()
+    response = supabase.from_('terms_of_service').select('*').lt('updated_at', three_months_ago.isoformat()).execute()
     return response.data if response.data else []
 
 def fetch_existing_tos(website_id: int):
-    response = supabase \
-        .from('terms_of_service') \
-        .select('*') \
-        .eq('website_id', website_id) \
-        .single() \
-        .execute()
+    response = supabase.from_('terms_of_service').select('*').eq('website_id', website_id).single().execute()
     return response.data if response.data else None
 
 def update_tos(url: str, website_id: int, existing_tos: dict):
@@ -42,11 +33,7 @@ def update_tos(url: str, website_id: int, existing_tos: dict):
                 'updated_at': datetime.now().isoformat(),
                 'version': new_version
             }
-            supabase \
-                .from('terms_of_service') \
-                .update(update_data) \
-                .eq('id', existing_tos['id']) \
-                .execute()
+            supabase.from_('terms_of_service').update(update_data).eq('id', existing_tos['id']).execute()
             print(f'Updated ToS for {url} to version {new_version}')
         else:
             print(f'No changes detected for {url}, no update needed.')
@@ -62,12 +49,7 @@ def main():
     for tos in outdated_tos:
         website_id = tos['website_id']
         if website_id:
-            website_response = supabase \
-                .from('websites') \
-                .select('url') \
-                .eq('id', website_id) \
-                .single() \
-                .execute()
+            website_response = supabase.from_('websites').select('url').eq('id', website_id).single().execute()
             if website_response.data:
                 url = website_response.data['url']
                 existing_tos = fetch_existing_tos(website_id)
