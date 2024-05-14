@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS "public"."terms_of_service" (
     "tos_url" "text",
     "file_path" "text",
     "created_at" timestamp without time zone DEFAULT "now"(),
-    "updated_at" timestamp without time zone DEFAULT "now"()
+    "updated_at" timestamp without time zone DEFAULT "now"(),
+    "version" integer DEFAULT 1
 );
 
 ALTER TABLE "public"."terms_of_service" OWNER TO "postgres";

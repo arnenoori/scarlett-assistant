@@ -6,4 +6,5 @@ export interface TermsOfServiceRow {
     file_path: string | null;
     created_at: string | null;
     updated_at: string | null;
-  }
+    version: number | null;
+}
