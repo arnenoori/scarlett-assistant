@@ -32,45 +32,38 @@ def get_website_metadata(url: str):
 def populate_database():
     file_path = os.path.join(os.path.dirname(__file__), 'populate_initial_sites.txt')
     websites = read_websites_from_file(file_path)
-
     for url in websites:
         parsed_url = urlparse(url)
         cleaned_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
-
+        
         # Check if the URL already exists in the database
         existing_entry = supabase \
             .from_('websites') \
             .select('id') \
             .eq('url', cleaned_url) \
-            .maybe_single() \
             .execute()
-
-        if existing_entry and existing_entry.data:
+        
+        if existing_entry.data:
             print(f'{cleaned_url} already exists in the database. Skipping.')
-            continue
-
-        site_name, description = get_website_metadata(url)
-
-        insert_data = {
-            'url': cleaned_url,
-            'site_name': site_name,
-            'website_description': description,
-            'last_crawled': 'now()',
-            'view_counter': 0,
-        }
-
-        response = supabase.table('websites').insert(insert_data).execute()
-        if response.data is None or response.status_code not in (200, 201):
-            print(f'Error inserting {cleaned_url} into Supabase: {response}')
         else:
+            site_name, description = get_website_metadata(url)
+            insert_data = {
+                'url': cleaned_url,
+                'site_name': site_name,
+                'website_description': description,
+                'last_crawled': 'now()',
+                'view_counter': 0,
+            }
+            
+            response = supabase.table('websites').insert(insert_data).execute()
             print(f'Inserted {cleaned_url} into Supabase')
-
-            # Call the findTos API to crawl the ToS
-            try:
-                response = requests.post(API_URL, json={'url': cleaned_url})
-                print(f'Processed {cleaned_url}: {response.json().get("message")}')
-            except Exception as e:
-                print(f'Error processing {cleaned_url}: {e}')
+        
+        # Call the findTos API to crawl the ToS
+        try:
+            response = requests.post(API_URL, json={'url': cleaned_url})
+            print(f'Processed {cleaned_url}: {response.json().get("message")}')
+        except Exception as e:
+            print(f'Error processing {cleaned_url}: {e}')
 
 if __name__ == '__main__':
     populate_database()

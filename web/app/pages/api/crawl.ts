@@ -2,7 +2,6 @@
 // Handles the main crawling functionality, orchestrating the different parts of the API.
 import { PlaywrightCrawler, RequestQueue } from 'crawlee';
 import axios from 'axios';
-import { downloadFavicon } from './favicon';
 import { processContent } from './summarization';
 import { createClient } from '@supabase/supabase-js';
 import { config } from 'dotenv';
@@ -14,8 +13,11 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 
 async function saveToTextFile(filename: string, content: string, processedContent: string, websiteId: number, tosUrl: string): Promise<void> {
   const { data: uploadData, error: uploadError } = await supabase.storage
-    .from('terms_of_service')
-    .upload(filename, content);
+    .from('terms_of_service_files')
+    .upload(filename, content, {
+      cacheControl: '3600',
+      upsert: false
+    });
 
   if (uploadError) {
     console.error('Error uploading ToS file to Supabase Storage:', uploadError.message);
@@ -29,10 +31,12 @@ async function saveToTextFile(filename: string, content: string, processedConten
     .insert([
       {
         website_id: websiteId,
-        content: content,
         simplified_content: processedContent,
         tos_url: tosUrl,
-        file_path: uploadData.path
+        file_path: uploadData.path, // Corrected property name
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        version: 1 // Assuming versioning starts at 1, adjust accordingly
       }
     ]);
 
@@ -215,13 +219,19 @@ async function searchTosWithGoogle(website: string): Promise<string | null> {
     if (response.data.items && response.data.items.length > 0) {
       return response.data.items[0].link;
     } else {
+      console.warn('No ToS link found in Google search results for:', website);
       return null;
     }
   } catch (error) {
-    console.error('Error searching ToS with Google:', error.message);
+    if (error.response && error.response.status === 429) {
+      console.error('Rate limit exceeded for Google Custom Search API:', error.message);
+    } else {
+      console.error('Error searching ToS with Google:', error.message);
+    }
     return null;
   }
 }
+
 
 export async function crawlTos(websiteData: { websiteId: number; siteName: string; url: string }) {
   const { websiteId, siteName, url } = websiteData;
@@ -229,47 +239,52 @@ export async function crawlTos(websiteData: { websiteId: number; siteName: strin
   console.log('Starting ToS crawling for URL:', url);
   const requestQueue = await RequestQueue.open();
 
-  console.log('Downloading favicon');
-  // const faviconUrl = await downloadFavicon(url);
-
   const crawler = new PlaywrightCrawler({
     requestQueue,
+    requestHandlerTimeoutSecs: 60, // Corrected property name
 
     async requestHandler({ request, page, enqueueLinks }) {
-      if (request.userData.isTosPage) {
-        console.log('Processing ToS page:', request.url);
-        const pageTitle = await page.title();
-        const textContent = await page.evaluate(() => document.body.innerText);
+      try {
+        if (request.userData.isTosPage) {
+          console.log('Processing ToS page:', request.url);
+          const pageTitle = await page.title();
+          const textContent = await page.evaluate(() => document.body.innerText);
 
-        // Check if the page content contains common ToS keywords
-        const tosKeywords = ['terms of service', 'terms and conditions', 'user agreement'];
-        const isTosPage = tosKeywords.some(keyword => textContent.toLowerCase().includes(keyword));
+          // Check if the page content contains common ToS keywords
+          const tosKeywords = ['terms of service', 'terms and conditions', 'user agreement'];
+          const isTosPage = tosKeywords.some(keyword => textContent.toLowerCase().includes(keyword));
 
-        if (isTosPage) {
-          const processedContent = await processContent(textContent);
-          const filename = generateFilename(request.url, pageTitle);
-          await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
-          console.log(`Saved ToS text content to ${filename}`);
+          if (isTosPage) {
+            const processedContent = await processContent(textContent);
+            const filename = generateFilename(request.url, pageTitle);
+            await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
+            console.log(`Saved ToS text content to ${filename}`);
 
-          const parsedContent = JSON.parse(processedContent);
-          // await updateWebsiteData(websiteId, parsedContent, url, request.url, siteName, url, faviconUrl);
-          await updateWebsiteData(websiteId, parsedContent, url, request.url, siteName, url);
+            try {
+              const parsedContent = JSON.parse(processedContent);
+              await updateWebsiteData(websiteId, parsedContent, url, request.url, siteName, url);
+            } catch (jsonError) {
+              console.error('Error parsing processed content JSON:', jsonError.message);
+            }
+          } else {
+            console.log('Page does not contain ToS content, skipping:', request.url);
+          }
         } else {
-          console.log('Page does not contain ToS content, skipping:', request.url);
-        }
-      } else {
-        const pageTitle = await page.title();
-        console.log(`Title of ${request.url}: ${pageTitle}`);
+          const pageTitle = await page.title();
+          console.log(`Title of ${request.url}: ${pageTitle}`);
 
-        const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
-          anchors
-            .filter(a => /terms|tos|privacy/i.test(a.textContent || '') || /terms|tos|privacy/i.test(a.href || ''))
-            .map(a => a.href)
-            .filter((link): link is string => link !== null)
-        );
-        for (const link of tosLinks) {
-          await requestQueue.addRequest({ url: link, userData: { isTosPage: true } });
+          const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
+            anchors
+              .filter(a => /terms|tos|privacy/i.test(a.textContent || '') || /terms|tos|privacy/i.test(a.href || ''))
+              .map(a => a.href)
+              .filter((link): link is string => link !== null)
+          );
+          for (const link of tosLinks) {
+            await requestQueue.addRequest({ url: link, userData: { isTosPage: true } });
+          }
         }
+      } catch (error) {
+        console.error(`Error processing request ${request.url}:`, error.message);
       }
     },
 
