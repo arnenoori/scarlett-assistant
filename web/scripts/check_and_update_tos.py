@@ -8,7 +8,7 @@ load_dotenv()
 
 SUPABASE_URL = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
 SUPABASE_KEY = os.getenv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
-API_URL = 'https://tosbuddy.com/api/findTos'  # Use the production URL
+SUMMARIZATION_API_URL = 'https://your-api-endpoint/summarization'  # Replace with your actual endpoint
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -21,24 +21,29 @@ def fetch_existing_tos(website_id: int):
     response = supabase.from_('terms_of_service').select('*').eq('website_id', website_id).single().execute()
     return response.data if response.data else None
 
-def update_tos(url: str, website_id: int, existing_tos: dict):
+def update_tos_batch(tos_updates):
     try:
-        response = requests.post(API_URL, json={'url': url})
-        new_tos_content = response.json().get('content')
+        response = requests.post(SUMMARIZATION_API_URL, json={'contents': tos_updates})
+        batch_results = response.json()
 
-        if new_tos_content and new_tos_content != existing_tos['simplified_content']:
-            new_version = existing_tos['version'] + 1 if existing_tos['version'] else 1
-            update_data = {
-                'simplified_content': new_tos_content,
-                'updated_at': datetime.now().isoformat(),
-                'version': new_version
-            }
-            supabase.from_('terms_of_service').update(update_data).eq('id', existing_tos['id']).execute()
-            print(f'Updated ToS for {url} to version {new_version}')
-        else:
-            print(f'No changes detected for {url}, no update needed.')
+        for result in batch_results:
+            website_id = result['website_id']
+            new_tos_content = result['content']
+            existing_tos = fetch_existing_tos(website_id)
+
+            if new_tos_content and new_tos_content != existing_tos['simplified_content']:
+                new_version = existing_tos['version'] + 1 if existing_tos['version'] else 1
+                update_data = {
+                    'simplified_content': new_tos_content,
+                    'updated_at': datetime.now().isoformat(),
+                    'version': new_version
+                }
+                supabase.from_('terms_of_service').update(update_data).eq('id', existing_tos['id']).execute()
+                print(f'Updated ToS for website ID {website_id} to version {new_version}')
+            else:
+                print(f'No changes detected for website ID {website_id}, no update needed.')
     except Exception as e:
-        print(f'Error updating ToS for {url}: {e}')
+        print(f'Error updating ToS batch: {e}')
 
 def main():
     outdated_tos = get_outdated_tos()
@@ -46,15 +51,17 @@ def main():
         print('No outdated ToS found.')
         return
 
+    tos_updates = []
     for tos in outdated_tos:
         website_id = tos['website_id']
         if website_id:
             website_response = supabase.from_('websites').select('url').eq('id', website_id).single().execute()
             if website_response.data:
                 url = website_response.data['url']
-                existing_tos = fetch_existing_tos(website_id)
-                if existing_tos:
-                    update_tos(url, website_id, existing_tos)
+                tos_updates.append({'website_id': website_id, 'url': url})
+
+    if tos_updates:
+        update_tos_batch(tos_updates)
 
 if __name__ == '__main__':
     main()
