@@ -1,6 +1,8 @@
 import os
+import csv
 import requests
-from datetime import datetime, timedelta
+from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
@@ -8,60 +10,95 @@ load_dotenv()
 
 SUPABASE_URL = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
 SUPABASE_KEY = os.getenv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
-SUMMARIZATION_API_URL = 'https://your-api-endpoint/summarization'  # Replace with your actual endpoint
+API_URL = 'http://localhost:3000/api/findTos'  # Adjust the URL if necessary
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-def get_outdated_tos():
-    three_months_ago = datetime.now() - timedelta(days=90)
-    response = supabase.from_('terms_of_service').select('*').lt('updated_at', three_months_ago.isoformat()).execute()
-    return response.data if response.data else []
+def read_websites_from_file(file_path: str):
+    with open(file_path, 'r') as file:
+        return [line.strip() for line in file if line.strip()]
 
-def fetch_existing_tos(website_id: int):
-    response = supabase.from_('terms_of_service').select('*').eq('website_id', website_id).single().execute()
-    return response.data if response.data else None
+def clean_site_name(site_name: str):
+    # remove text after -, :, | and .com
+    delimiters = ['-', ':', '|', '.com']
+    for delimiter in delimiters:
+        if delimiter in site_name:
+            parts = site_name.split(delimiter)
+            # choose the side with fewer characters
+            site_name = min(parts, key=len).strip()
+    return site_name
 
-def update_tos_batch(tos_updates):
+def get_website_metadata(url: str):
     try:
-        response = requests.post(SUMMARIZATION_API_URL, json={'contents': tos_updates})
-        batch_results = response.json()
-
-        for result in batch_results:
-            website_id = result['website_id']
-            new_tos_content = result['content']
-            existing_tos = fetch_existing_tos(website_id)
-
-            if new_tos_content and new_tos_content != existing_tos['simplified_content']:
-                new_version = existing_tos['version'] + 1 if existing_tos['version'] else 1
-                update_data = {
-                    'simplified_content': new_tos_content,
-                    'updated_at': datetime.now().isoformat(),
-                    'version': new_version
-                }
-                supabase.from_('terms_of_service').update(update_data).eq('id', existing_tos['id']).execute()
-                print(f'Updated ToS for website ID {website_id} to version {new_version}')
-            else:
-                print(f'No changes detected for website ID {website_id}, no update needed.')
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        title = soup.title.string if soup.title else ''
+        description_tag = soup.find('meta', attrs={'name': 'description'})
+        description = description_tag['content'].strip() if description_tag else ''
+        return clean_site_name(title), description
     except Exception as e:
-        print(f'Error updating ToS batch: {e}')
+        print(f'Error extracting metadata from {url}: {e}')
+        return '', ''
 
-def main():
-    outdated_tos = get_outdated_tos()
-    if not outdated_tos:
-        print('No outdated ToS found.')
-        return
+def read_svgs_from_csv(file_path: str):
+    svgs = {}
+    with open(file_path, mode='r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            svgs[row['url']] = row
+            svgs[row['title']] = row
+    return svgs
 
-    tos_updates = []
-    for tos in outdated_tos:
-        website_id = tos['website_id']
-        if website_id:
-            website_response = supabase.from_('websites').select('url').eq('id', website_id).single().execute()
-            if website_response.data:
-                url = website_response.data['url']
-                tos_updates.append({'website_id': website_id, 'url': url})
+def populate_database():
+    file_path = os.path.join(os.path.dirname(__file__), 'populate_initial_sites.txt')
+    csv_path = os.path.join(os.path.dirname(__file__), 'logo_svgs.csv')
+    
+    websites = read_websites_from_file(file_path)
+    svgs = read_svgs_from_csv(csv_path)
+    
+    # Remove duplicates from the list
+    unique_websites = list(set(websites))
+    if len(unique_websites) != len(websites):
+        print("Duplicate URLs found and removed from populate_initial_sites.txt.")
 
-    if tos_updates:
-        update_tos_batch(tos_updates)
+    for url in unique_websites:
+        parsed_url = urlparse(url)
+        cleaned_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
+        
+        # Check if the URL already exists in the database
+        existing_entry = supabase \
+            .from_('websites') \
+            .select('id') \
+            .eq('url', cleaned_url) \
+            .execute()
+        
+        if existing_entry.data:
+            print(f'{cleaned_url} already exists in the database. Skipping.')
+        else:
+            site_name, description = get_website_metadata(url)
+            insert_data = {
+                'url': cleaned_url,
+                'site_name': site_name,
+                'website_description': description,
+                'last_crawled': 'now()',
+                'view_counter': 0,
+            }
+            
+            # Check for matching SVG content
+            svg_data = svgs.get(cleaned_url) or svgs.get(site_name)
+            if svg_data:
+                insert_data['logo_svg'] = svg_data['svg_content']
+                insert_data['category'] = svg_data['category']
+            
+            response = supabase.table('websites').insert(insert_data).execute()
+            print(f'Inserted {cleaned_url} into Supabase')
+        
+        # Call the findTos API to crawl the ToS
+        try:
+            response = requests.post(API_URL, json={'url': cleaned_url})
+            print(f'Processed {cleaned_url}: {response.json().get("message")}')
+        except Exception as e:
+            print(f'Error processing {cleaned_url}: {e}')
 
 if __name__ == '__main__':
-    main()
+    populate_database()

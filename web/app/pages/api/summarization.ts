@@ -90,7 +90,7 @@ async function createBatchFile(contents: string[]) {
       method: "POST",
       url: "/v1/chat/completions",
       body: {
-        model: "gpt-4",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: "You are a helpful assistant." },
           { role: "user", content: TOS_PROMPT.replace("{content}", content) }
