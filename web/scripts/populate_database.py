@@ -25,7 +25,7 @@ def read_websites_from_file(file_path: str):
 
 def clean_site_name(site_name: str):
     # remove text after -, :, | and .com
-    delimiters = ['-', ':', '|', '.com']
+    delimiters = ['-', ':', '|', '.com', '—', "(", ")", "..."]
     for delimiter in delimiters:
         if delimiter in site_name:
             parts = site_name.split(delimiter)
@@ -66,36 +66,37 @@ Please carefully analyze this metadata description. Based on your analysis, sele
 
 Categories: Technology, Business, Finance, Education, Entertainment, Social, Health, Lifestyle, News, Science, Arts, Sports, Government, Career, Personal Development, Hobbies, Religion, Parenting, Non-Profit, Automotive, Shopping, Pets,
 
-Next, write a concise, SEO-friendly one-liner description encapsulating the key information about the website. The description should be engaging and include relevant keywords to help the website rank well in search results.
+Next, write a concise, SEO-friendly one-liner description the key information about the website. The description should be as useful as possible in describing the website. No yapping. Avoid repeating words like Explore, or Stay Updated. Use direct sentences.
 
 Please format your response in JSON with the following structure:
 
 <json>
 {{
   "category": "Selected category",
-  "seo_description": "SEO-friendly one-liner description"
+  "website_description": "SEO-friendly one-liner description"
 }}
 </json>
-
-Provide your response immediately, without any additional commentary before or after the JSON.
     """
-    response = client.chat.completions.create(model="gpt-4o",
-    messages=[
-        {"role": "system", "content": "You are an AI assistant."},
-        {"role": "user", "content": prompt}
-    ],
-    max_tokens=300,
-    n=1,
-    stop=None,
-    temperature=0.7)
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        response_format={"type": "json_object"},
+        messages=[
+            {"role": "system", "content": "You are an AI assistant designed to output JSON."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=300,
+        n=1,
+        stop=None,
+        temperature=0.7
+    )
     try:
         result = response.choices[0].message.content.strip()
         print(f"OpenAI raw response: {result}")  # Debugging statement
         return json.loads(result)  # safely parse the JSON string to a dictionary
     except Exception as e:
         print(f"Error parsing OpenAI response: {e}")
-        return {"category": "", "seo_description": ""}
-
+        return {"category": "", "website_description": ""}
+    
 def populate_database():
     file_path = os.path.join(os.path.dirname(__file__), 'populate_initial_sites.txt')
     csv_path = os.path.join(os.path.dirname(__file__), 'logo_svgs.csv')
@@ -103,7 +104,6 @@ def populate_database():
     websites = read_websites_from_file(file_path)
     svgs = read_svgs_from_csv(csv_path)
 
-    # remove duplicates from the list
     unique_websites = list(set(websites))
     num_duplicates = len(websites) - len(unique_websites)
     if num_duplicates > 0:
@@ -114,11 +114,10 @@ def populate_database():
 
         data = {
             "url": url,
-            "title": title,
-            "website_description": description,  # updated key to match your table schema
+            "site_name": title,
             "category": openai_result.get("category", ""),
-            "seo_description": openai_result.get("seo_description", ""),
-            "svg": svgs.get(url, {}).get('svg', '')
+            "website_description": openai_result.get("website_description", ""),
+            "logo_svg": svgs.get(url, {}).get('svg_content', '')
         }
 
         try:
@@ -126,6 +125,16 @@ def populate_database():
             print(f"Inserted data for {url}")
         except Exception as e:
             print(f"Error inserting data for {url}: {e}")
+
+        # call the findTos API to crawl the ToS
+        cleaned_url = urlparse(url).geturl()
+        payload = {'url': cleaned_url}
+        print(f"Sending to findTos API: {payload}")  # Log the payload being sent
+        try:
+            response = requests.post(API_URL, json=payload)
+            print(f'Processed {cleaned_url}: {response.json().get("message")}')
+        except Exception as e:
+            print(f'Error processing {cleaned_url}: {e}')
 
 if __name__ == "__main__":
     populate_database()

@@ -13,8 +13,6 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 const TOS_PROMPT = `
 Analyze the following Terms of Service document and produce a JSON response that simplifies the key sections for a general audience. If certain key sections (such as "Data Collection", "User Rights", "Limitations of Liability", "Cancellation & Termination") exist, summarize them. Additionally, evaluate the document for any potential dangers or unfavorable terms to the user, such as excessive data collection, limited user rights, or other restrictive conditions. Highlight these in a separate section within the JSON.
 
-Also, please include a "category" field in the JSON response, indicating the main category or industry the website belongs to (e.g., "Social Media", "E-commerce", "Technology", etc.).
-
 Input Document: {content}
 
 Expected JSON Output Format:
@@ -29,7 +27,6 @@ Expected JSON Output Format:
     "Highlight any sections that may pose a risk to the user, such as excessive data collection or unfair user restrictions."
   ],
   "overallAssessment": "Indicate whether the terms of service are generally favorable or unfavorable to the user, based on the summaries and identified potential dangers.",
-  "category": "Specify the main category or industry the website belongs to."
 }
 
 Please ensure the response strictly follows this JSON structure. Wrap the JSON response in triple backticks (\`\`\`) to ensure it is properly formatted.
