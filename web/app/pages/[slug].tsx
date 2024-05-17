@@ -138,14 +138,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
       return { paths: [], fallback: 'blocking' };
     }
 
-    const paths = websites.map((website) => ({
-      params: { slug: website.site_name },
+    const paths = websites
+      .map((website) => ({
+        params: { slug: website.site_name.trim() },
+      }))
+      .filter((path) => path.params.slug); // filter out empty slugs
+
+    const uniquePaths = Array.from(new Set(paths.map((path) => path.params.slug))).map((slug) => ({
+      params: { slug },
     }));
 
-    console.log('Generated paths:', paths);
+    console.log('Generated paths:', uniquePaths);
 
     return {
-      paths,
+      paths: uniquePaths,
       fallback: 'blocking',
     };
   } catch (err) {

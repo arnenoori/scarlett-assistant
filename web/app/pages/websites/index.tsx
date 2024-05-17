@@ -2,7 +2,7 @@
 import { IconLoader, IconSearch, Input } from '@supabase/ui';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { useDebounce } from 'use-debounce';
 import AddAWebsite from '~/components/AddAWebsite';
 import Layout from '~/components/Layout';
@@ -11,6 +11,8 @@ import WebsiteTileGrid from '~/components/WebsiteTileGrid';
 import SectionContainer from '~/components/SectionContainer';
 import supabase from '~/lib/supabase';
 import { WebsiteRow } from '~/types/websites';
+import { Menu, Transition } from '@headlessui/react';
+import { ChevronDownIcon } from '@heroicons/react/solid';
 
 export async function getStaticProps() {
   const { data: websites, error } = await supabase
@@ -22,8 +24,6 @@ export async function getStaticProps() {
     console.error('Error fetching websites:', error);
     return { props: { websites: [] } };
   }
-
-  console.log('Fetched websites:', websites); // Add this line
 
   return {
     props: {
@@ -37,11 +37,17 @@ interface Props {
   websites: WebsiteRow[];
 }
 
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ');
+}
+
 function IntegrationWebsitesPage(props: Props) {
   const { websites: initialWebsites } = props;
   const [websites, setWebsites] = useState(initialWebsites);
   const [categories, setCategories] = useState<{ [key: string]: number }>({});
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 40;
 
   const router = useRouter();
 
@@ -99,92 +105,105 @@ function IntegrationWebsitesPage(props: Props) {
     setCategories(categoryCount);
   }, [initialWebsites]);
 
+  const handleCategoryChange = (category: string | null) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  const paginatedWebsites = websites.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <>
+    <Layout>
       <Head>
-        <title>{meta_title} | TOS Buddy</title>
-        <meta name="description" content={meta_description}></meta>
+        <title>{meta_title}</title>
+        <meta name="description" content={meta_description} />
       </Head>
-      <Layout>
-        <SectionContainer className="space-y-16">
-          <div>
-            <h1 className="h1">{meta_title}</h1>
-            <h2 className="text-xl text-scale-900">{meta_description}</h2>
-          </div>
-          {/* Title */}
-          <div className="grid space-y-12 md:gap-8 lg:grid-cols-12 lg:gap-16 lg:space-y-0 xl:gap-16">
-            <div className="lg:col-span-4 xl:col-span-3">
-              {/* Horizontal link menu */}
-              <div className="space-y-6">
-                {/* Search Bar */}
-                <Input
-                  size="small"
-                  icon={<IconSearch />}
-                  placeholder="Search..."
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  actions={
-                    isSearching && <IconLoader className="animate-spin" />
-                  }
-                />
-                <div className="space-y-4">
-                  <div className="mb-2 text-sm text-scale-900">
-                    Explore more
-                  </div>
-                  <div className="grid grid-cols-2 gap-8 lg:grid-cols-1">
-                    <WebsiteLinkBox
-                      title="Most Popular"
-                      color="blue"
-                      description="View the most popular websites"
-                      href={`/popular`}
-                      icon={
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="1"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                          />
-                        </svg>
-                      }
-                    />
-                  </div>
-                  <div className="mt-4">
-                    {Object.keys(categories).map((category) => (
-                      <div key={category}>
-                        <a
-                          href="#"
-                          onClick={() => setSelectedCategory(category)}
-                          className="text-blue-500 hover:underline"
+      <SectionContainer>
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Find a simplified terms of service</h1>
+          <p className="text-lg mb-8">Terms of services simplified for our understanding</p>
+        </div>
+        <div className="flex justify-center mb-8">
+          <Input
+            icon={<IconSearch />}
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="mr-4"
+          />
+          <Menu as="div" className="relative inline-block text-left">
+            <div>
+              <Menu.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                {selectedCategory || 'Select a category'}
+                <ChevronDownIcon className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
+              </Menu.Button>
+            </div>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={() => handleCategoryChange(null)}
+                        className={classNames(
+                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          'block px-4 py-2 text-sm w-full text-left'
+                        )}
+                      >
+                        All Categories
+                      </button>
+                    )}
+                  </Menu.Item>
+                  {Object.keys(categories).map((category) => (
+                    <Menu.Item key={category}>
+                      {({ active }) => (
+                        <button
+                          onClick={() => handleCategoryChange(category)}
+                          className={classNames(
+                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                            'block px-4 py-2 text-sm w-full text-left'
+                          )}
                         >
                           {category} ({categories[category]})
-                        </a>
-                      </div>
-                    ))}
-                  </div>
+                        </button>
+                      )}
+                    </Menu.Item>
+                  ))}
                 </div>
-              </div>
-            </div>
-            <div className="lg:col-span-8 xl:col-span-9">
-              {websites.length === 0 ? (
-                <h2 className="h2">No Websites Found</h2>
-              ) : (
-                <WebsiteTileGrid websites={websites} />
-              )}
-            </div>
-          </div>
-          {/* Add a website form */}
-        </SectionContainer>
-        <AddAWebsite supabase={supabase} />
-      </Layout>
-    </>
+              </Menu.Items>
+            </Transition>
+          </Menu>
+        </div>
+        <WebsiteTileGrid websites={paginatedWebsites} />
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 mx-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage * itemsPerPage >= websites.length}
+            className="px-4 py-2 mx-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </SectionContainer>
+    </Layout>
   );
 }
 

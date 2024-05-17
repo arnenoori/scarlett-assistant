@@ -7,9 +7,10 @@ type LayoutProps = {
   hideFooter?: boolean;
 };
 
+// eventually fix the footer so we can display it
 const Layout = ({
   hideHeader = false,
-  hideFooter = false,
+  hideFooter = true,
   children,
 }: PropsWithChildren<LayoutProps>) => {
   useEffect(() => {
