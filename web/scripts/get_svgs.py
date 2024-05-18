@@ -42,7 +42,7 @@ def save_svgs_to_csv(svgs, filename):
 if __name__ == "__main__":
     try:
         all_svgs = get_all_svgs()
-        save_svgs_to_csv(all_svgs, "logo_svg.csv")
+        save_svgs_to_csv(all_svgs, "data/logo_svg.csv")
         print("SVG data has been saved to logo_svg.csv")
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")

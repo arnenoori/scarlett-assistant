@@ -98,8 +98,8 @@ Please format your response in JSON with the following structure:
         return {"category": "", "website_description": ""}
     
 def populate_database():
-    file_path = os.path.join(os.path.dirname(__file__), 'populate_initial_sites.txt')
-    csv_path = os.path.join(os.path.dirname(__file__), 'logo_svgs.csv')
+    file_path = os.path.join(os.path.dirname(__file__), 'data/populate_initial_sites.txt')
+    csv_path = os.path.join(os.path.dirname(__file__), 'data/logo_svgs.csv')
 
     websites = read_websites_from_file(file_path)
     svgs = read_svgs_from_csv(csv_path)

@@ -1,23 +1,32 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Supabase
+.branches
+.temp
+.env
+
+.DS_Store
+web/.DS_Store
+
+web/scritpts/.env
+venv
 
 .vscode
 
 # dependencies
-/node_modules
-/.pnp
+web/app/node_modules
+web/app/.pnp
 .pnp.js
 # lockfile
 package-lock.json
 
 # crawling storage:
-/storage
+web/app/storage
 
 # testing
 /coverage
 
 # next.js
-/.next/
-/out/
+web/app/.next/
+web/app/out/
 
 # production
 /build
