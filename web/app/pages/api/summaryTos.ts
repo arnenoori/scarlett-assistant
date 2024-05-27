@@ -1,12 +1,37 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { config } from 'dotenv';
+import Cors from 'cors';
 
+// Initialize environment variables
 config();
 
+// Initialize Supabase client
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
+// Initialize CORS middleware
+const cors = Cors({
+  origin: '*', // Allow all origins
+  methods: ['GET', 'HEAD', 'POST', 'OPTIONS'], // Allow these methods
+  allowedHeaders: ['*'], // Allow all headers
+});
+
+// Helper method to wait for a middleware to execute before continuing
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  });
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Run the CORS middleware
+  await runMiddleware(req, res, cors);
+
   if (req.method === 'POST') {
     let { url } = req.body;
 
