@@ -17,7 +17,7 @@ const cors = Cors({
 });
 
 // Helper method to wait for a middleware to execute before continuing
-function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) {
+async function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
@@ -31,6 +31,12 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Run the CORS middleware
   await runMiddleware(req, res, cors);
+
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Allow', 'GET, HEAD, POST, OPTIONS');
+    res.status(204).end();
+    return;
+  }
 
   if (req.method === 'POST') {
     let { url } = req.body;
@@ -58,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { data: websiteData, error: websiteError } = await supabase
         .from('websites')
         .select('id')
-        .eq('normalized_url', url)
+        .eq('url', url)
         .single();
 
       if (websiteError) {
@@ -72,8 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { data: tosData, error: tosError } = await supabase
           .from('terms_of_service')
           .select('simplified_content')
-          .eq('website_id', websiteData.id)
-          .single();
+          .eq('website_id', websiteData.id);
 
         if (tosError) {
           console.error('Error fetching terms of service data from Supabase:', tosError.message);
@@ -83,7 +88,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (tosData) {
           // Return the simplified_content as the response
-          res.status(200).json({ summary: tosData.simplified_content });
+          console.log('Returning simplified content:', tosData[0].simplified_content);
+          res.status(200).json({ summary: tosData[0].simplified_content });
         } else {
           res.status(404).json({ message: 'Terms of service not found for the website' });
         }

@@ -16,28 +16,9 @@
         <main class="popup-main">
             <button id="sendUrl" class="send-url-button">Analyze Privacy</button>
             <div id="loadingIndicator" class="loading-indicator" style="display: none;">Loading...</div>
-            <div id="apiResponse" class="api-response" style="display: none;">
+            <div id="apiResponseContainer" class="api-response">
                 <h2 id="websiteTitle"></h2>
-                <section>
-                    <h3>Terms of Service Summary</h3>
-                    <p id="tosSummary"></p>
-                </section>
-                <section>
-                    <h3>Terms of Service Details</h3>
-                    <p id="tosDetails"></p>
-                </section>
-                <section>
-                    <h3>User Rights</h3>
-                    <p id="userRights"></p>
-                </section>
-                <section>
-                    <h3>Data Collection</h3>
-                    <p id="dataCollection"></p>
-                </section>
-                <section>
-                    <h3>Limitations of Liability</h3>
-                    <p id="limitationsLiability"></p>
-                </section>
+                <pre id="apiResponse"></pre>
             </div>
         </main>
         <footer class="popup-footer">
