@@ -12,8 +12,8 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 // Initialize CORS middleware
 const cors = Cors({
   origin: '*', // Allow all origins
-  methods: ['GET', 'HEAD', 'POST', 'OPTIONS'], // Allow these methods
-  allowedHeaders: ['*'], // Allow all headers
+  methods: ['GET', 'HEAD', 'POST', 'OPTIONS'], 
+  allowedHeaders: ['*'], 
 });
 
 // Helper method to wait for a middleware to execute before continuing
