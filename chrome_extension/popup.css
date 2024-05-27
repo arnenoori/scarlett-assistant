@@ -41,16 +41,12 @@ body, button {
 }
 
 .api-response {
-    display: none; /* Initially hidden; shown after data is received */
+    display: none;
     text-align: left;
     padding: 10px;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
-
-section {
-    margin-top: 15px;
 }
 
 .popup-footer {
