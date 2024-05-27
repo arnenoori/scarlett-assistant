@@ -22,10 +22,21 @@ html {
   scroll-behavior: smooth;
 }
 
+/* styles/global.css */
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-dm-sans: 'DM Sans', serif;
+}
+
 body {
-  @apply bg-scale-200;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-inter);
+  background-color: white; /* Ensure background color is set */
+  -webkit-font-smoothing: antialiased; /* Ensure antialiasing */
+  -moz-osx-font-smoothing: grayscale; /* Ensure antialiasing */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-dm-sans);
 }
 
 .h1:not(.prose *):not(.overwrite),
@@ -123,63 +134,25 @@ body {
   width: 100%;
   top: 0;
   left: 0;
-  transform-origin: 100% 0;
-  transform: skewY(-2deg);
-  overflow: hidden;
-  /* transform-origin: var(--sectionTransformOrigin);
-    transform: skewY(var(--sectionAngle));
-    background: var(--backgroundColor);
-    overflow: 
-    hidden; */
+  transform-origin: center;
 }
 
-.section-container {
-  position: relative;
-}
-
-/* Database page */
-
-.dashboard-tabs div[role='seperator'] {
-  @apply border border-gray-50 dark:border-gray-700;
-}
-
-.sbui-tabs--alt div[role='tablist'] .sbui-btn-primary {
-  @apply text-white bg-gray-800 dark:bg-scale-300 dark:text-white;
-  text-shadow: none;
-  font-weight: 400;
-}
-.sbui-tabs--alt div[role='tablist'] .sbui-btn-text {
-  @apply dark:text-gray-400;
-  font-weight: 400;
-  shadow: none;
-}
-
-.sbui-tabs--underline-alt div[role='tablist'] .sbui-tab-button-underline--active {
-  @apply border-gray-900 dark:border-white;
-}
-/* override position of tabs  */
-.dashboard-tabs > div > div {
-  justify-content: center;
-}
-
-html, body, #__next {
+.h-full {
   height: 100%;
-  margin: 0;
+}
+
+.min-h-full {
+  min-height: 100%;
+}
+
+.flex {
   display: flex;
-  flex-direction: column;
 }
 
-.main-content {
-  flex: 1 0 auto; /* Flex-grow, flex-shrink, flex-basis */
-}
-
-.footer {
-  flex-shrink: 0; /* Prevents the footer from growing */
-  text-align: center; /* Centers the text */
+.w-full {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  bottom: 0;
+}
+
+.flex-col {
+  flex-direction: column;
 }

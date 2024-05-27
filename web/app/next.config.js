@@ -16,11 +16,6 @@ module.exports = {
   async redirects() {
     return [
       // This redirection has been removed to keep the homepage at '/'
-      {
-      permanent: false,
-      source: '/',
-      destination: '/websites',
-      },
       //   permanent: false,
       //   source: '/',
       //   destination: '/websites',

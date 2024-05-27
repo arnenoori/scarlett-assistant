@@ -1,18 +1,20 @@
-import type { NextPage } from 'next'
-import PlausibleProvider from 'next-plausible'
-import Head from 'next/head'
+import { Hero } from '~/components/Hero'
+import { Newsletter } from '~/components/Newsletter'
+import { Schedule } from '~/components/Schedule'
+import { Speakers } from '~/components/Speakers'
+import { Sponsors } from '~/components/Sponsors'
+import MainLayout from './(main)/layout'  // Import MainLayout
 
-const Home: NextPage = () => {
+export default function Home() {
   return (
-    <PlausibleProvider domain="tosbuddy.com">
-      <div className="flex min-h-screen flex-col items-center justify-center py-2">
-        <Head>
-          <title>TOS Buddy</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-      </div>
-    </PlausibleProvider>
+    <MainLayout>  // wrap content with MainLayout
+      <>
+        <Hero />
+        <Speakers />
+        <Schedule />
+        <Sponsors />
+        <Newsletter />
+      </>
+    </MainLayout>
   )
 }
-
-export default Home

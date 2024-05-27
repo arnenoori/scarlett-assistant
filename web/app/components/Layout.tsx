@@ -1,40 +1,18 @@
-import { PropsWithChildren, useEffect } from 'react';
-import Footer from './Footer';
-import Nav from './Nav';
+import { Footer } from '~/components/Footer'
+import { Header } from '~/components/Header'
 
-type LayoutProps = {
-  hideHeader?: boolean;
-  hideFooter?: boolean;
-};
-
-// eventually fix the footer so we can display it
-const Layout = ({
-  hideHeader = false,
-  hideFooter = true,
+export function Layout({
   children,
-}: PropsWithChildren<LayoutProps>) => {
-  useEffect(() => {
-    const key = localStorage.getItem('supabaseDarkMode');
-    if (!key) {
-      document.documentElement.className = 'dark';
-    } else {
-      document.documentElement.className = key === 'true' ? 'dark' : '';
-    }
-  }, []);
-
+  showFooter = true,
+}: {
+  children: React.ReactNode
+  showFooter?: boolean
+}) {
   return (
     <>
-      {!hideHeader && <Nav />}
-      <div className="flex flex-col min-h-screen">
-        <main className="flex-grow">{children}</main>
-        {!hideFooter && (
-          <div className="mt-auto">
-            <Footer />
-          </div>
-        )}
-      </div>
+      <Header />
+      <main className="flex-auto">{children}</main>
+      {showFooter && <Footer />}
     </>
-  );
-};
-
-export default Layout;
+  )
+}

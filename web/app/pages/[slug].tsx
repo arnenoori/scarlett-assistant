@@ -3,12 +3,12 @@ import { IconChevronLeft, IconExternalLink } from '@supabase/ui';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import Layout from '~/components/Layout';
+import Layout from '~/components/Layout_old';
 import SectionContainer from '~/components/SectionContainer';
 import supabase from '~/lib/supabase';
 import { WebsiteRow } from '~/types/websites';
 import { TermsOfServiceRow } from '~/types/terms_of_service';
-import Error404 from './404';
+import NotFound from '~/pages/not-found';
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
@@ -18,7 +18,7 @@ interface Props {
 }
 
 function WebsitePage({ website, termsOfService }: Props) {
-  if (!website) return <Error404 />;
+  if (!website) return <NotFound />;
 
   return (
     <>

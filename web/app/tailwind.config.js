@@ -2,6 +2,7 @@ const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenCo
 const svgToDataUri = require('mini-svg-data-uri');
 const uiConfig = require('./ui.config.js');
 const deepMerge = require('deepmerge');
+const headlessuiPlugin = require('@headlessui/tailwindcss');
 
 module.exports = uiConfig(deepMerge(
   {
@@ -12,20 +13,45 @@ module.exports = uiConfig(deepMerge(
       './utils/**/*.ts',
       './node_modules/@supabase/ui/dist/config/default-theme.js',
       './styles/**/*.css',
+      './src/**/*.{js,jsx,ts,tsx}', // Added from the new config
     ],
-    darkMode: 'class',
+    // darkMode: 'class', // Removed dark mode setting
     theme: {
       borderColor: (theme) => ({
         ...theme('colors'),
-        DEFAULT: theme('colors.scale.300', 'currentColor'),
-        dark: theme('colors.scale.1200', 'currentColor'),
+        DEFAULT: theme('colors.scale.600', 'currentColor'),
       }),
       divideColor: (theme) => ({
         ...theme('colors'),
-        DEFAULT: theme('colors.scale.300', 'currentColor'),
-        dark: theme('colors.scale.600', 'currentColor'),
+        DEFAULT: theme('colors.scale.200', 'currentColor'),
       }),
+      fontSize: {
+        xs: ['0.75rem', { lineHeight: '1rem' }],
+        sm: ['0.875rem', { lineHeight: '1.5rem' }],
+        base: ['1rem', { lineHeight: '1.5rem' }],
+        lg: ['1.125rem', { lineHeight: '2rem' }],
+        xl: ['1.25rem', { lineHeight: '2rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2.5rem' }],
+        '3xl': ['2rem', { lineHeight: '2.5rem' }],
+        '4xl': ['2.5rem', { lineHeight: '3rem' }],
+        '5xl': ['3rem', { lineHeight: '3.5rem' }],
+        '6xl': ['4rem', { lineHeight: '1' }],
+        '7xl': ['5rem', { lineHeight: '1' }],
+        '8xl': ['6rem', { lineHeight: '1' }],
+        '9xl': ['8rem', { lineHeight: '1' }],
+      },
       extend: {
+        borderRadius: {
+          '4xl': '2rem',
+          '5xl': '2.5rem',
+        },
+        fontFamily: {
+          sans: 'var(--font-inter)',
+          display: 'var(--font-dm-sans)',
+        },
+        maxWidth: {
+          '2xl': '40rem',
+        },
         typography: ({ theme }) => ({
           DEFAULT: {
             css: {
@@ -126,16 +152,6 @@ module.exports = uiConfig(deepMerge(
             },
           },
         }),
-        fontFamily: {
-          sans: [
-            'custom-font',
-            'Helvetica Neue',
-            'Helvetica',
-            'Arial',
-            'sans-serif',
-          ],
-          mono: ['Source Code Pro', 'Menlo', 'monospace'],
-        },
         backgroundImage: (theme) => ({
           squiggle: `url("${svgToDataUri(
             `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 3" enable-background="new 0 0 6 3" width="6" height="3" fill="${theme(
@@ -155,7 +171,11 @@ module.exports = uiConfig(deepMerge(
         },
       },
     },
-    plugins: [require('@tailwindcss/typography'), addVariablesForColors],
+    plugins: [
+      require('@tailwindcss/typography'),
+      headlessuiPlugin,
+      addVariablesForColors,
+    ],
   },
   uiConfig
 ));

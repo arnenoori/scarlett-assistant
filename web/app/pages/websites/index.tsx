@@ -5,14 +5,14 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState, Fragment } from 'react';
 import { useDebounce } from 'use-debounce';
 import AddAWebsite from '~/components/AddAWebsite';
-import Layout from '~/components/Layout';
+import Layout from '~/components/Layout_old';
 import WebsiteLinkBox from '~/components/WebsiteLinkBox';
 import WebsiteTileGrid from '~/components/WebsiteTileGrid';
 import SectionContainer from '~/components/SectionContainer';
 import supabase from '~/lib/supabase';
 import { WebsiteRow } from '~/types/websites';
 import { Menu, Transition } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/solid';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 
 export async function getStaticProps() {
   const { data: websites, error } = await supabase
