@@ -4,8 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState, Fragment } from 'react';
 import { useDebounce } from 'use-debounce';
-import AddAWebsite from '~/components/AddAWebsite';
-import Layout from '~/components/Layout_old';
+import { Layout } from '~/components/Layout'; // Updated import to use the new Layout
 import WebsiteLinkBox from '~/components/WebsiteLinkBox';
 import WebsiteTileGrid from '~/components/WebsiteTileGrid';
 import SectionContainer from '~/components/SectionContainer';
@@ -124,7 +123,7 @@ function IntegrationWebsitesPage(props: Props) {
       <SectionContainer>
         <div className="bg-white px-6 py-24 sm:py-32 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-1200 sm:text-6xl">Find a simplified terms of service</h1>
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Find a simplified terms of service</h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
               Terms of services simplified for our understanding
             </p>
