@@ -1,6 +1,8 @@
 
 # Scripts:
 
+What the scripts do:
+
 **check_and_update_tos.py**: Checks for outdated terms of service (if its older than 3 months), and updates them with a new version if found.
 
 **update_tos_prompt.py**: Update all existing terms of service entries in your database when we update with a new prompt.
@@ -8,18 +10,20 @@
 **populate_database.py**: Populate the database with initial sites.
 - populate_initial_sites.txt: change this with the sites you want to add to the database.
 
-## Running locally:
+**get_svgs.py**: Ping https://svgl.app/api to get the svgs for the sites in the database and also saves the svg for the logos in logo_svgs.csv
+
+### Setup for the scripts:
 
 #### Step 1: Set Up a Python Environment
 
-1. **Install Python**: Ensure you have Python installed on your system. You can download it from [python.org](https://www.python.org/downloads/).
+(assuming you have python installed)
 
-2. **Create a Virtual Environment**:
+1. **Create a Virtual Environment**:
    ```bash
    python -m venv venv
    ```
 
-3. **Activate the Virtual Environment**:
+2. **Activate the Virtual Environment**:
    - On Windows:
      ```bash
      venv\Scripts\activate
@@ -45,6 +49,8 @@
 
 #### Step 3: Set Up Environment Variables
 
+(you can just change the given .env.local.example file to .env.local)
+
 1. **Create a `.env` File** in the root of your project directory:
    ```text
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -54,16 +60,11 @@
 Replace `your_supabase_url` and `your_supabase_anon_key` with your actual Supabase URL and anonymous key.
 
 
-### Instructions to Run the populate with  script
-1. Ensure you have the necessary environment variables set in your `.env` file:
+### Populate initial database with the script
 
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+The purpose of the script is to update the `populate_initial_sites.txt` in the `scripts` folder with the list of websites, one per line.
 
-
-Update the `populate_initial_sites.txt` in the `scripts` folder** with the list of websites, one per line.
-
-2. **Run the script**:
+1. **Run the script**:
 
 python scripts/populate_database.py
 
@@ -72,9 +73,9 @@ This Python script will read the list of websites from `populate_initial_sites.t
 
 ### Instructions to Run the check_and_update_tos script
 
-What the script does: checks for outdated terms of service (if its older than 3 months), and updates them with a new version if found.
+The script checks for outdated terms of service (if its older than 3 months), and updates them with a new version if found.
 
-1. setup a cron job on render
+1. setup a cron job on render (super easy to setup for cron jobs)
    python scripts/check_and_update_tos.py
 
 2. setup cron job to run every Sunday at midnight:
@@ -83,7 +84,7 @@ What the script does: checks for outdated terms of service (if its older than 3 
 
 ### Instructions to run update_tos_prompt.py
 
-Purpose: Update all existing terms of service entries in your database when we update with a new prompt.
+The script updates all existing terms of service entries in your database when we update with a new prompt.
 
 python scripts/update_tos_prompt.py
 
