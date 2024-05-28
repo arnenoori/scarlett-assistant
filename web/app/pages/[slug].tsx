@@ -10,8 +10,6 @@ import { WebsiteRow } from '~/types/websites';
 import { TermsOfServiceRow } from '~/types/terms_of_service';
 import NotFound from '~/pages/not-found';
 
-const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
-
 interface Props {
   website: WebsiteRow;
   termsOfService: TermsOfServiceRow | null;
@@ -58,7 +56,6 @@ function WebsitePage({ website, termsOfService }: Props) {
                 </h2>
 
                 <div className="prose">
-                  <ReactJson src={termsOfService?.simplified_content} />
                 </div>
               </div>
 

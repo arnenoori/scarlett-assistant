@@ -122,9 +122,13 @@ function IntegrationWebsitesPage(props: Props) {
         <meta name="description" content={meta_description} />
       </Head>
       <SectionContainer>
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Find a simplified terms of service</h1>
-          <p className="text-lg mb-8">Terms of services simplified for our understanding</p>
+        <div className="bg-white px-6 py-24 sm:py-32 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-1200 sm:text-6xl">Find a simplified terms of service</h1>
+            <p className="mt-6 text-lg leading-8 text-gray-600">
+              Terms of services simplified for our understanding
+            </p>
+          </div>
         </div>
         <div className="flex justify-center mb-8">
           <Input

@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect } from 'react';
-import Nav from './Nav';
+import { Header } from '~/components/Header';
 
 type LayoutProps = {
   hideHeader?: boolean;
@@ -23,7 +23,7 @@ const Layout = ({
 
   return (
     <>
-      {!hideHeader && <Nav />}
+      {!hideHeader && <Header />}
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow">{children}</main>
         {!hideFooter && (

@@ -119,6 +119,8 @@ Linux:
 
 ### Self-Host
 
+#### Hosting Web App
+
 1. Get a free API Key at [https://supabase.com](https://supabase.com/docs/guides/api/api-keys) & [https://anthropic.com](https://docs.anthropic.com/claude/reference/getting-started-with-the-api)
 
 2. Clone the repo
@@ -140,6 +142,8 @@ Linux:
    ```
 5. On supabase within your new project. Create a storage bucket named "terms_of_service_files" to store terms of service files. And implement the schema outlined in web/app/supabse/schema.sql
 
+#### Chrome Extension
+
 Chrome Extension Hosting (navigate to the chrome_extension directory) -
 
 1. Open Chrome (or any Chromium based browser) and navigate to chrome://extensions
@@ -150,25 +154,21 @@ Chrome Extension Hosting (navigate to the chrome_extension directory) -
 6. And you should be able to access the extension's popup by clicking the TOS Buddy icon in the Chrome toolbar
 7. The extension will use the environment variables you set in the .env.local file to connect to your Supabase database and AI services
 
+#### Bonus Scripts
+
+We have made a 4 scripts to populate your database and keep it updated (located in the web/scripts folder)
+
+**check_and_update_tos.py**: Checks for outdated terms of service (if its older than 3 months), and updates them with a new version if found.
+
+**update_tos_prompt.py**: Update all existing terms of service entries in your database when we update with a new prompt.
+
+**populate_database.py**: Populate the database with initial sites.
+- populate_initial_sites.txt: change this with the sites you want to add to the database.
+
+**get_svgs.py**: Ping svgl.app/api to get the svgs for the sites in the database and also saves the svg for the logos in logo_svgs.csv
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Leave us a star!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- LICENSE -->
 ## License
@@ -176,7 +176,6 @@ Leave us a star!
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- CONTACT -->
