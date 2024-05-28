@@ -8,12 +8,23 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import json  # import json for safe parsing
 
-load_dotenv()
+# Load environment variables from .env.local file
+load_dotenv(dotenv_path='.env.local')
 
+# Retrieve environment variables
 SUPABASE_URL = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
 SUPABASE_KEY = os.getenv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 API_URL = 'http://localhost:3000/api/findTos'  # Adjust the URL if necessary
+
+# Debugging statements to check if the environment variables are loaded correctly
+print(f"Supabase URL: {SUPABASE_URL}")
+print(f"Supabase Key: {SUPABASE_KEY}")
+print(f"OpenAI API Key: {OPENAI_API_KEY}")
+
+# Check if the OpenAI API key is None
+if OPENAI_API_KEY is None:
+    raise ValueError("OpenAI API Key is not set. Please check your .env.local file.")
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -97,6 +108,10 @@ Please format your response in JSON with the following structure:
         print(f"Error parsing OpenAI response: {e}")
         return {"category": "", "website_description": ""}
     
+def clean_url(url: str) -> str:
+    """Normalize URL by removing the trailing slash."""
+    return url.rstrip('/')
+
 def populate_database():
     file_path = os.path.join(os.path.dirname(__file__), 'data/populate_initial_sites.txt')
     csv_path = os.path.join(os.path.dirname(__file__), 'data/logo_svgs.csv')
@@ -108,28 +123,29 @@ def populate_database():
     num_duplicates = len(websites) - len(unique_websites)
     if num_duplicates > 0:
         print(f"{num_duplicates} duplicate URLs found and removed from populate_initial_sites.txt.")
+
     for url in unique_websites:
-        title, description = get_website_metadata(url)
+        cleaned_url = clean_url(url)
+        title, description = get_website_metadata(cleaned_url)
         openai_result = get_openai_category_and_description(description)
 
         data = {
-            "url": url,
+            "url": cleaned_url,
             "site_name": title,
             "category": openai_result.get("category", ""),
             "website_description": openai_result.get("website_description", ""),
-            "logo_svg": svgs.get(url, {}).get('svg_content', '')
+            "logo_svg": svgs.get(cleaned_url, {}).get('svg_content', '')
         }
 
         try:
             supabase.table('websites').insert(data).execute()
-            print(f"Inserted data for {url}")
+            print(f"Inserted data for {cleaned_url}")
         except Exception as e:
-            print(f"Error inserting data for {url}: {e}")
+            print(f"Error inserting data for {cleaned_url}: {e}")
 
-        # call the findTos API to crawl the ToS
-        cleaned_url = urlparse(url).geturl()
+        # Log the URL being sent to the findTos API
+        print(f"Sending to findTos API: {cleaned_url}")
         payload = {'url': cleaned_url}
-        print(f"Sending to findTos API: {payload}")  # Log the payload being sent
         try:
             response = requests.post(API_URL, json=payload)
             print(f'Processed {cleaned_url}: {response.json().get("message")}')

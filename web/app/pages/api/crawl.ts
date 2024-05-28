@@ -13,7 +13,7 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 
 async function saveToTextFile(filename: string, content: string, processedContent: string, websiteId: number, tosUrl: string): Promise<void> {
   const { data: uploadData, error: uploadError } = await supabase.storage
-    .from('terms_of_service_files')
+    .from('terms_of_service')
     .upload(filename, content, {
       cacheControl: '3600',
       upsert: false
@@ -249,22 +249,22 @@ export async function crawlTos(websiteData: { websiteId: number; siteName: strin
           console.log('Processing ToS page:', request.url);
           const pageTitle = await page.title();
           const textContent = await page.evaluate(() => document.body.innerText);
-
+    
           // Check if the page content contains common ToS keywords
           const tosKeywords = ['terms of service', 'terms and conditions', 'user agreement'];
           const isTosPage = tosKeywords.some(keyword => textContent.toLowerCase().includes(keyword));
-
+    
           if (isTosPage) {
             const processedContent = await processContent(textContent);
             const filename = generateFilename(request.url, pageTitle);
             await saveToTextFile(filename, textContent, processedContent, websiteId, request.url);
             console.log(`Saved ToS text content to ${filename}`);
-
             try {
               const parsedContent = JSON.parse(processedContent);
               await updateWebsiteData(websiteId, parsedContent, url, request.url, siteName, url);
             } catch (jsonError) {
               console.error('Error parsing processed content JSON:', jsonError.message);
+              console.error('Processed content:', processedContent);
             }
           } else {
             console.log('Page does not contain ToS content, skipping:', request.url);
@@ -272,7 +272,16 @@ export async function crawlTos(websiteData: { websiteId: number; siteName: strin
         } else {
           const pageTitle = await page.title();
           console.log(`Title of ${request.url}: ${pageTitle}`);
-
+    
+          // Filter out non-relevant pages based on URL patterns or keywords
+          const nonRelevantKeywords = ['magazine', 'news', 'article', 'culture', 'dispatch', 'jpg', 'photos'];
+          const isNonRelevantPage = nonRelevantKeywords.some(keyword => request.url.toLowerCase().includes(keyword));
+    
+          if (isNonRelevantPage) {
+            console.log('Non-relevant page detected, skipping:', request.url);
+            return;
+          }
+    
           const tosLinks = await page.$$eval('a', (anchors: HTMLAnchorElement[]) =>
             anchors
               .filter(a => /terms|tos|privacy/i.test(a.textContent || '') || /terms|tos|privacy/i.test(a.href || ''))
@@ -286,7 +295,7 @@ export async function crawlTos(websiteData: { websiteId: number; siteName: strin
       } catch (error) {
         console.error(`Error processing request ${request.url}:`, error.message);
       }
-    },
+    }, 
 
     async failedRequestHandler({ request }) {
       console.error(`Request ${request.url} failed too many times.`);
