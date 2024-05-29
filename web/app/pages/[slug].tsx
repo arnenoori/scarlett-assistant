@@ -10,11 +10,6 @@ import { WebsiteRow } from '~/types/websites';
 import { TermsOfServiceRow } from '~/types/terms_of_service';
 import NotFound from '~/pages/not-found';
 
-interface Props {
-  website: WebsiteRow;
-  termsOfService: TermsOfServiceRow | null;
-}
-
 interface SimplifiedContent {
   summary: {
     [key: string]: string;
@@ -23,14 +18,20 @@ interface SimplifiedContent {
   overallAssessment: string;
 }
 
+interface Props {
+  website: WebsiteRow;
+  termsOfService: TermsOfServiceRow | null;
+}
+
 function WebsitePage({ website, termsOfService }: Props) {
   if (!website) return <NotFound />;
 
-  // Safely parse the simplified content JSON
   let simplifiedContent: SimplifiedContent | null = null;
   try {
     if (termsOfService?.simplified_content) {
-      simplifiedContent = JSON.parse(termsOfService.simplified_content) as SimplifiedContent;
+      // Remove the "json\n" prefix before parsing
+      const cleanJson = termsOfService.simplified_content.replace(/^json\n/, '');
+      simplifiedContent = JSON.parse(cleanJson) as SimplifiedContent;
     }
   } catch (error) {
     console.error('Failed to parse simplified content:', error);
@@ -40,16 +41,16 @@ function WebsitePage({ website, termsOfService }: Props) {
     <>
       <Head>
         <title>{website.site_name} | TOS Buddy</title>
-        <meta name="description" content={website.website_description}></meta>
+        <meta name="description" content={website.website_description || 'Default description'}></meta>
       </Head>
 
       <Layout>
         <SectionContainer>
           <div className="col-span-12 mx-auto mb-2 max-w-5xl space-y-12 lg:col-span-2">
-          <Link href="/websites" className="flex cursor-pointer items-center text-scale-1200 transition-colors hover:text-scale-1000">
-          <IconChevronLeft style={{ padding: 0 }} />
-          Back
-        </Link>
+            <Link href="/websites" className="flex cursor-pointer items-center text-scale-1200 transition-colors hover:text-scale-1000">
+              <IconChevronLeft style={{ padding: 0 }} />
+              Back
+            </Link>
 
             <div className="flex items-center space-x-4">
               {website.logo_svg && (
@@ -69,55 +70,28 @@ function WebsitePage({ website, termsOfService }: Props) {
                   {simplifiedContent ? (
                     <>
                       <h3>Summary</h3>
-                      {Object.entries(simplifiedContent.summary).map(([key, value]) => (
-                        <p key={key}><strong>{key}:</strong> {value}</p>
-                      ))}
+                      {simplifiedContent.summary && Object.entries(simplifiedContent.summary).length > 0 ? (
+                        Object.entries(simplifiedContent.summary).map(([key, value]) => (
+                          <p key={key}><strong>{key}:</strong> {value}</p>
+                        ))
+                      ) : (
+                        <p>No summary available.</p>
+                      )}
                       <h3>Potential Dangers</h3>
-                      <ul>
-                        {simplifiedContent.potentialDangers.map((danger, index) => (
-                          <li key={index}>{danger}</li>
-                        ))}
-                      </ul>
+                      {simplifiedContent.potentialDangers && simplifiedContent.potentialDangers.length > 0 ? (
+                        <ul>
+                          {simplifiedContent.potentialDangers.map((danger, index) => (
+                            <li key={index}>{danger}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>No potential dangers listed.</p>
+                      )}
                       <h3>Overall Assessment</h3>
                       <p>{simplifiedContent.overallAssessment}</p>
                     </>
                   ) : (
                     <p>Loading content...</p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-scale-1200" style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-                  Details
-                </h2>
-                <div className="divide-y text-scale-1200">
-                  <div className="flex items-center justify-between py-2">
-                    <span className="text-scale-900">Website</span>
-                    <a href={website.url} target="_blank" rel="noreferrer" className="text-brand-900 transition-colors hover:text-brand-800">
-                      {new URL(website.url).host}
-                    </a>
-                  </div>
-                  <div className="flex items-center justify-between py-2">
-                    <span className="text-scale-900">Terms of Service</span>
-                    <a href={termsOfService?.tos_url || ''} target="_blank" rel="noreferrer" className="text-brand-900 transition-colors hover:text-brand-800">
-                      <span className="flex items-center space-x-1">
-                        <span>View</span>
-                        <IconExternalLink size="small" />
-                      </span>
-                    </a>
-                  </div>
-                  {website.category && (
-                    <div className="flex items-center justify-between py-2">
-                      <span className="text-scale-900">Category</span>
-                      <span>{website.category}</span>
-                    </div>
-                  )}
-                  {website.last_crawled && (
-                    <div className="flex items-center justify-between py-2">
-                      <span className="text-scale-900">Last Crawled</span>
-                      <span>{new Date(website.last_crawled).toLocaleDateString()}</span>
-                    </div>
                   )}
                 </div>
               </div>
@@ -129,44 +103,25 @@ function WebsitePage({ website, termsOfService }: Props) {
   );
 }
 
-// This function gets called at build time
-export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    const { data: websites, error } = await supabase
-      .from('websites')
-      .select('site_name');
+export async function getStaticPaths() {
+  // Fetch the list of slugs from your database
+  const { data: websites, error } = await supabase
+    .from('websites')
+    .select('site_name');
 
-    if (error) {
-      console.error('Error fetching websites:', error.message);
-      return { paths: [], fallback: 'blocking' };
-    }
-
-    if (!websites) {
-      console.error('No websites data returned from Supabase');
-      return { paths: [], fallback: 'blocking' };
-    }
-
-    const paths = websites
-      .map((website) => ({
-        params: { slug: website.site_name.trim() },
-      }))
-      .filter((path) => path.params.slug); // filter out empty slugs
-
-    const uniquePaths = Array.from(new Set(paths.map((path) => path.params.slug))).map((slug) => ({
-      params: { slug },
-    }));
-
-    console.log('Generated paths:', uniquePaths);
-
-    return {
-      paths: uniquePaths,
-      fallback: 'blocking',
-    };
-  } catch (err) {
-    console.error('Unexpected error in getStaticPaths:', err);
-    return { paths: [], fallback: 'blocking' };
+  if (error) {
+    console.error('Failed to fetch slugs:', error.message);
+    return { paths: [], fallback: false };
   }
-};
+
+  // Generate paths with `slug` param
+  const paths = websites.map(website => ({
+    params: { slug: website.site_name },
+  }));
+
+  // Return the list of paths for static generation, and set fallback to false
+  return { paths, fallback: false };
+}
 
 // This also gets called at build time
 export const getStaticProps: GetStaticProps = async ({ params }) => {
@@ -191,14 +146,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
     console.log('Fetched website:', website);
 
+    // Fetch the latest terms of service based on 'updated_at' or 'version'
     const { data: termsOfService, error: termsOfServiceError } = await supabase
       .from('terms_of_service')
-      .select('*')  // Make sure to fetch all necessary fields, including simplified_content
+      .select('*')
       .eq('website_id', website.id)
+      .order('updated_at', { ascending: false }) // or order by 'version' if applicable
+      .limit(1)
       .single();
 
-    if (termsOfServiceError) {
-      console.error('Error fetching terms of service:', termsOfServiceError.message);
+    if (termsOfServiceError || !termsOfService) {
+      console.error('Error fetching terms of service:', termsOfServiceError?.message);
       return { props: { website, termsOfService: null } };
     }
 
