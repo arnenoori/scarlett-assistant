@@ -104,22 +104,20 @@ function WebsitePage({ website, termsOfService }: Props) {
 }
 
 export async function getStaticPaths() {
-  // Fetch the list of slugs from your database
   const { data: websites, error } = await supabase
-    .from('websites')
-    .select('site_name');
+      .from('websites')
+      .select('id, site_name');
 
   if (error) {
-    console.error('Failed to fetch slugs:', error.message);
-    return { paths: [], fallback: false };
+      console.error('Failed to fetch slugs:', error.message);
+      return { paths: [], fallback: false };
   }
 
-  // Generate paths with `slug` param
   const paths = websites.map(website => ({
-    params: { slug: website.site_name },
+      params: { slug: website.site_name ? website.site_name : `website-${website.id}` },
   }));
 
-  // Return the list of paths for static generation, and set fallback to false
+  console.log('Generated paths:', paths);  // Detailed logging
   return { paths, fallback: false };
 }
 
