@@ -1,9 +1,7 @@
 {
     "functions": {
       "pages/api/crawl.ts": {
-        "includeFiles": [
-          "node_modules/playwright/**"
-        ]
+        "includeFiles": "node_modules/playwright/**"
       }
     }
   }
