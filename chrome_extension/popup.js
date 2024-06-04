@@ -22,7 +22,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log('Received response from background script:', response);
                     const cleanedTitle = cleanTitle(currentTab.title) || currentTab.url;
                     document.getElementById('websiteTitle').textContent = cleanedTitle;
-                    displayResponse(response.data); // Use response.data directly
+
+                    
+                    const cleanJson = response.data.replace(/^json\n/, '');
+                    const parsedData = JSON.parse(cleanJson);
+
+                    displayResponse(parsedData); 
                     document.getElementById('apiResponseContainer').style.display = 'block'; 
                 } else {
                     console.error('Failed to receive response from background script.');
