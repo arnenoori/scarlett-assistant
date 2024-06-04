@@ -1,7 +1,7 @@
 {
     "functions": {
       "pages/api/crawl.ts": {
-        "includeFiles": "node_modules/playwright/** node_modules/@crawlee/browser/**"
+        "includeFiles": "node_modules/playwright/** node_modules/@crawlee/browser/** node_modules/@crawlee/core/** node_modules/cheerio/** node_modules/iconv-lite/**"
       }
     }
   }
