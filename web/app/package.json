@@ -38,6 +38,7 @@
     "next-themes": "^0.3.0",
     "openai": "^4.47.1",
     "playwright": "^1.43.1",
+    "playwright-aws-lambda": "^0.10.0",
     "punycode": "^2.3.1",
     "react": "latest",
     "react-dom": "latest",
