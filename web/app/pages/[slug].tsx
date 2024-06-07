@@ -29,7 +29,7 @@ function WebsitePage({ website, termsOfService }: Props) {
   let simplifiedContent: SimplifiedContent | null = null;
   try {
     if (termsOfService?.simplified_content) {
-      // Remove the "json\n" prefix before parsing
+      // remove the "json\n" prefix before parsing
       const cleanJson = termsOfService.simplified_content.replace(/^json\n/, '');
       simplifiedContent = JSON.parse(cleanJson) as SimplifiedContent;
     }
@@ -46,15 +46,15 @@ function WebsitePage({ website, termsOfService }: Props) {
 
       <Layout>
         <SectionContainer>
-          <div className="col-span-12 mx-auto mb-2 max-w-5xl space-y-12 lg:col-span-2">
-            <Link href="/websites" className="flex cursor-pointer items-center text-scale-1200 transition-colors hover:text-scale-1000">
+          <div className="max-w-5xl col-span-12 mx-auto mb-2 space-y-12 lg:col-span-2">
+            <Link href="/websites" className="flex items-center transition-colors cursor-pointer text-scale-1200 hover:text-scale-1000">
               <IconChevronLeft style={{ padding: 0 }} />
               Back
             </Link>
 
             <div className="flex items-center space-x-4">
               {website.logo_svg && (
-                <img src={website.logo_svg} alt={`${website.site_name} logo`} className="h-10 w-10" />
+                <img src={website.logo_svg} alt={`${website.site_name} logo`} className="w-10 h-10" />
               )}
               <h1 className="h1" style={{ marginBottom: 0 }}>
                 {website.site_name}
@@ -70,10 +70,29 @@ function WebsitePage({ website, termsOfService }: Props) {
                   {simplifiedContent ? (
                     <>
                       <h3>Summary</h3>
-                      {simplifiedContent.summary && Object.entries(simplifiedContent.summary).length > 0 ? (
-                        Object.entries(simplifiedContent.summary).map(([key, value]) => (
-                          <p key={key}><strong>{key}:</strong> {value}</p>
-                        ))
+                      {simplifiedContent.summary ? (
+                        <>
+                          {simplifiedContent.summary.DataCollection && (
+                            <div className="mb-4">
+                              <strong>Data Collection:</strong> <span>{simplifiedContent.summary.DataCollection}</span>
+                            </div>
+                          )}
+                          {simplifiedContent.summary.UserRights && (
+                            <div className="mb-4">
+                              <strong>User Rights:</strong> <span>{simplifiedContent.summary.UserRights}</span>
+                            </div>
+                          )}
+                          {simplifiedContent.summary.LimitationsOfLiability && (
+                            <div className="mb-4">
+                              <strong>Limitations Of Liability:</strong> <span>{simplifiedContent.summary.LimitationsOfLiability}</span>
+                            </div>
+                          )}
+                          {simplifiedContent.summary.CancellationAndTermination && (
+                            <div className="mb-4">
+                              <strong>Cancellation And Termination:</strong> <span>{simplifiedContent.summary.CancellationAndTermination}</span>
+                            </div>
+                          )}
+                        </>
                       ) : (
                         <p>No summary available.</p>
                       )}
@@ -81,7 +100,7 @@ function WebsitePage({ website, termsOfService }: Props) {
                       {simplifiedContent.potentialDangers && simplifiedContent.potentialDangers.length > 0 ? (
                         <ul>
                           {simplifiedContent.potentialDangers.map((danger, index) => (
-                            <li key={index}>{danger}</li>
+                            <li key={index} className="mb-2">{danger}</li>
                           ))}
                         </ul>
                       ) : (
@@ -92,6 +111,24 @@ function WebsitePage({ website, termsOfService }: Props) {
                     </>
                   ) : (
                     <p>Loading content...</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="lg:col-span-1">
+                <div className="p-4 border rounded-lg shadow-md">
+                  <h3 className="text-scale-1200" style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Website Stats</h3>
+                  {website.website_description && (
+                    <p><strong>Description:</strong> {website.website_description}</p>
+                  )}
+                  {website.category && (
+                    <p><strong>Category:</strong> {website.category}</p>
+                  )}
+                  {termsOfService?.updated_at && (
+                    <p><strong>Last Time TOS Updated:</strong> {new Date(termsOfService.updated_at).toLocaleDateString()}</p>
+                  )}
+                  {termsOfService?.tos_url && (
+                    <p><a href={termsOfService.tos_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">View Original TOS</a></p>
                   )}
                 </div>
               </div>
@@ -150,20 +187,16 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       .select('*')
       .eq('website_id', website.id)
       .order('updated_at', { ascending: false }) // or order by 'version' if applicable
-      .limit(1)
-      .single();
+      .limit(1);
 
-    if (termsOfServiceError || !termsOfService) {
-      console.error('Error fetching terms of service:', termsOfServiceError?.message);
-      return { props: { website, termsOfService: null } };
+    if (termsOfServiceError) {
+      console.error('Error fetching terms of service:', termsOfServiceError.message);
     }
-
-    console.log('Fetched terms of service:', termsOfService);
 
     return {
       props: {
         website,
-        termsOfService: termsOfService || null,
+        termsOfService: Array.isArray(termsOfService) && termsOfService.length > 0 ? termsOfService[0] : null,
       },
       revalidate: 18000, // In seconds - refresh every 5 hours
     };
