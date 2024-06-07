@@ -1,19 +1,13 @@
-# Use the official Node.js image.
-# https://hub.docker.com/_/node
-FROM node:14
+FROM jarredsumner/bun:latest
 
-# Create and change to the app directory.
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure both package.json AND package-lock.json are copied.
-COPY package*.json ./
+COPY package.json bun.lockb ./
+RUN bun install
 
-# Install production dependencies.
-RUN npm install --only=production
-
-# Copy local code to the container image.
 COPY . .
+RUN bun run build
 
-# Run the web service on container startup.
-CMD [ "npm", "start" ]
+EXPOSE 3000
+
+CMD ["bun", "run", "start"]
