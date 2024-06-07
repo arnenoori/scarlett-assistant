@@ -58,6 +58,10 @@ TOS Buddy is a chrome extension that helps users understand and control their pr
 <!-- GETTING STARTED -->
 ## Running locally
 
+Note if you want to host the summarize endpoint on a docker file we you can 
+
+docker-compose up --build
+
 ### Prerequisites
 
 * Bun
