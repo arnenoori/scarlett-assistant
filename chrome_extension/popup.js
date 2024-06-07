@@ -23,12 +23,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     const cleanedTitle = cleanTitle(currentTab.title) || currentTab.url;
                     document.getElementById('websiteTitle').textContent = cleanedTitle;
 
-                    
-                    const cleanJson = response.data.replace(/^json\n/, '');
-                    const parsedData = JSON.parse(cleanJson);
+                    let responseData = response.data;
 
-                    displayResponse(parsedData); 
-                    document.getElementById('apiResponseContainer').style.display = 'block'; 
+                    // Remove the first 5 characters and new lines
+                    responseData = responseData.substring(5).replace(/\n/g, '');
+
+                    try {
+                        const parsedData = JSON.parse(responseData);
+                        displayResponse(parsedData); 
+                        document.getElementById('apiResponseContainer').style.display = 'block'; 
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
+                    }
                 } else {
                     console.error('Failed to receive response from background script.');
                 }
@@ -53,11 +59,20 @@ function displayResponse(data) {
     const potentialDangers = data.potentialDangers || [];
     const overallAssessment = data.overallAssessment || 'No overall assessment available.';
 
-    const responseText = `
-        Summary: ${JSON.stringify(summary, null, 2)}
-        Potential Dangers: ${potentialDangers.join(', ')}
-        Overall Assessment: ${overallAssessment}
-    `;
+    const apiResponseElement = document.getElementById('apiResponse');
+    apiResponseElement.innerHTML = ''; 
 
-    document.getElementById('apiResponse').textContent = responseText;
+    const summarySection = document.createElement('div');
+    summarySection.innerHTML = '<strong>Summary:</strong><br>' + 
+        Object.entries(summary).map(([key, value]) => `<strong>${key}:</strong> ${value}`).join('<br>');
+
+    const potentialDangersSection = document.createElement('div');
+    potentialDangersSection.innerHTML = '<strong>Potential Dangers:</strong><br>' + potentialDangers.join('<br>');
+
+    const overallAssessmentSection = document.createElement('div');
+    overallAssessmentSection.innerHTML = '<strong>Overall Assessment:</strong><br>' + overallAssessment;
+
+    apiResponseElement.appendChild(summarySection);
+    apiResponseElement.appendChild(potentialDangersSection);
+    apiResponseElement.appendChild(overallAssessmentSection);
 }

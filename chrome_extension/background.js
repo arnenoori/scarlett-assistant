@@ -19,8 +19,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                console.log('API response data:', data);
+                let data = await response.text(); 
                 sendResponse({ data: data });
             } else {
                 console.error('Error with the API:', response.statusText);

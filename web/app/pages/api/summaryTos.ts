@@ -89,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (tosData) {
           // Return the simplified_content as the response
           console.log('Returning simplified content:', tosData[0].simplified_content);
-          res.status(200).json({ summary: tosData[0].simplified_content });
+          res.status(200).send(tosData[0].simplified_content as string);
         } else {
           res.status(404).json({ message: 'Terms of service not found for the website' });
         }

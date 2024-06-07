@@ -47,6 +47,19 @@ body, button {
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
+    word-wrap: break-word; 
+    white-space: pre-wrap; 
+    overflow-wrap: break-word;
+    word-break: break-word; /* Added property */
+    overflow: auto; /* Ensures proper handling of overflow content */
+    font-size: 14px; 
+    max-width: 100%; 
+    box-sizing: border-box;
+}
+
+#apiResponse {
+    margin: 0;
+    padding: 0;
 }
 
 .popup-footer {
