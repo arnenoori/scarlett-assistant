@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     var sendUrlButton = document.getElementById('sendUrl');
     var loadingIndicator = document.getElementById('loadingIndicator'); 
-    var addWebsiteButton = document.getElementById('addWebsite'); // New button
-    var confirmationMessage = document.getElementById('confirmationMessage'); // Confirmation message
+    var addWebsiteButton = document.getElementById('addWebsite'); 
+    var confirmationMessage = document.getElementById('confirmationMessage'); 
 
     sendUrlButton.addEventListener('click', function() {
         loadingIndicator.style.display = 'block'; 
@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     let responseData = response.data;
 
-                    // Remove the first 5 characters and new lines
                     responseData = responseData.substring(5).replace(/\n/g, '');
 
                     try {
@@ -51,13 +50,12 @@ document.addEventListener('DOMContentLoaded', function () {
         confirmationMessage.style.display = 'block';
         setTimeout(() => {
             confirmationMessage.style.display = 'none';
-        }, 3000); // Hide the message after 3 seconds
+        }, 3000); 
     });
 });
 
 function cleanTitle(title) {
     if (!title) return '';
-    // Remove leading numeric prefixes and surrounding parentheses
     return title.replace(/^\(\d+\)\s*/, '');
 }
 
