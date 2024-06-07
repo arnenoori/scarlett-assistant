@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     var sendUrlButton = document.getElementById('sendUrl');
     var loadingIndicator = document.getElementById('loadingIndicator'); 
+    var addWebsiteButton = document.getElementById('addWebsite'); // New button
+    var confirmationMessage = document.getElementById('confirmationMessage'); // Confirmation message
 
     sendUrlButton.addEventListener('click', function() {
         loadingIndicator.style.display = 'block'; 
@@ -15,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (chrome.runtime.lastError) {
                     console.error('Runtime error:', chrome.runtime.lastError.message);
+                    displayNoInfoMessage();
                     return;
                 }
 
@@ -34,12 +37,21 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById('apiResponseContainer').style.display = 'block'; 
                     } catch (e) {
                         console.error('Error parsing JSON:', e);
+                        displayNoInfoMessage();
                     }
                 } else {
                     console.error('Failed to receive response from background script.');
+                    displayNoInfoMessage();
                 }
             });
         });
+    });
+
+    addWebsiteButton.addEventListener('click', function() {
+        confirmationMessage.style.display = 'block';
+        setTimeout(() => {
+            confirmationMessage.style.display = 'none';
+        }, 3000); // Hide the message after 3 seconds
     });
 });
 
@@ -75,4 +87,10 @@ function displayResponse(data) {
     apiResponseElement.appendChild(summarySection);
     apiResponseElement.appendChild(potentialDangersSection);
     apiResponseElement.appendChild(overallAssessmentSection);
+}
+
+function displayNoInfoMessage() {
+    const apiResponseElement = document.getElementById('apiResponse');
+    apiResponseElement.innerHTML = '<strong>No information is available about this site.</strong>';
+    document.getElementById('apiResponseContainer').style.display = 'block';
 }

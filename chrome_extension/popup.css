@@ -11,6 +11,7 @@ body, button {
     background-color: #f4f4f4;
     color: #333;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .popup-header {
@@ -26,7 +27,7 @@ body, button {
     text-align: center;
 }
 
-.send-url-button {
+.send-url-button, .add-website-button { /* Updated styles */
     background-color: #007cba;
     color: white;
     border: none;
@@ -36,7 +37,7 @@ body, button {
     margin-bottom: 20px;
 }
 
-.send-url-button:hover {
+.send-url-button:hover, .add-website-button:hover { /* Updated styles */
     background-color: #005792;
 }
 
@@ -50,8 +51,8 @@ body, button {
     word-wrap: break-word; 
     white-space: pre-wrap; 
     overflow-wrap: break-word;
-    word-break: break-word; /* Added property */
-    overflow: auto; /* Ensures proper handling of overflow content */
+    word-break: break-word; 
+    overflow: hidden;
     font-size: 14px; 
     max-width: 100%; 
     box-sizing: border-box;
@@ -74,4 +75,10 @@ body, button {
     text-align: center;
     margin-top: 20px;
     font-size: 16px;
+}
+
+.confirmation-message { /* New styles */
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
 }
