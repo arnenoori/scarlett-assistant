@@ -1,4 +1,3 @@
-import { SupabaseClient } from '@supabase/supabase-js';
 import AddAWebsite from '~/components/AddAWebsite';
 import supabase from '~/lib/supabase';
 import { Layout } from '~/components/Layout';

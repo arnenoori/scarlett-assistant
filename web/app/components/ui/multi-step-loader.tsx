@@ -47,18 +47,23 @@ const LoaderCore = ({
   value?: number;
 }) => {
   return (
-    <div className="flex relative justify-start max-w-xl mx-auto flex-col mt-40">
+    <div className="relative flex flex-col justify-start max-w-xl mx-auto mt-40">
       {loadingStates.map((loadingState, index) => {
         const distance = Math.abs(index - value);
-        const opacity = Math.max(1 - distance * 0.2, 0); // Minimum opacity is 0, keep it 0.2 if you're sane.
+        const opacity = Math.max(1 - distance * 0.2, 0);
 
         return (
           <motion.div
             key={index}
-            className={cn("text-left flex gap-2 mb-4")}
             initial={{ opacity: 0, y: -(value * 40) }}
             animate={{ opacity: opacity, y: -(value * 40) }}
             transition={{ duration: 0.5 }}
+            style={{
+              display: "flex",
+              gap: "0.5rem",
+              marginBottom: "1rem",
+              textAlign: "left",
+            }}
           >
             <div>
               {index > value && (
@@ -133,9 +138,12 @@ export const MultiStepLoader = ({
           exit={{
             opacity: 0,
           }}
-          className="relative z-10"
+          style={{
+            position: "relative",
+            zIndex: 10,
+          }}
         >
-          <div className="h-auto relative">
+          <div className="relative h-auto">
             <LoaderCore value={currentState} loadingStates={loadingStates} />
           </div>
         </motion.div>

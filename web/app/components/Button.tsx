@@ -1,10 +1,21 @@
 import Link from 'next/link'
 import clsx from 'clsx'
-import { ButtonHTMLAttributes, DetailedHTMLProps, AnchorHTMLAttributes } from 'react';
 
-type ButtonProps =
-  | (React.ComponentPropsWithoutRef<typeof Link> & { href: string })  // Ensure href is required for Link
-  | (React.ComponentPropsWithoutRef<'button'> & { href?: undefined })
+type ButtonOrLinkProps = {
+  className?: string
+  children?: React.ReactNode
+}
+
+type ButtonAsButton = ButtonOrLinkProps & {
+  href?: undefined
+  type?: 'button' | 'submit' | 'reset'
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
+
+type ButtonAsLink = ButtonOrLinkProps & {
+  href: string
+} & Omit<React.ComponentProps<typeof Link>, 'href'>
+
+type ButtonProps = ButtonAsButton | ButtonAsLink
 
 export function Button({ className, ...props }: ButtonProps) {
   className = clsx(
@@ -12,21 +23,9 @@ export function Button({ className, ...props }: ButtonProps) {
     className,
   )
 
-  // Filter props for button element
-  const buttonProps: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> = {
-    className,
-    ...props as ButtonHTMLAttributes<HTMLButtonElement>
-  };
+  if ('href' in props) {
+    return <Link className={className} {...(props as ButtonAsLink)} />
+  }
 
-  // Filter props for Link element
-  const linkProps: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> = {
-    className,
-    ...props as AnchorHTMLAttributes<HTMLAnchorElement>
-  };
-
-  return typeof props.href === 'undefined' ? (
-    <button {...buttonProps} />
-  ) : (
-    <Link {...linkProps} href={props.href} />  // Explicitly pass href to ensure it's provided
-  )
+  return <button type="button" className={className} {...(props as ButtonAsButton)} />
 }
