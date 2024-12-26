@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState, Fragment } from 'react';
 import { useDebounce } from 'use-debounce';
 import { Layout } from '~/components/Layout'; // Updated import to use the new Layout
-import WebsiteLinkBox from '~/components/WebsiteLinkBox';
 import WebsiteTileGrid from '~/components/WebsiteTileGrid';
 import SectionContainer from '~/components/SectionContainer';
 import supabase from '~/lib/supabase';
@@ -121,8 +120,8 @@ function IntegrationWebsitesPage(props: Props) {
         <meta name="description" content={meta_description} />
       </Head>
       <SectionContainer>
-        <div className="bg-white px-6 py-24 sm:py-32 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
+        <div className="px-6 py-24 bg-white sm:py-32 lg:px-8">
+          <div className="max-w-2xl mx-auto text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Find a simplified terms of service</h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
               Terms of services simplified for our understanding
@@ -139,9 +138,9 @@ function IntegrationWebsitesPage(props: Props) {
           />
           <Menu as="div" className="relative inline-block text-left">
             <div>
-              <Menu.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 {selectedCategory || 'Select a category'}
-                <ChevronDownIcon className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
+                <ChevronDownIcon className="w-5 h-5 ml-2 -mr-1" aria-hidden="true" />
               </Menu.Button>
             </div>
             <Transition
@@ -153,7 +152,7 @@ function IntegrationWebsitesPage(props: Props) {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="py-1">
                   <Menu.Item>
                     {({ active }) => (
